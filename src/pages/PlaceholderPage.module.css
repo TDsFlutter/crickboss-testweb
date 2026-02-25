@@ -1,0 +1,25 @@
+.page {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.center {
+    max-width: 500px;
+    margin-inline: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.iconWrap {
+    font-size: 64px;
+}
+
+.desc {
+    color: var(--color-body);
+    font-size: var(--text-body-lg);
+    line-height: var(--lh-relaxed);
+}

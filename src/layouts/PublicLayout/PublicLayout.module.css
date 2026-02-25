@@ -1,0 +1,16 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main {
+    flex: 1;
+    padding-top: var(--total-offset);
+}
+
+@media (max-width: 1024px) {
+    .main {
+        padding-top: var(--header-height);
+    }
+}

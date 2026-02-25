@@ -1,0 +1,213 @@
+.footer {
+    background: var(--color-bg-dark);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+[data-theme="dark"] .footer {
+    background: #08111e;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: var(--space-16);
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-16);
+}
+
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-10);
+    }
+}
+
+@media (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+    }
+}
+
+/* Brand */
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: var(--fw-extrabold);
+    color: var(--color-heading);
+    margin-bottom: var(--space-4);
+    text-decoration: none;
+    color: #fff;
+}
+
+.logoBoss {
+    color: var(--color-accent);
+}
+
+.tagline {
+    font-size: var(--text-body-sm);
+    color: var(--color-muted);
+    line-height: var(--lh-relaxed);
+    max-width: 280px;
+    margin-bottom: var(--space-6);
+}
+
+.socials {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.socialIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.socialIcon:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--brand-color, var(--color-accent));
+    transform: translateY(-2px);
+}
+
+/* Columns */
+.colTitle {
+    font-family: var(--font-body);
+    font-size: var(--text-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-white);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-5);
+    color: #fff;
+}
+
+.contactTitle {
+    margin-top: var(--space-6);
+}
+
+.col ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.link {
+    font-size: var(--text-body-sm);
+    color: var(--color-muted);
+    transition: color var(--transition-fast), padding-left var(--transition-fast);
+    text-decoration: none;
+}
+
+.link:hover {
+    color: var(--color-accent);
+    padding-left: 4px;
+}
+
+/* App Badges */
+.appBadges {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.appBadge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+    text-decoration: none;
+}
+
+.appBadge:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--color-accent);
+}
+
+.appIcon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.appSmall {
+    font-size: 10px;
+    color: var(--color-muted);
+}
+
+.appBig {
+    font-size: 14px;
+    font-weight: var(--fw-semibold);
+    color: #fff;
+}
+
+/* Contact links */
+.contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.contactLink {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-body-sm);
+    color: var(--color-muted);
+    transition: color var(--transition-fast);
+    text-decoration: none;
+}
+
+.contactLink:hover {
+    color: var(--color-accent);
+}
+
+/* Bottom */
+.bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-block: var(--space-5);
+}
+
+.bottomInner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.copyright {
+    font-size: var(--text-caption);
+    color: var(--color-muted);
+}
+
+.legalLinks {
+    display: flex;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.legalLink {
+    font-size: var(--text-caption);
+    color: var(--color-muted);
+    transition: color var(--transition-fast);
+    text-decoration: none;
+}
+
+.legalLink:hover {
+    color: var(--color-accent);
+}

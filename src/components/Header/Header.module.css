@@ -1,0 +1,282 @@
+.header {
+    position: fixed;
+    top: var(--topbar-height);
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+    height: var(--header-height);
+    transition: background var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+}
+
+/* Top bar is hidden on ≤ 1024px — snap header back to top */
+@media (max-width: 1024px) {
+    .header {
+        top: 0;
+    }
+}
+
+/* Solid state — used on non-home pages AND when scrolled on home */
+.header.scrolled {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 1px 0 var(--color-border), var(--shadow-md);
+    border-bottom-color: var(--color-border);
+}
+
+[data-theme="dark"] .header.scrolled {
+    background: rgba(17, 24, 39, 0.97);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06), var(--shadow-lg);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Transparent (hero only) — force white text */
+.header:not(.scrolled) .navLink,
+.header:not(.scrolled) .logoText {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.header:not(.scrolled) .hamburger span {
+    background: #fff;
+}
+
+.header:not(.scrolled) .themeToggle {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    gap: var(--space-8);
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.logoMark {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    filter: drop-shadow(0 2px 6px rgba(31, 60, 136, 0.3));
+}
+
+.logoText {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: var(--fw-extrabold);
+    color: var(--color-heading);
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+
+.logoBoss {
+    color: var(--color-primary);
+}
+
+/* Solid header logo always follows theme heading color */
+.header.scrolled .logoText {
+    color: var(--color-heading);
+}
+
+[data-theme="dark"] .header.scrolled .logoText {
+    color: #EDF2F7;
+}
+
+/* Nav */
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    justify-content: center;
+}
+
+.navLink {
+    padding: 7px 13px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: var(--fw-medium);
+    color: var(--color-body);
+    transition: color var(--transition-fast), background var(--transition-fast);
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.navLink:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-bg);
+}
+
+.navLink.active {
+    color: var(--color-primary);
+    font-weight: var(--fw-semibold);
+    background: var(--color-primary-bg);
+    position: relative;
+}
+
+[data-theme="dark"] .header.scrolled .navLink {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] .header.scrolled .navLink:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .header.scrolled .navLink.active {
+    color: #7B9EFF;
+    background: rgba(61, 90, 200, 0.18);
+}
+
+.navLink.active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: var(--color-accent);
+    border-radius: var(--radius-full);
+}
+
+/* Transparent header nav links are white */
+.header:not(.scrolled) .navLink {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.header:not(.scrolled) .navLink:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.header:not(.scrolled) .navLink.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+/* Theme Toggle — icon button */
+.themeToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.themeToggle:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: var(--color-accent);
+    transform: rotate(15deg) scale(1.05);
+}
+
+/* On solid header — adapt colours for light/dark mode */
+.header.scrolled .themeToggle {
+    background: var(--color-primary-bg);
+    border-color: var(--color-border);
+    color: var(--color-primary);
+}
+
+[data-theme="dark"] .header.scrolled .themeToggle {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.header.scrolled .themeToggle:hover {
+    background: var(--color-accent-bg);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+/* keep these for JSX references even though we replaced the pill */
+.toggleTrack {
+    display: none;
+}
+
+.trackDark {
+    display: none;
+}
+
+.toggleThumb {
+    display: none;
+}
+
+/* CTA */
+.ctaBtn {
+    padding: 9px 20px;
+    background: var(--color-primary);
+    color: #fff !important;
+    border-radius: var(--radius-md);
+    font-size: var(--text-btn-sm);
+    font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-blue);
+    transition: background var(--transition-fast), transform var(--transition-fast);
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.ctaBtn:hover {
+    background: var(--color-primary-soft);
+    transform: translateY(-1px);
+}
+
+/* Hamburger */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    width: 28px;
+    padding: 4px;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--color-heading);
+    border-radius: 2px;
+}
+
+@media (max-width: 1024px) {
+    .nav {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+}
+
+@media (max-width: 480px) {
+    .ctaBtn {
+        display: none;
+    }
+}

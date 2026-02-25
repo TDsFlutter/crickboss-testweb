@@ -1,0 +1,123 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(14, 26, 43, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: calc(var(--z-sticky) + 1);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+}
+
+.backdrop.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, 85vw);
+    background: var(--color-bg-dark);
+    z-index: calc(var(--z-sticky) + 2);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform var(--transition-slow);
+    overflow-y: auto;
+}
+
+.drawer.open {
+    transform: translateX(0);
+}
+
+.drawerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--color-border-dark);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: var(--fw-bold);
+    color: var(--color-white);
+}
+
+.logo strong {
+    color: var(--color-accent);
+}
+
+.closeBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-white);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast);
+}
+
+.closeBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6) var(--space-4);
+    gap: var(--space-2);
+}
+
+.link {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--text-body);
+    font-weight: var(--fw-medium);
+    color: rgba(255, 255, 255, 0.75);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-white);
+}
+
+.link.active {
+    background: rgba(61, 190, 139, 0.15);
+    color: var(--color-accent);
+    font-weight: var(--fw-semibold);
+}
+
+.drawerFooter {
+    padding: var(--space-6);
+    border-top: 1px solid var(--color-border-dark);
+}
+
+.cta {
+    display: block;
+    text-align: center;
+    padding: var(--space-4) var(--space-6);
+    background: var(--color-accent);
+    color: var(--color-btn-cta-text);
+    border-radius: var(--radius-md);
+    font-size: var(--text-btn);
+    font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-accent);
+    transition: filter var(--transition-fast);
+}
+
+.cta:hover {
+    filter: brightness(1.08);
+}

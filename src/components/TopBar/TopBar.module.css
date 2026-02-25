@@ -1,0 +1,99 @@
+.bar {
+    width: 100%;
+    height: var(--topbar-height, 36px);
+    background-color: #1F3C88;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: calc(var(--z-sticky) + 1);
+    overflow: hidden;
+}
+
+[data-theme="dark"] .bar {
+    background-color: #0A1120;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: var(--space-4);
+}
+
+/* ── Static text ── */
+.text {
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
+    font-family: var(--font-body);
+    font-weight: var(--fw-medium);
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Right side ── */
+.right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+.socials {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.socialLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    color: rgba(255, 255, 255, 0.75);
+    transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.socialLink:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.25);
+    display: block;
+    flex-shrink: 0;
+}
+
+.phone {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: var(--fw-semibold);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    transition: color var(--transition-fast);
+}
+
+.phone:hover {
+    color: var(--color-accent);
+}
+
+/* Hide on tablets and smaller */
+@media (max-width: 1024px) {
+    .bar {
+        display: none;
+    }
+}
