@@ -30,7 +30,7 @@ Start-Process cmd -ArgumentList '/c cd /d "d:\Android Studio\CrickBoss\projects\
 
 ### Build + Commit + Push to GitHub
 ```powershell
-cd "d:\Android Studio\CrickBoss\projects\crickboss-web"; node_modules/.bin/vite build 2>&1; git add .; git commit -m "chore: production build update"; git push origin main
+node_modules/.bin/vite build 2>&1; git add .; git commit -m "chore: auth dashboard integration"; git push origin main
 ```
 
 ---
