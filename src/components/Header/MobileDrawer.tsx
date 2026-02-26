@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { NAV_LINKS } from '../../utils/constants';
+import { useAuth } from '../../context/AuthContext';
 import styles from './MobileDrawer.module.css';
 
 interface Props {
@@ -9,6 +10,14 @@ interface Props {
 }
 
 export default function MobileDrawer({ open, onClose }: Props) {
+    const { isLoggedIn, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        onClose();
+        navigate('/login', { replace: true });
+    };
     // Lock body scroll when open
     useEffect(() => {
         document.body.style.overflow = open ? 'hidden' : '';
@@ -57,9 +66,20 @@ export default function MobileDrawer({ open, onClose }: Props) {
 
                 {/* CTA */}
                 <div className={styles.drawerFooter}>
-                    <Link to="/auctions/today" className={styles.cta} onClick={onClose}>
-                        Register / Login →
-                    </Link>
+                    {isLoggedIn ? (
+                        <>
+                            <Link to="/dashboard" className={styles.cta} onClick={onClose}>
+                                Dashboard →
+                            </Link>
+                            <button className={styles.logoutDrawerBtn} onClick={handleLogout}>
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <Link to="/login" className={styles.cta} onClick={onClose}>
+                            Register / Login →
+                        </Link>
+                    )}
                 </div>
             </nav>
         </>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import { SunIcon, MoonIcon } from '../Icons/Icons';
 import MobileDrawer from './MobileDrawer';
 import { NAV_LINKS } from '../../utils/constants';
@@ -11,7 +12,14 @@ export default function Header() {
     const scrolled = useScrollHeader(60);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
+    const { isLoggedIn, logout } = useAuth();
+    const navigate = useNavigate();
     const { pathname } = useLocation();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login', { replace: true });
+    };
 
     // On non-home pages there's no hero, so always force solid header
     const isHome = pathname === '/';
@@ -66,9 +74,24 @@ export default function Header() {
                             {theme === 'dark' ? <MoonIcon size={17} /> : <SunIcon size={17} />}
                         </button>
 
-                        <Link to="/auctions/today" className={styles.ctaBtn}>
-                            Register / Login
-                        </Link>
+                        {isLoggedIn ? (
+                            <>
+                                <Link to="/dashboard" className={styles.ctaBtn}>
+                                    Dashboard
+                                </Link>
+                                <button
+                                    className={styles.logoutHeaderBtn}
+                                    onClick={handleLogout}
+                                    aria-label="Logout"
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <Link to="/login" className={styles.ctaBtn}>
+                                Register / Login
+                            </Link>
+                        )}
 
                         <button
                             className={styles.hamburger}

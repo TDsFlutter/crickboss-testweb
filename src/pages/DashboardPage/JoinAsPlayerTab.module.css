@@ -1,0 +1,284 @@
+/* ── JoinAsPlayerTab.module.css ─────────────────────────── */
+
+.wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 40px;
+    animation: fadeUp 0.35s ease both;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hero */
+.hero {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.heroIcon {
+    width: 100px;
+    height: 100px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #1F3C88, #3DBE8B);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin: 0 auto 24px;
+    box-shadow: 0 12px 36px rgba(31, 60, 136, 0.3);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 12px 36px rgba(31, 60, 136, 0.3);
+    }
+
+    50% {
+        transform: scale(1.04);
+        box-shadow: 0 16px 44px rgba(31, 60, 136, 0.42);
+    }
+}
+
+.heroTitle {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a2340;
+    margin: 0 0 10px;
+    letter-spacing: -0.5px;
+}
+
+.dark .heroTitle {
+    color: #e8edf8;
+}
+
+.heroSub {
+    font-size: 1rem;
+    color: #7a8ba6;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.55;
+}
+
+.dark .heroSub {
+    color: #8da0ba;
+}
+
+/* Card */
+.card {
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border: 1.5px solid #e8edf8;
+    border-radius: 24px;
+    padding: 32px 30px 28px;
+    box-shadow: 0 8px 32px rgba(31, 60, 136, 0.08);
+}
+
+.dark .card {
+    background: #161b27;
+    border-color: #1e2636;
+}
+
+.cardTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a2340;
+    margin: 0 0 6px;
+}
+
+.dark .cardTitle {
+    color: #e8edf8;
+}
+
+.cardSub {
+    font-size: 0.85rem;
+    color: #9fafc4;
+    margin: 0 0 24px;
+}
+
+/* Code input */
+.codeWrap {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.codeInput {
+    width: 100%;
+    height: 64px;
+    border: 2px solid #dde3ef;
+    border-radius: 14px;
+    padding: 0 20px;
+    font-size: 1.6rem;
+    font-weight: 800;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 0.25em;
+    text-align: center;
+    color: #1F3C88;
+    background: #f8faff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+    text-transform: uppercase;
+}
+
+.codeInput:focus {
+    border-color: #1F3C88;
+    box-shadow: 0 0 0 4px rgba(31, 60, 136, 0.12);
+    background: #ffffff;
+}
+
+.codeInput::placeholder {
+    color: #cdd6e8;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+}
+
+.dark .codeInput {
+    background: #1a2031;
+    border-color: #2d3a53;
+    color: #5b82e8;
+}
+
+.dark .codeInput:focus {
+    border-color: #5b82e8;
+    box-shadow: 0 0 0 4px rgba(91, 130, 232, 0.12);
+}
+
+.joinBtn {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1F3C88, #2a52b8);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 6px 20px rgba(31, 60, 136, 0.35);
+    font-family: inherit;
+    margin-bottom: 20px;
+}
+
+.joinBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(31, 60, 136, 0.45);
+}
+
+.joinBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.dividerLine {
+    flex: 1;
+    height: 1px;
+    background: #e8edf8;
+}
+
+.dark .dividerLine {
+    background: #1e2636;
+}
+
+.dividerText {
+    font-size: 0.78rem;
+    color: #b0bdd0;
+    font-weight: 600;
+}
+
+/* How it works */
+.howList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.howItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.84rem;
+    color: #7a8ba6;
+}
+
+.dark .howItem {
+    color: #8da0ba;
+}
+
+.howNum {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(31, 60, 136, 0.1);
+    color: #1F3C88;
+    font-weight: 700;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.dark .howNum {
+    background: rgba(91, 130, 232, 0.12);
+    color: #5b82e8;
+}
+
+/* Success state */
+.successBanner {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: rgba(61, 190, 139, 0.1);
+    border: 1.5px solid rgba(61, 190, 139, 0.3);
+    border-radius: 12px;
+    color: #16a34a;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeUp 0.3s ease both;
+}
+
+.errorBanner {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1.5px solid rgba(239, 68, 68, 0.25);
+    border-radius: 12px;
+    color: #ef4444;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeUp 0.3s ease both;
+}

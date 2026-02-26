@@ -121,3 +121,25 @@
 .cta:hover {
     filter: brightness(1.08);
 }
+
+.logoutDrawerBtn {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+    padding: var(--space-3) var(--space-6);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-md);
+    font-size: var(--text-btn-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.logoutDrawerBtn:hover {
+    border-color: #e84040;
+    color: #e84040;
+    background: rgba(232, 64, 64, 0.08);
+}

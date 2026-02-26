@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import PublicLayout from '../layouts/PublicLayout/PublicLayout';
 import HomePage from '../pages/HomePage';
@@ -14,6 +14,11 @@ import AboutPage from '../pages/AboutPage';
 import ClientsPage from '../pages/ClientsPage';
 import ContactPage from '../pages/ContactPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import LoginPage from '../pages/LoginPage/LoginPage';
+import RegisterPage from '../pages/RegisterPage/RegisterPage';
+import DashboardPage from '../pages/DashboardPage/DashboardPage';
+import ProtectedRoute from './ProtectedRoute';
+import { useAuth } from '../context/AuthContext';
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -22,11 +27,29 @@ function ScrollToTop() {
 }
 
 export default function AppRouter() {
+    const { isLoggedIn } = useAuth();
+
     return (
         <BrowserRouter>
             <ScrollToTop />
             <Routes>
+                {/* Protected routes — wrapped in PublicLayout so TopBar/Header/Footer are always visible */}
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<PublicLayout />}>
+                        <Route path="/dashboard" element={<DashboardPage />} />
+                    </Route>
+                </Route>
+
+                {/* Public layout routes */}
                 <Route element={<PublicLayout />}>
+                    <Route
+                        path="/login"
+                        element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <LoginPage />}
+                    />
+                    <Route
+                        path="/register"
+                        element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <RegisterPage />}
+                    />
                     <Route path="/" element={<HomePage />} />
                     <Route path="/auctions/today" element={<TodayAuctionsPage />} />
                     <Route path="/auctions/upcoming" element={<UpcomingAuctionsPage />} />

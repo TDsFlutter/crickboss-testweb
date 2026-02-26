@@ -4,6 +4,37 @@
 
 ---
 
+## 🚀 Local Development Commands
+
+### Start Dev Server (Background / Minimized)
+```powershell
+Start-Process cmd -ArgumentList '/c cd /d "d:\Android Studio\CrickBoss\projects\crickboss-web" && npm run dev' -WindowStyle Minimized
+```
+
+### Start Dev Server (Interactive Terminal)
+```powershell
+cd "d:\Android Studio\CrickBoss\projects\crickboss-web"; npm run dev
+```
+> Runs at: **http://localhost:5173**
+
+### Build for Production
+```powershell
+cd "d:\Android Studio\CrickBoss\projects\crickboss-web"; node_modules/.bin/vite build 2>&1
+```
+
+### Preview Production Build
+```powershell
+Start-Process cmd -ArgumentList '/c cd /d "d:\Android Studio\CrickBoss\projects\crickboss-web" && node_modules/.bin/vite preview --port 4173' -WindowStyle Minimized
+```
+> Runs at: **http://localhost:4173**
+
+### Build + Commit + Push to GitHub
+```powershell
+cd "d:\Android Studio\CrickBoss\projects\crickboss-web"; node_modules/.bin/vite build 2>&1; git add .; git commit -m "chore: production build update"; git push origin main
+```
+
+---
+
 ## 📑 Table of Contents
 
 1. [Project Overview](#1-project-overview)

@@ -1,0 +1,283 @@
+/* ── DashboardLayout.module.css ─────────────────────────── */
+
+/* ======= Root Shell =======
+   PublicLayout <main> already applies padding-top: var(--total-offset).
+   Shell fills the remaining viewport below the TopBar + Header.
+   ======= */
+.shell {
+    display: flex;
+    min-height: calc(100vh - var(--total-offset, 108px));
+    background: #f0f4ff;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    transition: background 0.3s;
+}
+
+/* ======= Sidebar ======= */
+.sidebar {
+    width: 230px;
+    min-width: 230px;
+    background: #ffffff;
+    border-right: 1.5px solid #e8edf8;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 14px 18px;
+    position: sticky;
+    top: 0;
+    /* sticks to top of <main> which is already offset below header */
+    height: calc(100vh - var(--total-offset, 108px));
+    overflow-y: auto;
+    transition: background 0.3s, border-color 0.3s;
+    z-index: 10;
+}
+
+/* Back-to-site row */
+.backRow {
+    margin-bottom: 20px;
+    padding: 0 4px;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #9fafc4;
+    text-decoration: none;
+    transition: color 0.18s;
+}
+
+.backLink:hover {
+    color: #1F3C88;
+}
+
+/* Nav items */
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #7a8ba6;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;
+    width: 100%;
+    transition: all 0.18s;
+    position: relative;
+}
+
+.navItem:hover {
+    background: rgba(31, 60, 136, 0.06);
+    color: #1F3C88;
+}
+
+.navItem.active {
+    background: linear-gradient(135deg, rgba(31, 60, 136, 0.12), rgba(61, 190, 139, 0.08));
+    color: #1F3C88;
+}
+
+.navIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.75;
+}
+
+.navItem.active .navIcon,
+.navItem:hover .navIcon {
+    opacity: 1;
+}
+
+.activeBar {
+    position: absolute;
+    right: 0;
+    top: 25%;
+    height: 50%;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+    background: linear-gradient(180deg, #1F3C88, #3DBE8B);
+}
+
+/* Sidebar bottom — user + sign out */
+.sidebarBottom {
+    border-top: 1.5px solid #e8edf8;
+    padding-top: 14px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.userRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1F3C88, #3DBE8B);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.userInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.userName {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1a2340;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.userMobile {
+    font-size: 0.73rem;
+    color: #9fafc4;
+}
+
+.logoutBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1.5px solid #e8edf8;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #7a8ba6;
+    transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+    border-color: #e84040;
+    color: #e84040;
+    background: #fff5f5;
+}
+
+/* ======= Main Content ======= */
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: 32px 36px 80px;
+    overflow-y: auto;
+}
+
+.pageHeader {
+    margin-bottom: 28px;
+}
+
+.pageTitle {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #1a2340;
+    letter-spacing: -0.5px;
+    margin: 0 0 4px;
+}
+
+.pageSubtitle {
+    font-size: 0.9rem;
+    color: #9fafc4;
+    margin: 0;
+}
+
+/* ======= Bottom Tab Bar (mobile) ======= */
+.bottomBar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1.5px solid #e8edf8;
+    z-index: 100;
+    padding: 6px 0 env(safe-area-inset-bottom, 6px);
+}
+
+.bottomNav {
+    display: flex;
+    justify-content: space-around;
+}
+
+.bottomNavItem {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9fafc4;
+    font-size: 0.65rem;
+    font-weight: 600;
+    transition: color 0.18s;
+}
+
+.bottomNavItem.active {
+    color: #1F3C88;
+}
+
+.bottomNavIcon {
+    width: 22px;
+    height: 22px;
+}
+
+/* ======= Dark mode ======= */
+/* Applied via a class on the <html> or parent by ThemeContext.
+   The public Header/TopBar/Footer already handle their own dark styles.
+   Inside the dashboard shell we detect dark via CSS custom property or
+   we keep it light — the theme toggle in the public Header handles it globally. */
+
+/* ======= Responsive ======= */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .bottomBar {
+        display: block;
+    }
+
+    .main {
+        padding: 20px 16px 90px;
+    }
+
+    .pageTitle {
+        font-size: 1.35rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .shell {
+        min-height: auto;
+    }
+}

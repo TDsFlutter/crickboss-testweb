@@ -245,6 +245,26 @@
     transform: translateY(-1px);
 }
 
+/* Logout button (shown when logged in) */
+.logoutHeaderBtn {
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--color-body);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-btn-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.logoutHeaderBtn:hover {
+    border-color: #e84040;
+    color: #e84040;
+    background: rgba(232, 64, 64, 0.06);
+}
+
 /* Hamburger */
 .hamburger {
     display: none;
