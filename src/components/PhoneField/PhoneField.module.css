@@ -1,0 +1,128 @@
+/* ── PhoneField.module.css ─────────────────────────── */
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1a2340;
+    padding-left: 2px;
+}
+
+.dark .label {
+    color: #e8edf8;
+}
+
+.required {
+    color: #e84040;
+    margin-left: 3px;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    background: #f5f7fc;
+    border: 1.5px solid #dde3ef;
+    border-radius: 12px;
+    height: 48px;
+    padding: 0 16px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.container:focus-within {
+    border-color: #1F3C88;
+    box-shadow: 0 0 0 3px rgba(31, 60, 136, 0.12);
+    background: #ffffff;
+}
+
+.container.error {
+    border-color: #e84040;
+}
+
+.container.error:focus-within {
+    box-shadow: 0 0 0 3px rgba(232, 64, 64, 0.12);
+}
+
+/* Override react-phone-number-input internals */
+.container :global(.PhoneInputCountry) {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    color: #7a8ba6;
+}
+
+.container :global(.PhoneInputCountrySelect) {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #1a2340;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.container :global(.PhoneInputCountryIcon) {
+    width: 22px;
+    height: 16px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.container :global(.PhoneInputInput) {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: #1a2340;
+    outline: none;
+    letter-spacing: 0.5px;
+    font-family: inherit;
+    min-width: 0;
+}
+
+.container :global(.PhoneInputInput)::placeholder {
+    color: #b0bdd0;
+}
+
+/* Dark mode */
+.dark .container {
+    background: #1e2636;
+    border-color: #2d3a53;
+}
+
+.dark .container:focus-within {
+    border-color: #5b82e8;
+    box-shadow: 0 0 0 3px rgba(91, 130, 232, 0.18);
+    background: #232d42;
+}
+
+.dark .container :global(.PhoneInputInput) {
+    color: #e8edf8;
+}
+
+.dark .container :global(.PhoneInputInput)::placeholder {
+    color: #3d4f6a;
+}
+
+.dark .container :global(.PhoneInputCountrySelect) {
+    color: #e8edf8;
+}
+
+.errorMsg {
+    color: #e84040;
+    font-size: 0.8rem;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.errorMsg::before {
+    content: '⚠';
+    font-size: 0.75rem;
+}

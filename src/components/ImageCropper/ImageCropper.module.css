@@ -1,0 +1,255 @@
+/* ── ImageCropper.module.css ─────────────────────────────── */
+
+/* Overlay backdrop */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal */
+.modal {
+    background: #ffffff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 560px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    animation: slideUp 0.25s cubic-bezier(.22, .68, 0, 1.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.dark .modal {
+    background: #161b27;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #e8edf8;
+}
+
+.dark .header {
+    border-color: #1e2636;
+}
+
+.title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a2340;
+    margin: 0;
+}
+
+.dark .title {
+    color: #e8edf8;
+}
+
+.closeBtn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #f0f4ff;
+    border-radius: 8px;
+    color: #7a8ba6;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s;
+    font-family: inherit;
+}
+
+.closeBtn:hover {
+    background: #e0e8f8;
+    color: #1a2340;
+}
+
+.dark .closeBtn {
+    background: #1e2636;
+}
+
+.dark .closeBtn:hover {
+    background: #2d3a53;
+    color: #e8edf8;
+}
+
+/* Crop area */
+.cropArea {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--crop-aspect, 16 / 9);
+    background: #000;
+    overflow: hidden;
+    max-height: 360px;
+}
+
+/* Zoom slider */
+.controls {
+    padding: 16px 22px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sliderLabel {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #9fafc4;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.zoomSlider {
+    width: 100%;
+    height: 4px;
+    appearance: none;
+    background: linear-gradient(to right, #1F3C88 0%, #dde3ef 0%);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.zoomSlider::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #1F3C88;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(31, 60, 136, 0.35);
+    transition: transform 0.15s;
+}
+
+.zoomSlider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Action buttons */
+.actions {
+    display: flex;
+    gap: 10px;
+    padding: 14px 22px 20px;
+}
+
+.cancelBtn {
+    flex: 1;
+    height: 46px;
+    border: 1.5px solid #dde3ef;
+    border-radius: 12px;
+    background: transparent;
+    color: #7a8ba6;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.18s;
+}
+
+.cancelBtn:hover {
+    border-color: #9fafc4;
+    color: #1a2340;
+}
+
+.dark .cancelBtn {
+    border-color: #2d3a53;
+    color: #8da0ba;
+}
+
+.dark .cancelBtn:hover {
+    color: #e8edf8;
+    border-color: #5a6e8a;
+}
+
+.cropBtn {
+    flex: 2;
+    height: 46px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1F3C88, #2a52b8);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(31, 60, 136, 0.35);
+    transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.cropBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(31, 60, 136, 0.45);
+}
+
+.cropBtn:active {
+    transform: translateY(0);
+}
+
+.cropBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Spinner */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal {
+        border-radius: 16px;
+    }
+
+    .cropArea {
+        max-height: 260px;
+    }
+}

@@ -23,14 +23,7 @@ export default function JoinAsPlayerTab() {
 
     return (
         <div className={`${styles.wrap} ${d}`}>
-            {/* Hero */}
-            <div className={styles.hero}>
-                <div className={styles.heroIcon}>🏏</div>
-                <h1 className={`${styles.heroTitle} ${d}`}>Join an Auction</h1>
-                <p className={`${styles.heroSub} ${d}`}>
-                    Enter the unique 6-character code shared by your auction organizer to join as a player.
-                </p>
-            </div>
+
 
             {/* Card */}
             <div className={`${styles.card} ${d}`}>
@@ -66,7 +59,7 @@ export default function JoinAsPlayerTab() {
                             <polyline points="10 17 15 12 10 7" />
                             <line x1="15" y1="12" x2="3" y2="12" />
                         </svg>
-                        Join Auction
+                        Join as Player
                     </button>
 
                     {status === 'success' && (
@@ -91,8 +84,7 @@ export default function JoinAsPlayerTab() {
                     {[
                         'Get the unique join code from your organizer.',
                         'Enter the 6-character code in the field above.',
-                        'Click "Join Auction" to enter the auction room.',
-                        'Bid on your favorite players in real-time!',
+                        'Click "Join as Player" to enter the auction room.',
                     ].map((step, i) => (
                         <li key={i} className={styles.howItem}>
                             <span className={styles.howNum}>{i + 1}</span>

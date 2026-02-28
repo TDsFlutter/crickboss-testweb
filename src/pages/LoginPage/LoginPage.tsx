@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import type { KeyboardEvent, ClipboardEvent, ChangeEvent } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import PhoneField from '../../components/PhoneField/PhoneField';
 import styles from './LoginPage.module.css';
 
 const STATIC_OTP = '123456';
@@ -13,7 +13,7 @@ function maskMobile(phone: string): string {
     if (!phone || phone.length < 5) return phone;
     const first4 = phone.slice(0, 4);
     const last2 = phone.slice(-2);
-    const stars = '*'.repeat(phone.length - 6);
+    const stars = '*'.repeat(Math.max(0, phone.length - 6));
     return `${first4}${stars}${last2}`;
 }
 
@@ -22,13 +22,11 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const { theme } = useTheme();
 
-    // ─── Step 1 state ───
     const [step, setStep] = useState<1 | 2>(1);
     const [mobile, setMobile] = useState('');
     const [mobileError, setMobileError] = useState('');
     const [sending, setSending] = useState(false);
 
-    // ─── Step 2 state ───
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [otpError, setOtpError] = useState('');
     const [verifying, setVerifying] = useState(false);
@@ -36,10 +34,9 @@ export default function LoginPage() {
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    // Redirect if already logged in
     if (isLoggedIn) return <Navigate to="/dashboard" replace />;
 
-    // ─── Countdown ───
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         if (step === 2) {
             setCountdown(60);
@@ -53,9 +50,11 @@ export default function LoginPage() {
         return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, [step]);
 
-    // ─── Step 1: Send OTP ───
     const handleSendOtp = () => {
-        if (!mobile || !isValidPhoneNumber(mobile)) { setMobileError('Please enter a valid mobile number.'); return; }
+        if (!mobile || !isValidPhoneNumber(mobile)) {
+            setMobileError('Please enter a valid mobile number.');
+            return;
+        }
         setSending(true);
         setTimeout(() => {
             setSending(false);
@@ -66,7 +65,6 @@ export default function LoginPage() {
         }, 600);
     };
 
-    // ─── OTP box handlers ───
     const handleOtpChange = (i: number, e: ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value.replace(/\D/g, '').slice(-1);
         const next = [...otp];
@@ -93,7 +91,6 @@ export default function LoginPage() {
         otpRefs.current[focusIdx]?.focus();
     };
 
-    // ─── Step 2: Verify OTP ───
     const handleVerify = () => {
         const entered = otp.join('');
         if (entered.length < 6) { setOtpError('Please enter the 6-digit OTP.'); return; }
@@ -113,10 +110,10 @@ export default function LoginPage() {
 
     const isMobileValid = mobile ? isValidPhoneNumber(mobile) : false;
     const isOtpFilled = otp.every(d => d !== '');
+    const isDark = theme === 'dark';
 
     return (
-        <div className={`${styles.page} ${theme === 'dark' ? styles.dark : ''}`}>
-            {/* BG decoration */}
+        <div className={`${styles.page} ${isDark ? styles.dark : ''}`}>
             <div className={styles.bg}>
                 <div className={styles.blob1} />
                 <div className={styles.blob2} />
@@ -139,18 +136,19 @@ export default function LoginPage() {
                         <h1 className={styles.title}>Welcome Back 👋</h1>
                         <p className={styles.sub}>Enter your mobile number to continue</p>
 
-                        <PhoneInput
-                            international
-                            defaultCountry="IN"
+                        <PhoneField
                             value={mobile}
-                            onChange={(value: string | undefined) => {
+                            onChange={(value) => {
                                 setMobileError('');
                                 setMobile(value || '');
                             }}
-                            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { if (e.key === 'Enter' && isMobileValid) handleSendOtp(); }}
-                            className={`${styles.phoneInputContainer} ${mobileError ? styles.inputError : ''}`}
+                            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                                if (e.key === 'Enter' && isMobileValid) handleSendOtp();
+                            }}
+                            error={mobileError}
+                            defaultCountry="IN"
+                            id="login-mobile"
                         />
-                        {mobileError && <p className={styles.errorMsg}>{mobileError}</p>}
 
                         <button
                             className={`${styles.primaryBtn} ${sending ? styles.loading : ''}`}

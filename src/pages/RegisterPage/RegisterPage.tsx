@@ -1,32 +1,32 @@
 import { useState, useRef } from 'react';
-import type { FormEvent, ChangeEvent } from 'react';
+import type { FormEvent } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import FormField from '../../components/FormField/FormField';
+import PhoneField from '../../components/PhoneField/PhoneField';
 import styles from './RegisterPage.module.css';
 
 export default function RegisterPage() {
     const { isLoggedIn, login } = useAuth();
     const navigate = useNavigate();
     const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [mobile, setMobile] = useState('');
     const [city, setCity] = useState('');
-
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [registering, setRegistering] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Redirect if already logged in
     if (isLoggedIn) return <Navigate to="/dashboard" replace />;
 
-    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const tempUrl = URL.createObjectURL(file);
@@ -36,37 +36,37 @@ export default function RegisterPage() {
 
     const validateForm = () => {
         const newErrors: { [key: string]: string } = {};
-
         if (!name.trim()) newErrors.name = 'Full name is required.';
-        if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (!email.trim()) {
+            newErrors.email = 'Email address is required.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
             newErrors.email = 'Please enter a valid email address.';
         }
         if (!mobile || !isValidPhoneNumber(mobile)) {
             newErrors.mobile = 'Please enter a valid mobile number.';
         }
         if (!city.trim()) newErrors.city = 'City is required.';
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    const clearError = (field: string) => {
+        if (errors[field]) setErrors(prev => { const e = { ...prev }; delete e[field]; return e; });
     };
 
     const handleRegister = (e: FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
-
         setRegistering(true);
-        // Simulate registration delay
         setTimeout(() => {
             setRegistering(false);
-            // Simulate auto-login on successful registration
             login(mobile);
             navigate('/dashboard', { replace: true });
         }, 800);
     };
 
     return (
-        <div className={`${styles.page} ${theme === 'dark' ? styles.dark : ''}`}>
-            {/* BG decoration */}
+        <div className={`${styles.page} ${isDark ? styles.dark : ''}`}>
             <div className={styles.bg}>
                 <div className={styles.blob1} />
                 <div className={styles.blob2} />
@@ -87,7 +87,7 @@ export default function RegisterPage() {
                     <h1 className={styles.title}>Create Account ✨</h1>
                     <p className={styles.sub}>Join CrickBoss to manage your tournaments</p>
 
-                    <form onSubmit={handleRegister} className={styles.form}>
+                    <form onSubmit={handleRegister} className={styles.form} noValidate>
                         {/* Image Upload */}
                         <div className={styles.imageUploadGroup}>
                             <div
@@ -96,6 +96,7 @@ export default function RegisterPage() {
                                 role="button"
                                 tabIndex={0}
                                 aria-label="Upload profile image"
+                                onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
                             >
                                 {imagePreview ? (
                                     <img src={imagePreview} alt="Profile preview" className={styles.previewImg} />
@@ -112,68 +113,57 @@ export default function RegisterPage() {
                                 ref={fileInputRef}
                                 onChange={handleImageChange}
                                 className={styles.hiddenInput}
+                                aria-label="Upload profile photo"
                             />
                             <span className={styles.imageLabel}>Add Profile Photo</span>
                         </div>
 
                         {/* Full Name */}
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="name">Full Name</label>
-                            <input
-                                id="name"
-                                className={`${styles.textInput} ${errors.name ? styles.inputError : ''}`}
-                                type="text"
-                                placeholder="e.g. MS Dhoni"
-                                value={name}
-                                onChange={e => { setName(e.target.value); if (errors.name) setErrors({ ...errors, name: '' }); }}
-                            />
-                            {errors.name && <span className={styles.errorMsg}>{errors.name}</span>}
-                        </div>
+                        <FormField
+                            label="Full Name"
+                            id="reg-name"
+                            type="text"
+                            placeholder="e.g. MS Dhoni"
+                            value={name}
+                            onChange={e => { setName(e.target.value); clearError('name'); }}
+                            error={errors.name}
+                            required
+                        />
 
                         {/* Email */}
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="email">Email Address</label>
-                            <input
-                                id="email"
-                                className={`${styles.textInput} ${errors.email ? styles.inputError : ''}`}
-                                type="email"
-                                placeholder="dhoni@example.com"
-                                value={email}
-                                onChange={e => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }); }}
-                            />
-                            {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
-                        </div>
+                        <FormField
+                            label="Email Address"
+                            id="reg-email"
+                            type="email"
+                            placeholder="dhoni@example.com"
+                            value={email}
+                            onChange={e => { setEmail(e.target.value); clearError('email'); }}
+                            error={errors.email}
+                            required
+                        />
 
                         {/* Mobile Number */}
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="mobile">Mobile Number</label>
-                            <PhoneInput
-                                id="mobile"
-                                international
-                                defaultCountry="IN"
-                                value={mobile}
-                                onChange={(value: string | undefined) => {
-                                    setMobile(value || '');
-                                    if (errors.mobile) setErrors({ ...errors, mobile: '' });
-                                }}
-                                className={`${styles.phoneInputContainer} ${errors.mobile ? styles.inputError : ''}`}
-                            />
-                            {errors.mobile && <span className={styles.errorMsg}>{errors.mobile}</span>}
-                        </div>
+                        <PhoneField
+                            label="Mobile Number"
+                            id="reg-mobile"
+                            value={mobile}
+                            onChange={(value) => { setMobile(value || ''); clearError('mobile'); }}
+                            error={errors.mobile}
+                            required
+                            defaultCountry="IN"
+                        />
 
                         {/* City */}
-                        <div className={styles.inputGroup}>
-                            <label htmlFor="city">City</label>
-                            <input
-                                id="city"
-                                className={`${styles.textInput} ${errors.city ? styles.inputError : ''}`}
-                                type="text"
-                                placeholder="e.g. Ranchi"
-                                value={city}
-                                onChange={e => { setCity(e.target.value); if (errors.city) setErrors({ ...errors, city: '' }); }}
-                            />
-                            {errors.city && <span className={styles.errorMsg}>{errors.city}</span>}
-                        </div>
+                        <FormField
+                            label="City"
+                            id="reg-city"
+                            type="text"
+                            placeholder="e.g. Ranchi"
+                            value={city}
+                            onChange={e => { setCity(e.target.value); clearError('city'); }}
+                            error={errors.city}
+                            required
+                        />
 
                         <button
                             type="submit"

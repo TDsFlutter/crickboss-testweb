@@ -20,9 +20,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
+/* Search */
 .searchBar {
     display: flex;
     align-items: center;
@@ -68,6 +69,7 @@
     color: #e8edf8;
 }
 
+/* Create Button */
 .createBtn {
     display: flex;
     align-items: center;
@@ -91,76 +93,7 @@
     box-shadow: 0 6px 20px rgba(31, 60, 136, 0.4);
 }
 
-/* ── Stats strip ── */
-.statsStrip {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-bottom: 28px;
-}
-
-.statCard {
-    background: #ffffff;
-    border: 1.5px solid #e8edf8;
-    border-radius: 16px;
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.statCard:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(31, 60, 136, 0.1);
-}
-
-.dark .statCard {
-    background: #161b27;
-    border-color: #1e2636;
-}
-
-.statIcon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    flex-shrink: 0;
-}
-
-.statIcon.blue {
-    background: rgba(31, 60, 136, 0.1);
-}
-
-.statIcon.green {
-    background: rgba(61, 190, 139, 0.1);
-}
-
-.statIcon.amber {
-    background: rgba(245, 158, 11, 0.1);
-}
-
-.statNum {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #1a2340;
-    line-height: 1;
-}
-
-.dark .statNum {
-    color: #e8edf8;
-}
-
-.statLabel {
-    font-size: 0.78rem;
-    color: #9fafc4;
-    margin-top: 3px;
-}
-
-/* ── Section heading ── */
+/* Section Label */
 .sectionLabel {
     font-size: 0.82rem;
     font-weight: 700;
@@ -170,13 +103,14 @@
     margin-bottom: 14px;
 }
 
-/* ── Auction Cards ── */
+/* ── Auction Grid ── */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 18px;
 }
 
+/* ── Card ── */
 .card {
     background: #ffffff;
     border: 1.5px solid #e8edf8;
@@ -184,6 +118,8 @@
     overflow: hidden;
     transition: transform 0.22s, box-shadow 0.22s;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -196,16 +132,16 @@
     border-color: #1e2636;
 }
 
+/* Card Banner */
 .cardBanner {
     width: 100%;
-    height: 140px;
-    object-fit: cover;
+    aspect-ratio: 16 / 7;
     background: linear-gradient(135deg, #1F3C88 0%, #3DBE8B 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    font-size: 3rem;
+    flex-shrink: 0;
 }
 
 .cardBanner.football {
@@ -216,11 +152,54 @@
     background: linear-gradient(135deg, #d97706, #b45309);
 }
 
+.bannerEmoji {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.bannerImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+}
+
+.bannerUploadBtn {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 2;
+    backdrop-filter: blur(4px);
+}
+
+.card:hover .bannerUploadBtn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.hiddenInput {
+    display: none;
+}
+
 .statusBadge {
     position: absolute;
     top: 10px;
     right: 10px;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.72rem;
     font-weight: 700;
@@ -238,12 +217,16 @@
 }
 
 .statusBadge.draft {
-    background: rgba(150, 150, 150, 0.85);
+    background: rgba(120, 120, 140, 0.85);
     color: #fff;
 }
 
+/* Card Body */
 .cardBody {
     padding: 16px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .cardTop {
@@ -265,11 +248,24 @@
     flex-shrink: 0;
 }
 
+.cardInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.cardInfo {
+    flex: 1;
+    min-width: 0;
+}
+
 .cardName {
     font-size: 1rem;
     font-weight: 700;
     color: #1a2340;
     margin: 0 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dark .cardName {
@@ -285,6 +281,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+    flex: 1;
 }
 
 .metaItem {
@@ -293,16 +290,21 @@
     gap: 6px;
     font-size: 0.78rem;
     color: #7a8ba6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .metaItem svg {
     color: #9fafc4;
+    flex-shrink: 0;
 }
 
 .dark .metaItem {
     color: #8da0ba;
 }
 
+/* Card Actions */
 .cardActions {
     margin-top: 14px;
     padding-top: 14px;
@@ -350,7 +352,7 @@
     color: #8da0ba;
 }
 
-/* ── Empty state ── */
+/* Empty state */
 .empty {
     text-align: center;
     padding: 60px 20px;
@@ -384,23 +386,5 @@
 
     .searchBar {
         width: 100%;
-    }
-
-    .statsStrip {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .statsStrip .statCard:last-child {
-        grid-column: span 2;
-    }
-}
-
-@media (max-width: 480px) {
-    .statsStrip {
-        grid-template-columns: 1fr;
-    }
-
-    .statsStrip .statCard:last-child {
-        grid-column: auto;
     }
 }

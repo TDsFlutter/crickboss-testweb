@@ -33,11 +33,13 @@ export default function MyProfileTab() {
     const [formName, setFormName] = useState(displayName);
     const [formEmail, setFormEmail] = useState(email);
     const [profileToast, setProfileToast] = useState<'idle' | 'success'>('idle');
+    const [emailError, setEmailError] = useState('');
 
     // Sync if context values change (e.g. after login)
     useEffect(() => {
         setFormName(displayName);
         setFormEmail(email);
+        setEmailError('');
     }, [displayName, email]);
 
     // Password form
@@ -56,7 +58,13 @@ export default function MyProfileTab() {
 
     const handleProfileSave = (e: React.FormEvent) => {
         e.preventDefault();
-        updateProfile(formName, formEmail); // persist to localStorage via AuthContext
+        // Validate email format
+        if (formEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formEmail.trim())) {
+            setEmailError('Please enter a valid email address.');
+            return;
+        }
+        setEmailError('');
+        updateProfile(formName, formEmail);
         setProfileToast('success');
         setTimeout(() => setProfileToast('idle'), 3000);
     };
@@ -129,12 +137,13 @@ export default function MyProfileTab() {
                         <div className={styles.field}>
                             <label className={`${styles.label} ${d}`}>Email Address</label>
                             <input
-                                className={`${styles.input} ${d}`}
+                                className={`${styles.input} ${d} ${emailError ? styles.inputError : ''}`}
                                 type="email"
                                 placeholder="e.g. trunal@example.com"
                                 value={formEmail}
-                                onChange={e => setFormEmail(e.target.value)}
+                                onChange={e => { setFormEmail(e.target.value); if (emailError) setEmailError(''); }}
                             />
+                            {emailError && <div className={styles.fieldError}>{emailError}</div>}
                         </div>
 
                         <button type="submit" className={styles.saveBtn}>

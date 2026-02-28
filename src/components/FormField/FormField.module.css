@@ -1,0 +1,131 @@
+/* ── FormField.module.css ───────────────────────────── */
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1a2340;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dark .label {
+    color: #e8edf8;
+}
+
+.required {
+    color: #e84040;
+}
+
+.inputWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9fafc4;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 1.5px solid #dde3ef;
+    background: #f5f7fc;
+    font-size: 0.95rem;
+    color: #1a2340;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    appearance: none;
+}
+
+.hasIcon .input {
+    padding-left: 40px;
+}
+
+.input::placeholder {
+    color: #b0bdd0;
+}
+
+.input:focus {
+    border-color: #1F3C88;
+    box-shadow: 0 0 0 3px rgba(31, 60, 136, 0.12);
+    background: #ffffff;
+}
+
+.input.error {
+    border-color: #e84040;
+    background: #fff5f5;
+}
+
+.input.error:focus {
+    box-shadow: 0 0 0 3px rgba(232, 64, 64, 0.12);
+}
+
+/* Dark mode */
+.dark .input {
+    background: #1e2636;
+    border-color: #2d3a53;
+    color: #e8edf8;
+}
+
+.dark .input::placeholder {
+    color: #3d4f6a;
+}
+
+.dark .input:focus {
+    border-color: #5b82e8;
+    box-shadow: 0 0 0 3px rgba(91, 130, 232, 0.18);
+    background: #232d42;
+}
+
+.dark .input.error {
+    border-color: #e84040;
+    background: #2a1616;
+}
+
+.dark .icon {
+    color: #5a6e8a;
+}
+
+.errorMsg {
+    color: #e84040;
+    font-size: 0.8rem;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.errorMsg::before {
+    content: '⚠';
+    font-size: 0.75rem;
+}
+
+.hint {
+    font-size: 0.78rem;
+    color: #9fafc4;
+    padding-left: 2px;
+}
+
+.dark .hint {
+    color: #5a6e8a;
+}

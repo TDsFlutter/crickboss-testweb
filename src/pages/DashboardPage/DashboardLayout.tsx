@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './DashboardLayout.module.css';
 
-export type DashTab = 'auctions' | 'create' | 'join' | 'profile';
+export type DashTab = 'auctions' | 'create' | 'join' | 'profile' | 'manage';
 
 interface DashboardLayoutProps {
     children: (tab: DashTab, setTab: (t: DashTab) => void) => ReactNode;
@@ -68,6 +68,7 @@ const PAGE_META: Record<DashTab, { title: string; subtitle: string }> = {
     create: { title: 'Create Auction', subtitle: 'Set up a new auction event' },
     join: { title: 'Join as Player', subtitle: 'Enter your code to join an auction' },
     profile: { title: 'My Profile', subtitle: 'Manage your account and security settings' },
+    manage: { title: 'Manage Auction', subtitle: 'Dashboard for your specific auction event' },
 };
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {

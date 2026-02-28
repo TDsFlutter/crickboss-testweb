@@ -1,313 +1,303 @@
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import ImageCropper, { useImageCropper } from '../../components/ImageCropper/ImageCropper';
 import styles from './CreateAuctionTab.module.css';
 
-interface BidSlab {
-    id: number;
-    from: string;
-    to: string;
-    increment: string;
-}
-
+interface BidSlab { id: number; from: string; to: string; increment: string; }
 const SPORTS = ['Cricket', 'Football', 'Volleyball', 'Basketball', 'Kabaddi', 'Badminton', 'Tennis', 'Hockey'];
+interface FormErrors {
+    name?: string; date?: string; time?: string; venue?: string;
+    pointsPerTeam?: string; baseValue?: string; bidIncrement?: string; playersPerTeam?: string; slabs?: string;
+}
 
 export default function CreateAuctionTab() {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    const d = isDark ? styles.dark : '';
 
-    const [bannerUrl, setBannerUrl] = useState('');
-    const [iconUrl, setIconUrl] = useState('');
+    const banner = useImageCropper();
+    const icon = useImageCropper();
+
     const [form, setForm] = useState({
-        name: '',
-        date: '',
-        time: '',
-        venue: '',
-        sport: 'Cricket',
-        pointsPerTeam: '',
-        baseValue: '',
-        bidIncrement: '',
-        playersPerTeam: '',
+        name: '', date: '', time: '', venue: '', sport: 'Cricket',
+        pointsPerTeam: '', baseValue: '', bidIncrement: '', playersPerTeam: '',
     });
-    const [slabs, setSlabs] = useState<BidSlab[]>([
-        { id: 1, from: '100', to: '5000', increment: '500' },
-    ]);
+    const [slabs, setSlabs] = useState<BidSlab[]>([]);
     const [remoteBidding, setRemoteBidding] = useState(false);
-    const bannerRef = useRef<HTMLInputElement>(null);
-    const iconRef = useRef<HTMLInputElement>(null);
-    const slabCounter = useRef(2);
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [submitted, setSubmitted] = useState(false);
+    const slabId = useRef(1);
 
-    const handleField = (k: keyof typeof form, v: string) =>
+    const field = (k: keyof typeof form, v: string) => {
         setForm(f => ({ ...f, [k]: v }));
-
-    const handleBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) setBannerUrl(URL.createObjectURL(file));
-    };
-
-    const handleIcon = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) setIconUrl(URL.createObjectURL(file));
+        setErrors(prev => { const e = { ...prev }; delete e[k as keyof FormErrors]; return e; });
     };
 
     const addSlab = () => {
-        setSlabs(s => [...s, { id: slabCounter.current++, from: '', to: '', increment: '' }]);
+        setSlabs(s => [...s, { id: slabId.current++, from: '', to: '', increment: '' }]);
+        setErrors(prev => { const e = { ...prev }; delete e.slabs; return e; });
+    };
+    const updateSlab = (id: number, f: keyof Omit<BidSlab, 'id'>, v: string) =>
+        setSlabs(s => s.map(sl => sl.id === id ? { ...sl, [f]: v } : sl));
+    const deleteSlab = (id: number) => setSlabs(s => s.filter(sl => sl.id !== id));
+
+    const posNum = (val: string, label: string): string | undefined => {
+        if (!val.trim()) return `${label} is required.`;
+        const n = parseFloat(val);
+        if (isNaN(n) || n <= 0) return `${label} must be a positive number.`;
     };
 
-    const updateSlab = (id: number, field: keyof Omit<BidSlab, 'id'>, value: string) =>
-        setSlabs(s => s.map(sl => sl.id === id ? { ...sl, [field]: value } : sl));
-
-    const deleteSlab = (id: number) =>
-        setSlabs(s => s.filter(sl => sl.id !== id));
+    const validate = () => {
+        const e: FormErrors = {};
+        if (!form.name.trim()) e.name = 'Auction name is required.';
+        if (!form.date) e.date = 'Date is required.';
+        if (!form.time) e.time = 'Time is required.';
+        if (!form.venue.trim()) e.venue = 'Venue is required.';
+        const pt = posNum(form.pointsPerTeam, 'Points per team'); if (pt) e.pointsPerTeam = pt;
+        const bv = posNum(form.baseValue, 'Base value'); if (bv) e.baseValue = bv;
+        const bi = posNum(form.bidIncrement, 'Bid increment'); if (bi) e.bidIncrement = bi;
+        const pp = posNum(form.playersPerTeam, 'Players per team'); if (pp) e.playersPerTeam = pp;
+        if (slabs.length > 0) {
+            const bad = slabs.some(s => {
+                const f = parseFloat(s.from), t = parseFloat(s.to), i = parseFloat(s.increment);
+                return !s.from || !s.to || !s.increment || isNaN(f) || isNaN(t) || isNaN(i) || f >= t || i <= 0;
+            });
+            if (bad) e.slabs = 'Complete all slab fields. "From" must be less than "To".';
+        }
+        setErrors(e);
+        return Object.keys(e).length === 0;
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Show a basic success feedback (demo)
-        alert('Auction created successfully! (Demo mode)');
+        if (!validate()) return;
+        setSubmitted(true);
+        setTimeout(() => setSubmitted(false), 4000);
     };
 
-    const d = isDark ? styles.dark : '';
-
     return (
-        <form className={`${styles.wrap} ${d}`} onSubmit={handleSubmit} noValidate>
+        <>
+            {banner.rawSrc && <ImageCropper src={banner.rawSrc} aspect={16 / 9} title="Crop Banner (16:9)" onCropComplete={banner.confirm} onCancel={banner.cancel} />}
+            {icon.rawSrc && <ImageCropper src={icon.rawSrc} aspect={1} title="Crop Logo (1:1)" onCropComplete={icon.confirm} onCancel={icon.cancel} />}
 
-            {/* ── Media Section ── */}
-            <div className={`${styles.section} ${d}`}>
-                <h2 className={`${styles.sectionTitle} ${d}`}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
-                    Media
-                </h2>
-                <p className={styles.sectionDesc}>Add a banner image and auction icon</p>
+            {/* Hidden file inputs */}
+            <input ref={banner.fileInputRef} type="file" accept="image/*" onChange={banner.handleFile} style={{ display: 'none' }} />
+            <input ref={icon.fileInputRef} type="file" accept="image/*" onChange={icon.handleFile} style={{ display: 'none' }} />
 
-                {/* Banner */}
-                <div className={`${styles.bannerUpload} ${d}`} onClick={() => bannerRef.current?.click()}>
-                    <input ref={bannerRef} type="file" accept="image/*" onChange={handleBanner} tabIndex={-1} />
-                    {bannerUrl
-                        ? <img src={bannerUrl} alt="Banner preview" className={styles.bannerPreview} />
-                        : <>
-                            <div className={styles.uploadIcon}>
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+            <form className={`${styles.wrap} ${d}`} onSubmit={handleSubmit} noValidate>
+
+                {/* ── BANNER — no section card, full-width 16:9 zone ── */}
+                <div
+                    className={`${styles.bannerZone} ${d}`}
+                    onClick={banner.openPicker}
+                    role="button" tabIndex={0}
+                    onKeyDown={e => e.key === 'Enter' && banner.openPicker()}
+                    aria-label="Upload and crop banner (16:9)"
+                >
+                    {banner.resultUrl ? (
+                        <>
+                            <img src={banner.resultUrl} alt="Banner preview" className={styles.bannerPreviewImg} />
+                            <div className={styles.bannerOverlay}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                                Replace Banner
                             </div>
-                            <span className={styles.uploadLabel}>Tap to upload banner image</span>
-                            <span className={styles.uploadHint}>Recommended: 16:9 ratio</span>
                         </>
-                    }
-                </div>
-
-                {/* Icon */}
-                <div className={styles.iconRow}>
-                    <div className={`${styles.iconUpload} ${d}`} onClick={() => iconRef.current?.click()}>
-                        <input ref={iconRef} type="file" accept="image/*" onChange={handleIcon} tabIndex={-1} />
-                        {iconUrl
-                            ? <img src={iconUrl} alt="Icon preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 14 }} />
-                            : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                        }
-                    </div>
-                    <div className={styles.iconMeta}>
-                        <h4>Auction Logo / Icon</h4>
-                        <p>Square image, used as auction avatar</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Basic Info ── */}
-            <div className={`${styles.section} ${d}`}>
-                <h2 className={`${styles.sectionTitle} ${d}`}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34" /><polygon points="18 2 22 6 12 16 8 16 8 12 18 2" /></svg>
-                    Auction Info
-                </h2>
-                <p className={styles.sectionDesc}>Basic details about your auction</p>
-
-                <div className={styles.formGrid}>
-                    {/* Name */}
-                    <div className={`${styles.field} ${styles.fullSpan}`}>
-                        <label className={`${styles.label} ${d}`}>
-                            Auction Name <span className={styles.required}>*</span>
-                        </label>
-                        <div className={styles.inputWrap}>
-                            <span className={styles.inputIcon}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>
-                            </span>
-                            <input
-                                className={`${styles.input} ${d}`}
-                                type="text"
-                                placeholder="e.g. IPL Season 2026"
-                                value={form.name}
-                                onChange={e => handleField('name', e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    {/* Date */}
-                    <div className={styles.field}>
-                        <label className={`${styles.label} ${d}`}>Date <span className={styles.required}>*</span></label>
-                        <div className={styles.inputWrap}>
-                            <span className={styles.inputIcon}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                            </span>
-                            <input className={`${styles.input} ${d}`} type="date" value={form.date} onChange={e => handleField('date', e.target.value)} required />
-                        </div>
-                    </div>
-
-                    {/* Time */}
-                    <div className={styles.field}>
-                        <label className={`${styles.label} ${d}`}>Time <span className={styles.required}>*</span></label>
-                        <div className={styles.inputWrap}>
-                            <span className={styles.inputIcon}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                            </span>
-                            <input className={`${styles.input} ${d}`} type="time" value={form.time} onChange={e => handleField('time', e.target.value)} required />
-                        </div>
-                    </div>
-
-                    {/* Venue */}
-                    <div className={`${styles.field} ${styles.fullSpan}`}>
-                        <label className={`${styles.label} ${d}`}>Venue <span className={styles.required}>*</span></label>
-                        <div className={styles.inputWrap}>
-                            <span className={styles.inputIcon}>
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>
-                            </span>
-                            <input className={`${styles.input} ${d}`} type="text" placeholder="e.g. Wankhede Stadium" value={form.venue} onChange={e => handleField('venue', e.target.value)} required />
-                        </div>
-                    </div>
-
-                    {/* Play Type */}
-                    <div className={`${styles.field} ${styles.fullSpan}`}>
-                        <label className={`${styles.label} ${d}`}>Play Type</label>
-                        <div className={styles.selectWrap}>
-                            <select className={`${styles.select} ${d}`} value={form.sport} onChange={e => handleField('sport', e.target.value)}>
-                                {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
-                            </select>
-                            <span className={styles.selectArrow}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9" /></svg>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Auction Settings ── */}
-            <div className={`${styles.section} ${d}`}>
-                <h2 className={`${styles.sectionTitle} ${d}`}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" /></svg>
-                    Auction Settings
-                </h2>
-                <p className={styles.sectionDesc}>Configure points, bids and player limits</p>
-
-                <div className={`${styles.formGrid} ${d}`}>
-                    {[
-                        { key: 'pointsPerTeam', label: 'Points per Team', placeholder: '100' },
-                        { key: 'baseValue', label: 'Base Value (₹)', placeholder: '100' },
-                        { key: 'bidIncrement', label: 'Bid Increment (₹)', placeholder: '50' },
-                        { key: 'playersPerTeam', label: 'Players per Team', placeholder: '11' },
-                    ].map(f => (
-                        <div key={f.key} className={styles.field}>
-                            <label className={`${styles.label} ${d}`}>{f.label} <span className={styles.required}>*</span></label>
-                            <input
-                                className={`${styles.input} ${d}`}
-                                type="number"
-                                placeholder={f.placeholder}
-                                min={0}
-                                value={form[f.key as keyof typeof form]}
-                                onChange={e => handleField(f.key as keyof typeof form, e.target.value)}
-                                required
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* ── Bid Slabs ── */}
-            <div className={`${styles.section} ${d}`}>
-                <h2 className={`${styles.sectionTitle} ${d}`}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
-                    Bid Slabs
-                </h2>
-                <p className={styles.sectionDesc}>Set different bid increments for different price ranges</p>
-
-                <div className={styles.slabList}>
-                    {slabs.map((slab, idx) => (
-                        <div key={slab.id} className={`${styles.slabRow} ${d}`}>
-                            <span className={`${styles.slabLabel} ${d}`}>Slab {idx + 1}</span>
-
-                            <div className={styles.slabFieldWrap}>
-                                <div className={styles.slabFieldLabel}>From (₹)</div>
-                                <input
-                                    className={`${styles.slabInput} ${d}`}
-                                    type="number"
-                                    placeholder="0"
-                                    value={slab.from}
-                                    onChange={e => updateSlab(slab.id, 'from', e.target.value)}
-                                />
+                    ) : (
+                        <div className={styles.bannerPlaceholder}>
+                            <div className={styles.uploadCircle}>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
+                                </svg>
                             </div>
-
-                            <span className={styles.slabDash}>—</span>
-
-                            <div className={styles.slabFieldWrap}>
-                                <div className={styles.slabFieldLabel}>To (₹)</div>
-                                <input
-                                    className={`${styles.slabInput} ${d}`}
-                                    type="number"
-                                    placeholder="5000"
-                                    value={slab.to}
-                                    onChange={e => updateSlab(slab.id, 'to', e.target.value)}
-                                />
+                            <div>
+                                <div className={styles.uploadTitle}>Click to upload banner</div>
+                                <div className={styles.uploadSub}>PNG, JPG · Cropped to 16:9 ✂️</div>
                             </div>
+                        </div>
+                    )}
+                </div>
 
-                            <span className={styles.slabDash}>+</span>
+                {/* ── 01. Auction Info  ─────────────────────────────── */}
+                <div className={`${styles.section} ${d}`}>
+                    <div className={styles.sectionHead}>
+                        <span className={styles.sectionBadge}>01</span>
+                        <div>
+                            <h2 className={`${styles.sectionTitle} ${d}`}>Auction Info</h2>
+                            <p className={styles.sectionDesc}>Basic details about your auction event</p>
+                        </div>
+                    </div>
 
-                            <div className={styles.slabFieldWrap}>
-                                <div className={styles.slabFieldLabel}>Increment (₹)</div>
-                                <input
-                                    className={`${styles.slabInput} ${d}`}
-                                    type="number"
-                                    placeholder="500"
-                                    value={slab.increment}
-                                    onChange={e => updateSlab(slab.id, 'increment', e.target.value)}
-                                />
+                    <hr className={styles.divider} />
+
+                    {/* Middle Section: Left(Sport + Title) | Right(Logo) */}
+                    <div className={styles.upperSection}>
+                        <div className={styles.leftFields}>
+                            <div className={styles.fieldGroup}>
+                                <label className={`${styles.label} ${d}`}>Sport</label>
+                                <div className={styles.selectWrap}>
+                                    <select className={`${styles.input} ${styles.select} ${d}`} value={form.sport} onChange={e => field('sport', e.target.value)}>
+                                        {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                    <span className={styles.selectChev}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9" /></svg></span>
+                                </div>
                             </div>
+                            <div className={styles.fieldGroup}>
+                                <label className={`${styles.label} ${d}`}>Auction Title <span className={styles.req}>*</span></label>
+                                <input className={`${styles.input} ${d} ${errors.name ? styles.inputErr : ''}`} type="text" placeholder="e.g. IPL Season 2026" value={form.name} onChange={e => field('name', e.target.value)} />
+                                {errors.name && <span className={styles.err}>{errors.name}</span>}
+                            </div>
+                        </div>
 
-                            <button
-                                type="button"
-                                className={styles.deleteSlabBtn}
-                                onClick={() => deleteSlab(slab.id)}
-                                aria-label={`Remove slab ${idx + 1}`}
+                        {/* Logo square on right */}
+                        <div className={styles.fieldGroup}>
+                            <label className={`${styles.label} ${d}`}>Logo <span className={styles.logoSize}>500×500 px</span></label>
+                            <div
+                                className={`${styles.logoZone} ${d}`}
+                                onClick={icon.openPicker}
+                                role="button" tabIndex={0}
+                                onKeyDown={e => e.key === 'Enter' && icon.openPicker()}
+                                aria-label="Upload logo (1:1 square)"
                             >
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                            </button>
+                                {icon.resultUrl
+                                    ? <img src={icon.resultUrl} alt="Logo" className={styles.logoPreviewImg} />
+                                    : <>
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                                        <span>Browse</span>
+                                    </>
+                                }
+                            </div>
                         </div>
-                    ))}
-                </div>
-
-                <button type="button" className={`${styles.addSlabBtn} ${d}`} onClick={addSlab}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                    Add Bid Slab
-                </button>
-            </div>
-
-            {/* ── Remote Bidding ── */}
-            <div className={`${styles.section} ${d}`}>
-                <div className={styles.toggleRow}>
-                    <div className={styles.toggleInfo}>
-                        <h4>Remote Bidding</h4>
-                        <p>Allow participants to join and bid remotely</p>
                     </div>
-                    <label className={styles.toggle} aria-label="Toggle remote bidding">
-                        <input
-                            type="checkbox"
-                            checked={remoteBidding}
-                            onChange={e => setRemoteBidding(e.target.checked)}
-                        />
-                        <span className={styles.toggleSlider} />
-                    </label>
-                </div>
-            </div>
 
-            {/* ── Submit ── */}
-            <button type="submit" className={styles.submitBtn}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34" /><polygon points="18 2 22 6 12 16 8 16 8 12 18 2" /></svg>
-                Create Auction
-            </button>
-        </form>
+                    <hr className={styles.divider} />
+
+                    {/* Bottom Row: Date | Time | Venue */}
+                    <div className={styles.grid3}>
+                        <div className={styles.fieldGroup}>
+                            <label className={`${styles.label} ${d}`}>Date <span className={styles.req}>*</span></label>
+                            <input className={`${styles.input} ${d} ${errors.date ? styles.inputErr : ''}`} type="date" value={form.date} onChange={e => field('date', e.target.value)} />
+                            {errors.date && <span className={styles.err}>{errors.date}</span>}
+                        </div>
+                        <div className={styles.fieldGroup}>
+                            <label className={`${styles.label} ${d}`}>Time <span className={styles.req}>*</span></label>
+                            <input className={`${styles.input} ${d} ${errors.time ? styles.inputErr : ''}`} type="time" value={form.time} onChange={e => field('time', e.target.value)} />
+                            {errors.time && <span className={styles.err}>{errors.time}</span>}
+                        </div>
+                        <div className={styles.fieldGroup}>
+                            <label className={`${styles.label} ${d}`}>Venue <span className={styles.req}>*</span></label>
+                            <input className={`${styles.input} ${d} ${errors.venue ? styles.inputErr : ''}`} type="text" placeholder="e.g. Wankhede Stadium" value={form.venue} onChange={e => field('venue', e.target.value)} />
+                            {errors.venue && <span className={styles.err}>{errors.venue}</span>}
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── 02. Auction Settings ───────────────────────── */}
+                <div className={`${styles.section} ${d}`}>
+                    <div className={styles.sectionHead}>
+                        <span className={styles.sectionBadge}>02</span>
+                        <div>
+                            <h2 className={`${styles.sectionTitle} ${d}`}>Auction Settings</h2>
+                            <p className={styles.sectionDesc}>Configure purse, bids, and player limits</p>
+                        </div>
+                    </div>
+                    <div className={styles.grid4}>
+                        {[
+                            { key: 'pointsPerTeam', label: 'Team Purse Value', ph: '100' },
+                            { key: 'baseValue', label: 'Player Base Price', ph: '100' },
+                            { key: 'bidIncrement', label: 'Bid Increment (₹)', ph: '50' },
+                            { key: 'playersPerTeam', label: 'Players per Team', ph: '11' },
+                        ].map(f => (
+                            <div key={f.key} className={styles.fieldGroup}>
+                                <label className={`${styles.label} ${d}`}>{f.label} <span className={styles.req}>*</span></label>
+                                <input
+                                    className={`${styles.input} ${d} ${errors[f.key as keyof FormErrors] ? styles.inputErr : ''}`}
+                                    type="number" placeholder={f.ph} min={1}
+                                    value={form[f.key as keyof typeof form]}
+                                    onChange={e => field(f.key as keyof typeof form, e.target.value)}
+                                />
+                                {errors[f.key as keyof FormErrors] && <span className={styles.err}>{errors[f.key as keyof FormErrors]}</span>}
+                            </div>
+                        ))}
+                    </div>
+                    <p className={styles.settingsNote}>
+                        💡 Base price and bid increment can be changed per-category or per-player after creating.
+                    </p>
+                </div>
+
+                {/* ── 03. Bid Slabs ─────────────────────────────── */}
+                <div className={`${styles.section} ${d}`}>
+                    <div className={styles.sectionHead}>
+                        <span className={styles.sectionBadge}>03</span>
+                        <div>
+                            <h2 className={`${styles.sectionTitle} ${d}`}>
+                                Bid Slabs <span className={styles.optionalTag}>Optional</span>
+                            </h2>
+                            <p className={styles.sectionDesc}>Different bid increments for different price ranges</p>
+                        </div>
+                    </div>
+
+                    {slabs.length === 0 ? (
+                        <div className={styles.slabEmpty}>
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" />
+                            </svg>
+                            <p>No bid slabs configured yet. Click below to add ranges.</p>
+                        </div>
+                    ) : (
+                        <div className={styles.slabTable}>
+                            <div className={styles.slabTHead}>
+                                <span>#</span><span>From (₹)</span><span>To (₹)</span><span>Increment (₹)</span><span></span>
+                            </div>
+                            {slabs.map((slab, idx) => (
+                                <div key={slab.id} className={`${styles.slabTRow} ${d}`}>
+                                    <span className={styles.slabIdx}>{idx + 1}</span>
+                                    <input className={`${styles.slabInput} ${d}`} type="number" placeholder="0" min={0} value={slab.from} onChange={e => updateSlab(slab.id, 'from', e.target.value)} />
+                                    <input className={`${styles.slabInput} ${d}`} type="number" placeholder="5000" min={0} value={slab.to} onChange={e => updateSlab(slab.id, 'to', e.target.value)} />
+                                    <input className={`${styles.slabInput} ${d}`} type="number" placeholder="500" min={1} value={slab.increment} onChange={e => updateSlab(slab.id, 'increment', e.target.value)} />
+                                    <button type="button" className={styles.slabDel} onClick={() => deleteSlab(slab.id)} aria-label="Remove">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {errors.slabs && <p className={styles.err} style={{ marginTop: 8 }}>{errors.slabs}</p>}
+                    <button type="button" className={`${styles.addSlabBtn} ${d}`} onClick={addSlab}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                        Add Bid Slab
+                    </button>
+                </div>
+
+                {/* ── Options ─────────────────────────────────────── */}
+                <div className={`${styles.section} ${d}`}>
+                    <div className={styles.toggleRow}>
+                        <div>
+                            <div className={styles.toggleTitle}>Remote Bidding</div>
+                            <div className={styles.toggleSub}>Allow participants to join and bid from anywhere</div>
+                        </div>
+                        <label className={styles.toggle}>
+                            <input type="checkbox" checked={remoteBidding} onChange={e => setRemoteBidding(e.target.checked)} />
+                            <span className={styles.toggleSlider} />
+                        </label>
+                    </div>
+                </div>
+
+                {submitted && (
+                    <div className={styles.successToast}>✅ Auction created successfully! (Demo mode)</div>
+                )}
+
+                <div className={styles.submitRow}>
+                    <button type="submit" className={styles.submitBtn}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34" /><polygon points="18 2 22 6 12 16 8 16 8 12 18 2" />
+                        </svg>
+                        Create Auction
+                    </button>
+                    <p className={styles.submitNote}>You can edit all details after creating.</p>
+                </div>
+            </form>
+        </>
     );
 }
