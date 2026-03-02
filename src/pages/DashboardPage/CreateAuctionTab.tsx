@@ -18,6 +18,32 @@ export default function CreateAuctionTab() {
     const banner = useImageCropper();
     const icon = useImageCropper();
 
+    const [isDraggingBanner, setIsDraggingBanner] = useState(false);
+    const [isDraggingIcon, setIsDraggingIcon] = useState(false);
+
+    // Reusable drag handlers that forward dropped file into handleFile
+    const makeDragHandlers = (
+        setDragging: (v: boolean) => void,
+        handleFile: (e: React.ChangeEvent<HTMLInputElement>) => void
+    ) => ({
+        onDragOver: (e: React.DragEvent) => { e.preventDefault(); setDragging(true); },
+        onDragEnter: (e: React.DragEvent) => { e.preventDefault(); setDragging(true); },
+        onDragLeave: () => setDragging(false),
+        onDrop: (e: React.DragEvent) => {
+            e.preventDefault();
+            setDragging(false);
+            const file = e.dataTransfer.files?.[0];
+            if (!file || !file.type.startsWith('image/')) return;
+            // Synthesise a ChangeEvent so we can reuse handleFile
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            const fakeInput = document.createElement('input');
+            fakeInput.type = 'file';
+            Object.defineProperty(fakeInput, 'files', { value: dt.files });
+            handleFile({ target: fakeInput } as unknown as React.ChangeEvent<HTMLInputElement>);
+        },
+    });
+
     const [form, setForm] = useState({
         name: '', date: '', time: '', venue: '', sport: 'Cricket',
         pointsPerTeam: '', baseValue: '', bidIncrement: '', playersPerTeam: '',
@@ -88,11 +114,12 @@ export default function CreateAuctionTab() {
 
                 {/* ── BANNER — no section card, full-width 16:9 zone ── */}
                 <div
-                    className={`${styles.bannerZone} ${d}`}
+                    className={`${styles.bannerZone} ${d} ${isDraggingBanner ? styles.bannerZoneDrag : ''}`}
                     onClick={banner.openPicker}
                     role="button" tabIndex={0}
                     onKeyDown={e => e.key === 'Enter' && banner.openPicker()}
                     aria-label="Upload and crop banner (16:9)"
+                    {...makeDragHandlers(setIsDraggingBanner, banner.handleFile)}
                 >
                     {banner.resultUrl ? (
                         <>
@@ -112,7 +139,9 @@ export default function CreateAuctionTab() {
                                 </svg>
                             </div>
                             <div>
-                                <div className={styles.uploadTitle}>Click to upload banner</div>
+                                <div className={styles.uploadTitle}>
+                                    {isDraggingBanner ? '📂 Drop image here' : 'Drag & drop or click to upload banner'}
+                                </div>
                                 <div className={styles.uploadSub}>PNG, JPG · Cropped to 16:9 ✂️</div>
                             </div>
                         </div>
@@ -154,17 +183,18 @@ export default function CreateAuctionTab() {
                         <div className={styles.fieldGroup}>
                             <label className={`${styles.label} ${d}`}>Logo <span className={styles.logoSize}>500×500 px</span></label>
                             <div
-                                className={`${styles.logoZone} ${d}`}
+                                className={`${styles.logoZone} ${d} ${isDraggingIcon ? styles.logoZoneDrag : ''}`}
                                 onClick={icon.openPicker}
                                 role="button" tabIndex={0}
                                 onKeyDown={e => e.key === 'Enter' && icon.openPicker()}
                                 aria-label="Upload logo (1:1 square)"
+                                {...makeDragHandlers(setIsDraggingIcon, icon.handleFile)}
                             >
                                 {icon.resultUrl
                                     ? <img src={icon.resultUrl} alt="Logo" className={styles.logoPreviewImg} />
                                     : <>
                                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
-                                        <span>Browse</span>
+                                        <span>{isDraggingIcon ? 'Drop here' : 'Browse'}</span>
                                     </>
                                 }
                             </div>
