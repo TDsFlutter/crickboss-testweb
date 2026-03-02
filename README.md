@@ -19,6 +19,27 @@ node_modules/.bin/vite build 2>&1; git add .; git commit -m "Updated"; git push 
 
 ---
 
+## 🌐 GitHub Pages Deployment
+
+**Live URL:** https://tdsflutter.github.io/crickboss-testweb/
+
+Deployment is **automatic** — every push to `main` triggers a GitHub Actions build and deploy.
+
+### Trigger Deployment Manually
+To trigger a fresh deploy without code changes, run:
+```powershell
+git commit --allow-empty -m "Trigger GitHub Pages deployment"; git push origin main
+```
+
+Or go to: **[GitHub Actions → Run workflow](https://github.com/TDsFlutter/crickboss-testweb/actions/workflows/deploy.yml)**
+
+### How It Works
+- Workflow file: `.github/workflows/deploy.yml`
+- On every push to `main`: installs deps → runs `npm run build` → deploys `dist/` to GitHub Pages
+- `404.html` is copied from `index.html` to handle SPA route refreshes
+
+---
+
 ## 📑 Table of Contents
 
 1. [Project Overview](#1-project-overview)
