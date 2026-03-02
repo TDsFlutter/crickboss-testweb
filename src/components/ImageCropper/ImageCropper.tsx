@@ -1,3 +1,4 @@
+// ImageCropper component
 import { useState, useCallback, useRef } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area, Point } from 'react-easy-crop';
