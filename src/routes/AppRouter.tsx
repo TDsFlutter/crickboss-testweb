@@ -30,7 +30,7 @@ export default function AppRouter() {
     const { isLoggedIn } = useAuth();
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
             <ScrollToTop />
             <Routes>
                 {/* Protected routes — wrapped in PublicLayout so TopBar/Header/Footer are always visible */}
