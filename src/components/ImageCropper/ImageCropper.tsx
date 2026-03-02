@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef } from 'react';
-import type { ReactNode } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area, Point } from 'react-easy-crop';
 import { createPortal } from 'react-dom';
