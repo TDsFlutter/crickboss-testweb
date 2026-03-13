@@ -44,18 +44,18 @@ export default function HeroSection() {
                 <div className={styles.content}>
                     <div className={styles.overlineBadge}>
                         <span className={styles.badgeDot} />
-                        <span>India's Most Trusted Cricket Auction Platform</span>
+                        <span>India's Most Trusted Cricket Draft Management Platform</span>
                     </div>
 
                     <h1 className={styles.heading}>
                         Run Powerful<br />
-                        <span className={styles.accentText}>Cricket Auctions</span>
+                        <span className={styles.accentText}>Cricket Drafts</span>
                     </h1>
 
                     <p className={styles.tagline}>Anywhere, Anytime — on any device</p>
 
                     <p className={styles.lead}>
-                        Live player bidding, team formation, and tournament management made effortless.
+                        Live player drafting, team formation, and tournament administration made effortless.
                         Trusted by <strong>10,000+ organizers</strong> across <strong>20+ countries</strong>.
                     </p>
 
@@ -154,24 +154,24 @@ export default function HeroSection() {
                                 </g>
                                 {/* Score overlay */}
                                 <rect x="225" y="35" width="140" height="72" rx="14" fill="rgba(31,60,136,0.72)" stroke="rgba(61,190,139,0.35)" strokeWidth="1" />
-                                <text x="242" y="58" fontSize="11" fill="rgba(161,220,180,0.9)" fontFamily="monospace">LIVE AUCTION</text>
+                                <text x="242" y="58" fontSize="11" fill="rgba(161,220,180,0.9)" fontFamily="monospace">LIVE DRAFT</text>
                                 <text x="242" y="82" fontSize="22" fill="#3DBE8B" fontFamily="sans-serif" fontWeight="bold">₹2,50,000</text>
-                                <text x="242" y="98" fontSize="10" fill="rgba(255,255,255,0.5)" fontFamily="sans-serif">Current Bid</text>
+                                <text x="242" y="98" fontSize="10" fill="rgba(255,255,255,0.5)" fontFamily="sans-serif">Base Value</text>
                             </svg>
                         </div>
 
                         {/* Floating chips */}
                         <div className={styles.chip1}>
                             <span className={styles.chipDot} />
-                            <span>12 Teams Bidding</span>
+                            <span>12 Teams in Draft</span>
                         </div>
                         <div className={styles.chip2}>
                             <span>🏆</span>
-                            <span>10,000+ Auctions</span>
+                            <span>10,000+ Events</span>
                         </div>
                         <div className={styles.chip3}>
                             <span>⚡</span>
-                            <span>Real-Time Bids</span>
+                            <span>Real-Time Updates</span>
                         </div>
                     </div>
                 </div>

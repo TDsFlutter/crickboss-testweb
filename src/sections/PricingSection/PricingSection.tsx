@@ -3,11 +3,11 @@ import { PRICING_PLANS } from '../../utils/constants';
 import styles from './PricingSection.module.css';
 
 const PLAN_FEATURES = [
-    'Live player bidding',
+    'Live player drafting',
     'Team management',
     'Player profiles & stats',
     'Mobile app access',
-    'Public auction link',
+    'Public event link',
 ];
 
 export default function PricingSection() {
@@ -33,7 +33,7 @@ export default function PricingSection() {
                                     ? <><span className={styles.currency}>₹</span>{plan.price.toLocaleString()}</>
                                     : <span className={styles.free}>Free</span>
                                 }
-                                {plan.price && <span className={styles.period}> / auction</span>}
+                                {plan.price && <span className={styles.period}> / event</span>}
                             </div>
 
                             <ul className={styles.features}>

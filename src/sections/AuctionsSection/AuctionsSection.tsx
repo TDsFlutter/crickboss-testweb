@@ -5,14 +5,14 @@ import styles from './AuctionsSection.module.css';
 const TODAY_MOCK = [
     { name: 'Mumbai Premier League 2026', date: '24 Feb 2026', code: '52095-685', status: 'LIVE' as const, teamsCount: 8 },
     { name: 'Youngstars Cup Season 3', date: '24 Feb 2026', code: '75360-742', status: 'LIVE' as const, teamsCount: 6 },
-    { name: 'Jaguars Sports Auction', date: '24 Feb 2026', code: '50582-502', status: 'TODAY' as const, teamsCount: 4 },
+    { name: 'Jaguars Sports Event', date: '24 Feb 2026', code: '50582-502', status: 'TODAY' as const, teamsCount: 4 },
     { name: 'Bijapur RPL Season 4', date: '24 Feb 2026', code: '62013-515', status: 'TODAY' as const, teamsCount: 12 },
 ];
 
 const UPCOMING_MOCK = [
     { name: 'Maharashtra Premier League', date: '25 Feb 2026', code: '72637-263', status: 'UPCOMING' as const, teamsCount: 8 },
     { name: 'MPL 2026 Night Edition', date: '26 Feb 2026', code: '52024-848', status: 'UPCOMING' as const, teamsCount: 6 },
-    { name: 'Champions Auction 2026', date: '28 Feb 2026', code: '12389-270', status: 'UPCOMING' as const, teamsCount: 10 },
+    { name: 'Champions Draft 2026', date: '28 Feb 2026', code: '12389-270', status: 'UPCOMING' as const, teamsCount: 10 },
 ];
 
 interface Props {
@@ -39,15 +39,15 @@ function EmptyState({ variant }: { variant: 'today' | 'upcoming' }) {
                 </svg>
             </div>
             <p className={styles.emptyTitle}>
-                {variant === 'today' ? 'No Live Auctions Right Now' : 'No Upcoming Auctions Scheduled'}
+                {variant === 'today' ? 'No Live Events Right Now' : 'No Upcoming Events Scheduled'}
             </p>
             <p className={styles.emptyDesc}>
                 {variant === 'today'
-                    ? 'Check back soon — new auctions are added daily by organizers worldwide.'
-                    : 'New auctions are scheduled regularly. Register to get notified.'}
+                    ? 'Check back soon — new draft events are added daily by organizers worldwide.'
+                    : 'New events are scheduled regularly. Register to get notified.'}
             </p>
             <Link to="/contact" className={styles.emptyAction}>
-                {variant === 'today' ? 'Create an Auction →' : 'Get Notified →'}
+                {variant === 'today' ? 'Create an Event →' : 'Get Notified →'}
             </Link>
         </div>
     );
@@ -63,7 +63,7 @@ export default function AuctionsSection({ variant, limit = 4, showAll = false }:
             <div className="container">
                 <div className={styles.header}>
                     <div>
-                        <p className="overline">{isToday ? "Today's Auctions" : "Upcoming Auctions"}</p>
+                        <p className="overline">{isToday ? "Today's Events" : "Upcoming Events"}</p>
                         <h2 className="h2">
                             {isToday
                                 ? <span>Live <span className={styles.liveAccent}>Right Now</span></span>

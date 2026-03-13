@@ -11,8 +11,8 @@ interface Feature {
 const FEATURES: Feature[] = [
     {
         icon: <MdSportsScore size={26} color="#3DBE8B" />,
-        title: 'Real-Time Live Bidding',
-        desc: 'Dynamic bid updates with instant team formation and live leaderboard.',
+        title: 'Real-Time Live Player Drafting',
+        desc: 'Dynamic live updates with instant team formation and live leaderboard.',
     },
     {
         icon: <MdEmojiEvents size={26} color="#FFDC3C" />,
@@ -27,17 +27,17 @@ const FEATURES: Feature[] = [
     {
         icon: <MdBarChart size={26} color="#3DBE8B" />,
         title: 'Player Profiles & Stats',
-        desc: 'Comprehensive player cards with stats, positions, and auction history.',
+        desc: 'Comprehensive player cards with stats, positions, and draft history.',
     },
     {
         icon: <MdLiveTv size={26} color="#FF4444" />,
         title: 'Live Streaming Integration',
-        desc: 'Broadcast your auction live on YouTube directly from the platform.',
+        desc: 'Broadcast your draft event live on YouTube directly from the platform.',
     },
     {
         icon: <MdShare size={26} color="#FF9F43" />,
-        title: 'Public Auction Sharing',
-        desc: 'Share a unique link for spectators to watch your auction live on the web.',
+        title: 'Public Event Sharing',
+        desc: 'Share a unique link for spectators to watch your draft event live on the web.',
     },
     {
         icon: <MdPhoneAndroid size={26} color="#3DBE8B" />,
@@ -46,23 +46,23 @@ const FEATURES: Feature[] = [
     },
     {
         icon: <MdSettings size={26} color="#A0AEC0" />,
-        title: 'Customizable Auction Settings',
-        desc: 'Set base price, bid increments, player limits, and time constraints.',
+        title: 'Customizable Draft Settings',
+        desc: 'Set base value, increment steps, player limits, and time constraints.',
     },
     {
         icon: <MdLock size={26} color="#7B9EFF" />,
         title: 'Secure Tournament Codes',
-        desc: 'Private auctions with unique codes for verified participant access.',
+        desc: 'Private events with unique codes for verified participant access.',
     },
     {
         icon: <MdVideocam size={26} color="#FF9F43" />,
-        title: 'Video Auction Replays',
-        desc: 'Watch recordings of past auctions at any time for review and learning.',
+        title: 'Video Event Replays',
+        desc: 'Watch recordings of past draft events at any time for review and learning.',
     },
     {
         icon: <MdNotifications size={26} color="#FFDC3C" />,
         title: 'Notifications & Alerts',
-        desc: 'Real-time push alerts for bids, upcoming auctions, and announcements.',
+        desc: 'Real-time push alerts for selections, upcoming events, and announcements.',
     },
     {
         icon: <MdPublic size={26} color="#3DBE8B" />,
@@ -77,9 +77,9 @@ export default function FeaturesSection() {
             <div className="container">
                 <div className="section-header">
                     <p className="overline">Platform Features</p>
-                    <h2 className="h2">Everything You Need to Run<br />World-Class Auctions</h2>
+                    <h2 className="h2">Everything You Need to Run<br />World-Class Draft Events</h2>
                     <p className="subtitle" style={{ color: 'var(--color-muted)' }}>
-                        From live bidding to mobile apps — CrickBoss gives organizers every tool they need.
+                        From live player drafting to mobile apps — CrickBoss gives organizers every tool they need.
                     </p>
                 </div>
 

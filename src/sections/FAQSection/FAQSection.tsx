@@ -2,13 +2,13 @@ import { useState } from 'react';
 import styles from './FAQSection.module.css';
 
 const FAQS = [
-    { q: 'What is CrickBoss?', a: 'CrickBoss is a professional cricket player auction platform that allows organizers to create and manage live player bidding auctions for tournaments and leagues.' },
-    { q: 'Is CrickBoss free to use?', a: 'Yes! Our Starter plan is completely free for auctions with up to 3 teams. Paid plans start at ₹1,999 per auction for larger team counts.' },
-    { q: 'How do I create an auction?', a: 'Register an account, click "Create Auction", fill in your tournament details, add teams and players, then share your unique auction code with participants.' },
-    { q: 'Can spectators watch the auction?', a: 'Absolutely. Share your public auction link and anyone can watch the real-time bidding without needing an account.' },
+    { q: 'What is CrickBoss?', a: 'CrickBoss is a professional cricket player draft management platform that allows organizers to create and manage live player drafting events for tournaments and leagues.' },
+    { q: 'Is CrickBoss free to use?', a: 'Yes! Our Starter plan is completely free for draft events with up to 3 teams. Paid plans start at ₹1,999 per event for larger team counts.' },
+    { q: 'How do I create a draft event?', a: 'Register an account, click "Create Event", fill in your tournament details, add teams and players, then share your unique event code with participants.' },
+    { q: 'Can spectators watch the draft?', a: 'Absolutely. Share your public event link and anyone can watch the real-time player selections without needing an account.' },
     { q: 'Is the mobile app free?', a: 'Yes, the CrickBoss mobile app is free to download on both iOS (App Store) and Android (Google Play).' },
-    { q: 'What sports are supported?', a: 'CrickBoss works for Cricket, Kabaddi, Football, Volleyball, Hockey, Badminton, and more. Any sport that uses a player draft or auction format.' },
-    { q: 'Can I stream my auction on YouTube?', a: 'Yes! CrickBoss has built-in YouTube live streaming integration. Broadcast your auction live to any audience worldwide.' },
+    { q: 'What sports are supported?', a: 'CrickBoss works for Cricket, Kabaddi, Football, Volleyball, Hockey, Badminton, and more. Any sport that uses a player draft or team-building format.' },
+    { q: 'Can I stream my draft event on YouTube?', a: 'Yes! CrickBoss has built-in YouTube live streaming integration. Broadcast your draft event live to any audience worldwide.' },
     { q: 'How do I contact support?', a: 'Email us at support@crickboss.live or reach us via WhatsApp. Our team responds within 24 hours on business days.' },
 ];
 

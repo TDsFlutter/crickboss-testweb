@@ -2,7 +2,7 @@
 
 export const NAV_LINKS = [
     { label: 'Home', href: '/' },
-    { label: "Today's Auctions", href: '/auctions/today' },
+    { label: "Today's Drafts", href: '/auctions/today' },
     { label: 'Upcoming', href: '/auctions/upcoming' },
     { label: 'Features', href: '/features' },
     { label: 'Pricing', href: '/pricing' },
@@ -13,8 +13,8 @@ export const NAV_LINKS = [
 
 export const FOOTER_QUICK_LINKS = [
     { label: 'Home', href: '/' },
-    { label: "Today's Auctions", href: '/auctions/today' },
-    { label: 'Upcoming Auctions', href: '/auctions/upcoming' },
+    { label: "Today's Drafts", href: '/auctions/today' },
+    { label: 'Upcoming Events', href: '/auctions/upcoming' },
     { label: 'Video Gallery', href: '/video-gallery' },
     { label: 'Blog', href: '/blog' },
     { label: 'FAQ', href: '/faq' },
@@ -51,7 +51,7 @@ export const CONTACT_INFO = {
 };
 
 export const STATS = [
-    { value: '10,000+', label: 'Auctions Completed' },
+    { value: '10,000+', label: 'Events Completed' },
     { value: '5,000+', label: 'Organizers Registered' },
     { value: '50,000+', label: 'Teams Created' },
     { value: '5,00,000+', label: 'Players Registered' },
@@ -68,16 +68,16 @@ export const PRICING_PLANS = [
 ];
 
 export const FEATURES = [
-    { icon: '🎯', title: 'Real-Time Live Bidding', desc: 'Dynamic bid updates with instant team formation and live leaderboard.' },
+    { icon: '🎯', title: 'Real-Time Live Player Drafting', desc: 'Dynamic live updates with instant team formation and live leaderboard.' },
     { icon: '🏆', title: 'Tournament & League Management', desc: 'Create and manage full tournament cycles with customizable rules and schedules.' },
     { icon: '👥', title: 'Team Builder & Roster Tools', desc: 'Build balanced squads with drag-and-drop ease and budget tracking.' },
-    { icon: '📊', title: 'Player Profiles & Stats', desc: 'Comprehensive player cards with stats, positions, and auction history.' },
-    { icon: '📡', title: 'Live Streaming Integration', desc: 'Broadcast your auction live on YouTube directly from the platform.' },
-    { icon: '🔗', title: 'Public Auction Sharing', desc: 'Share a unique link for spectators to watch your auction live on the web.' },
+    { icon: '📊', title: 'Player Profiles & Stats', desc: 'Comprehensive player cards with stats, positions, and draft history.' },
+    { icon: '📡', title: 'Live Streaming Integration', desc: 'Broadcast your draft event live on YouTube directly from the platform.' },
+    { icon: '🔗', title: 'Public Event Sharing', desc: 'Share a unique link for spectators to watch your draft event live on the web.' },
     { icon: '📲', title: 'Mobile App (iOS & Android)', desc: 'Full-featured mobile app for organizers and team managers on the go.' },
-    { icon: '⚙️', title: 'Customizable Auction Settings', desc: 'Set base price, bid increments, player limits, and time constraints.' },
-    { icon: '🔒', title: 'Secure Tournament Codes', desc: 'Private auctions with unique codes for verified participant access.' },
-    { icon: '📹', title: 'Video Auction Replays', desc: 'Watch recordings of past auctions at any time for review and learning.' },
-    { icon: '📧', title: 'Notifications & Alerts', desc: 'Real-time push alerts for bids, upcoming auctions, and announcements.' },
+    { icon: '⚙️', title: 'Customizable Draft Settings', desc: 'Set base value, increment steps, player limits, and time constraints.' },
+    { icon: '🔒', title: 'Secure Tournament Codes', desc: 'Private events with unique codes for verified participant access.' },
+    { icon: '📹', title: 'Video Event Replays', desc: 'Watch recordings of past draft events at any time for review and learning.' },
+    { icon: '📧', title: 'Notifications & Alerts', desc: 'Real-time push alerts for selections, upcoming events, and announcements.' },
     { icon: '🌍', title: 'Multi-Sport Support', desc: 'Also works for Kabaddi, Football, Volleyball, Hockey, and more.' },
 ];
