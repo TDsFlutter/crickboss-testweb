@@ -5,7 +5,7 @@
 
 .hero {
     position: relative;
-    min-height: 100vh;
+    min-height: 720px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -13,6 +13,13 @@
     margin-top: calc(-1 * var(--header-height));
     padding-top: calc(var(--header-height) + var(--topbar-height) + 40px);
     padding-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: auto;
+        padding-bottom: 48px;
+    }
 }
 
 /* ── Background layers ── */

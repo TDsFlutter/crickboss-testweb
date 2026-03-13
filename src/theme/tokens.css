@@ -105,8 +105,8 @@
   --section-py-lg: 96px;
   --section-py-md: 64px;
   --section-py-sm: 48px;
-  --header-height: 80px;
-  --topbar-height: 40px;
+  --header-height: 90px;
+  --topbar-height: 45px;
   --total-offset: calc(var(--header-height) + var(--topbar-height));
 }
 

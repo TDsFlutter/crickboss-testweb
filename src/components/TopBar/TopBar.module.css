@@ -1,6 +1,6 @@
 .bar {
     width: 100%;
-    height: var(--topbar-height, 40px);
+    height: var(--topbar-height, 45px);
     background-color: #1F3C88;
     position: fixed;
     top: 0;
