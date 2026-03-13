@@ -36,7 +36,10 @@ export default function Header() {
 
                     {/* Logo */}
                     <Link to="/" className={styles.logo} aria-label="CrickBoss home">
-                        <img src={logoImg} alt="CrickBoss Logo" style={{ height: '40px', width: 'auto' }} />
+                        <img src={logoImg} alt="CrickBoss Logo" className={styles.logoImg} />
+                        <span className={styles.logoText}>
+                            <span className={styles.logoCrick}>Crick</span><span className={styles.logoBoss}>Boss</span>
+                        </span>
                     </Link>
 
                     {/* Desktop Nav */}
