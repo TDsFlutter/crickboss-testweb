@@ -100,13 +100,13 @@
   --z-toast: 500;
 
   /* ── Layout ── */
-  --container-max: 1280px;
-  --container-px: 24px;
+  --container-max: 1440px;
+  --container-px: 32px;
   --section-py-lg: 96px;
   --section-py-md: 64px;
   --section-py-sm: 48px;
-  --header-height: 72px;
-  --topbar-height: 36px;
+  --header-height: 80px;
+  --topbar-height: 40px;
   --total-offset: calc(var(--header-height) + var(--topbar-height));
 }
 

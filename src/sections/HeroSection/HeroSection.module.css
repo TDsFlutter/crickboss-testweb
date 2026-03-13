@@ -12,7 +12,7 @@
     justify-content: center;
     overflow: hidden;
     margin-top: calc(-1 * var(--header-height));
-    padding-top: calc(var(--header-height) + 60px);
+    padding-top: calc(var(--header-height) + var(--topbar-height) + 60px);
     padding-bottom: 0;
 }
 
@@ -226,6 +226,17 @@
     gap: var(--space-16);
     align-items: center;
     padding-bottom: 80px;
+}
+
+@media (min-width: 1600px) {
+    .inner {
+        grid-template-columns: 55% 45%;
+        gap: 80px;
+    }
+
+    .auctionBanner {
+        max-width: 520px;
+    }
 }
 
 /* ── Left content — always white text on dark hero bg ── */

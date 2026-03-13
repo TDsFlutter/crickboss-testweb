@@ -8,6 +8,13 @@
     padding-inline: var(--container-px);
 }
 
+@media (min-width: 1920px) {
+    .container {
+        max-width: 1680px;
+        padding-inline: 48px;
+    }
+}
+
 /* ── Section wrapper ── */
 .section {
     padding-top: var(--section-py-lg);
