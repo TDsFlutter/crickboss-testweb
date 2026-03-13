@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { KeyboardEvent, ClipboardEvent, ChangeEvent } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
+import logoImg from '../../assets/crickboss_trans.png';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -122,12 +123,7 @@ export default function LoginPage() {
             <div className={styles.card}>
                 {/* Logo */}
                 <div className={styles.logoRow}>
-                    <svg width="34" height="34" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                        <circle cx="16" cy="16" r="16" fill="#1F3C88" />
-                        <path d="M10 23 L16 9 L22 23" stroke="#3DBE8B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                        <line x1="12" y1="19" x2="20" y2="19" stroke="#3DBE8B" strokeWidth="2.2" strokeLinecap="round" />
-                    </svg>
-                    <span className={styles.logoText}>Crick<strong>Boss</strong></span>
+                    <img src={logoImg} alt="CrickBoss Logo" style={{ height: '48px', width: 'auto' }} />
                 </div>
 
                 {/* ── STEP 1 ── */}

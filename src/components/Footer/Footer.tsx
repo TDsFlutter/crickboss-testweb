@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FaXTwitter, FaInstagram, FaYoutube, FaLinkedinIn, FaFacebook, FaApple } from 'react-icons/fa6';
+import logoImg from '../../assets/crickboss_trans.png';
 import { IoLogoGooglePlaystore } from 'react-icons/io5';
 import { MdEmail, MdPhone } from 'react-icons/md';
 import { FOOTER_QUICK_LINKS, FOOTER_COMPANY_LINKS, FOOTER_LEGAL_LINKS, CONTACT_INFO } from '../../utils/constants';
@@ -21,12 +22,7 @@ export default function Footer() {
                 {/* Col 1: Brand */}
                 <div className={styles.brand}>
                     <Link to="/" className={styles.logo}>
-                        <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                            <circle cx="16" cy="16" r="16" fill="#1F3C88" />
-                            <path d="M10 22 L16 8 L22 22" stroke="#3DBE8B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <line x1="11.5" y1="18" x2="20.5" y2="18" stroke="#3DBE8B" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                        <span>Crick<span className={styles.logoBoss}>Boss</span></span>
+                        <img src={logoImg} alt="CrickBoss Logo" style={{ height: '32px', width: 'auto' }} />
                     </Link>
                     <p className={styles.tagline}>
                         The world's most trusted cricket player auction platform. Run fair, fast, and fun auctions — anywhere, anytime.

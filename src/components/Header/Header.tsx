@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
+import logoImg from '../../assets/crickboss_trans.png';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -35,16 +36,7 @@ export default function Header() {
 
                     {/* Logo */}
                     <Link to="/" className={styles.logo} aria-label="CrickBoss home">
-                        <span className={styles.logoMark}>
-                            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                                <circle cx="16" cy="16" r="16" fill="#1F3C88" />
-                                <path d="M10 23 L16 9 L22 23" stroke="#3DBE8B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                <line x1="12" y1="19" x2="20" y2="19" stroke="#3DBE8B" strokeWidth="2.2" strokeLinecap="round" />
-                            </svg>
-                        </span>
-                        <span className={styles.logoText}>
-                            Crick<span className={styles.logoBoss}>Boss</span>
-                        </span>
+                        <img src={logoImg} alt="CrickBoss Logo" style={{ height: '40px', width: 'auto' }} />
                     </Link>
 
                     {/* Desktop Nav */}

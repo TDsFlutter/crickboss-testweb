@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
+import logoImg from '../../assets/crickboss_trans.png';
 import { NAV_LINKS } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
 import styles from './MobileDrawer.module.css';
@@ -42,7 +43,7 @@ export default function MobileDrawer({ open, onClose }: Props) {
                 {/* Header row */}
                 <div className={styles.drawerHeader}>
                     <Link to="/" className={styles.logo} onClick={onClose}>
-                        🏏 <span>Crick<strong>Boss</strong></span>
+                        <img src={logoImg} alt="CrickBoss Logo" style={{ height: '32px', width: 'auto' }} />
                     </Link>
                     <button className={styles.closeBtn} onClick={onClose} aria-label="Close menu">✕</button>
                 </div>
