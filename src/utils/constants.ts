@@ -29,9 +29,9 @@ export const FOOTER_COMPANY_LINKS = [
 ];
 
 export const FOOTER_LEGAL_LINKS = [
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Terms & Conditions', href: '/terms' },
-    { label: 'Cancellation & Refund', href: '/cancellation' },
+    { label: 'Privacy Policy', href: '/privacy-policy' },
+    { label: 'Terms & Conditions', href: '/terms-conditions' },
+    { label: 'Cancellation & Refund', href: '/cancellation-refund' },
 ];
 
 export const SOCIAL_LINKS = [

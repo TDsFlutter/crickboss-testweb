@@ -13,6 +13,9 @@ import FAQPage from '../pages/FAQPage';
 import AboutPage from '../pages/AboutPage';
 import ClientsPage from '../pages/ClientsPage';
 import ContactPage from '../pages/ContactPage';
+import PrivacyPolicyPage from '../pages/PrivacyPolicyPage';
+import TermsConditionsPage from '../pages/TermsConditionsPage';
+import CancellationRefundPage from '../pages/CancellationRefundPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import RegisterPage from '../pages/RegisterPage/RegisterPage';
@@ -62,6 +65,9 @@ export default function AppRouter() {
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/clients" element={<ClientsPage />} />
                     <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                    <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+                    <Route path="/cancellation-refund" element={<CancellationRefundPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Route>
             </Routes>

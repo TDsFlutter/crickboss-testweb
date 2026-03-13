@@ -25,7 +25,7 @@ export default function Footer() {
                         <img src={logoImg} alt="CrickBoss Logo" style={{ height: '32px', width: 'auto' }} />
                     </Link>
                     <p className={styles.tagline}>
-                        The world's most trusted cricket player auction platform. Run fair, fast, and fun auctions — anywhere, anytime.
+                        The world's most trusted cricket player draft management platform. Run fair, fast, and fun draft events — anywhere, anytime.
                     </p>
                     <div className={styles.socials}>
                         {SOCIAL.map(({ name, href, Icon, color }) => (

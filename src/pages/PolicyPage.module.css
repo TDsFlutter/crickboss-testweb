@@ -1,0 +1,224 @@
+/* Shared policy page styles */
+.page {
+    padding-top: calc(var(--header-height) + var(--topbar-height) + var(--space-12));
+    padding-bottom: var(--space-20);
+    min-height: 100vh;
+}
+
+.hero {
+    background: linear-gradient(135deg, #0B1628 0%, #1F3C88 100%);
+    padding: calc(var(--header-height) + var(--topbar-height) + 48px) 0 48px;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.heroOverline {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    background: rgba(61, 190, 139, 0.12);
+    border: 1px solid rgba(61, 190, 139, 0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin-bottom: 16px;
+}
+
+.heroTitle {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.heroMeta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.heroDot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    display: inline-block;
+}
+
+/* Content wrapper */
+.content {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--color-surface);
+    border-radius: 16px;
+    padding: 48px 56px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+    border: 1px solid var(--color-border);
+    margin-top: -32px;
+    position: relative;
+    z-index: 1;
+}
+
+[data-theme="dark"] .content {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.08);
+}
+
+/* Alert box */
+.alertBox {
+    background: rgba(61, 190, 139, 0.08);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-bottom: 32px;
+    font-size: 0.92rem;
+    color: var(--color-body);
+}
+
+.alertBox strong {
+    color: var(--color-primary);
+}
+
+.highlightBox {
+    background: rgba(245, 158, 11, 0.08);
+    border-left: 4px solid #F59E0B;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 16px 0 28px;
+    font-size: 0.94rem;
+    color: var(--color-body);
+}
+
+/* Sections */
+.section {
+    margin-bottom: 8px;
+}
+
+.sectionTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 36px 0 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.intro {
+    margin-bottom: 10px;
+    font-size: 0.97rem;
+    color: var(--color-body);
+    line-height: 1.8;
+}
+
+.list {
+    margin: 8px 0 12px 0;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    font-size: 0.96rem;
+    color: var(--color-body);
+    line-height: 1.7;
+}
+
+.list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 12px;
+    top: 3px;
+}
+
+/* Refund table */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 0.93rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.table th {
+    background: var(--color-primary);
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-body);
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tr:nth-child(even) td {
+    background: var(--color-bg-alt, rgba(61,190,139,0.04));
+}
+
+/* Contact card at bottom */
+.contactCard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(61,190,139,0.06);
+    border: 1px solid rgba(61,190,139,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 8px;
+}
+
+.contactCard a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contactCard a:hover {
+    text-decoration: underline;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-muted);
+    margin-bottom: 40px;
+}
+
+.breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover { text-decoration: underline; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content { padding: 28px 20px; }
+    .heroTitle { font-size: 26px; }
+}
