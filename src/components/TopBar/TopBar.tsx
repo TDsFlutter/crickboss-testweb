@@ -9,7 +9,7 @@ const SOCIAL = [
     { name: 'Facebook', href: 'https://facebook.com/crickboss', Icon: FaFacebook },
 ];
 
-const TEXT = "Welcome to CrickBoss — India's Most Trusted Cricket Player Draft Management Platform.";
+const TEXT = "Welcome to CrickBoss — India's #1 Cricket Team Builder & League Manager Platform.";
 
 export default function TopBar() {
     return (

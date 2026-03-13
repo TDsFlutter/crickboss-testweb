@@ -44,18 +44,18 @@ export default function HeroSection() {
                 <div className={styles.content}>
                     <div className={styles.overlineBadge}>
                         <span className={styles.badgeDot} />
-                        <span>India's Most Trusted Cricket Draft Management Platform</span>
+                        <span>India's #1 Cricket Team Builder &amp; League Manager</span>
                     </div>
 
                     <h1 className={styles.heading}>
-                        Run Powerful<br />
-                        <span className={styles.accentText}>Cricket Drafts</span>
+                        Build Teams &amp; Run<br />
+                        <span className={styles.accentText}>Cricket Leagues</span>
                     </h1>
 
-                    <p className={styles.tagline}>Anywhere, Anytime — on any device</p>
+                    <p className={styles.tagline}>Cricket Team Builder &amp; League Manager — Anywhere, Anytime</p>
 
                     <p className={styles.lead}>
-                        Live player drafting, team formation, and tournament administration made effortless.
+                        Seamless team selection, squad building, and league administration made effortless.
                         Trusted by <strong>10,000+ organizers</strong> across <strong>20+ countries</strong>.
                     </p>
 
