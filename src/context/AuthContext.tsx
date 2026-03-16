@@ -1,53 +1,153 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { api } from '../utils/api';
+
+interface UserData {
+    email: string;
+    name?: string;
+    id?: string;
+    city?: string;
+}
 
 interface AuthContextType {
     isLoggedIn: boolean;
+    loading: boolean;
     email: string;
     displayName: string;
-    login: (email: string) => void;
+    userId: string;
+    city: string;
+    login: (userData: UserData, tokens?: { access: string; refresh: string }) => void;
     logout: () => void;
-    updateProfile: (name: string) => void;
+    updateProfile: (name: string, city?: string) => Promise<{ success: boolean; message: string }>;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-        () => localStorage.getItem('isLoggedIn') === 'true'
-    );
-    const [email, setEmail] = useState<string>(
-        () => localStorage.getItem('userEmail') || ''
-    );
-    const [displayName, setDisplayName] = useState<string>(
-        () => localStorage.getItem('userDisplayName') || ''
-    );
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [email, setEmail] = useState<string>('');
+    const [displayName, setDisplayName] = useState<string>('');
+    const [userId, setUserId] = useState<string>('');
+    const [city, setCity] = useState<string>('');
 
-    const login = useCallback((userEmail: string) => {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userEmail', userEmail);
+    const login = useCallback((userData: UserData, tokens?: { access: string; refresh: string }) => {
+        if (tokens) {
+            localStorage.setItem('access_token', tokens.access);
+            localStorage.setItem('refresh_token', tokens.refresh);
+        }
+
         setIsLoggedIn(true);
-        setEmail(userEmail);
-        // Restore any previously saved display name
-        const savedName = localStorage.getItem('userDisplayName') || '';
-        setDisplayName(savedName);
+        setEmail(userData.email);
+        setDisplayName(userData.name || '');
+        setUserId(userData.id || '');
+        setCity(userData.city || '');
     }, []);
 
     const logout = useCallback(() => {
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('userEmail');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         setIsLoggedIn(false);
         setEmail('');
         setDisplayName('');
+        setUserId('');
+        setCity('');
     }, []);
 
-    const updateProfile = useCallback((name: string) => {
-        localStorage.setItem('userDisplayName', name);
-        setDisplayName(name);
+    /** Tries to refresh the access token using the stored refresh token.
+     *  Returns true if successful, false otherwise. */
+    const tryRefreshToken = useCallback(async (): Promise<boolean> => {
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) return false;
+        try {
+            const res = await api.refreshToken(refreshToken);
+            if (res.success && res.token) {
+                localStorage.setItem('access_token', res.token);
+                if (res.refresh_token) {
+                    localStorage.setItem('refresh_token', res.refresh_token);
+                }
+                return true;
+            }
+        } catch {
+            // ignore
+        }
+        return false;
     }, []);
+
+    const refreshUser = useCallback(async () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            let res = await api.getMe();
+
+            // On 401-style failure, try to refresh the token once and retry
+            if (!res.success) {
+                const refreshed = await tryRefreshToken();
+                if (refreshed) {
+                    res = await api.getMe();
+                }
+            }
+
+            if (res.success && res.data) {
+                setIsLoggedIn(true);
+                setEmail(res.data.email || '');
+                setDisplayName(res.data.name || '');
+                setUserId(res.data.id || res.data._id || '');
+                setCity(res.data.city || '');
+            } else {
+                logout();
+            }
+        } catch (error) {
+            console.error('Failed to fetch user:', error);
+            logout();
+        } finally {
+            setLoading(false);
+        }
+    }, [logout, tryRefreshToken]);
+
+    /** Update profile via API and sync state on success */
+    const updateProfile = useCallback(async (
+        name: string,
+        cityVal?: string
+    ): Promise<{ success: boolean; message: string }> => {
+        try {
+            const payload: { name?: string; city?: string } = {};
+            if (name) payload.name = name;
+            if (cityVal !== undefined) payload.city = cityVal;
+
+            const res = await api.updateMe(payload);
+            if (res.success) {
+                setDisplayName(name);
+                if (cityVal !== undefined) setCity(cityVal);
+            }
+            return { success: res.success, message: res.message };
+        } catch (error) {
+            return { success: false, message: 'Connection error. Please try again.' };
+        }
+    }, []);
+
+    useEffect(() => {
+        refreshUser();
+    }, [refreshUser]);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, email, displayName, login, logout, updateProfile }}>
+        <AuthContext.Provider value={{
+            isLoggedIn,
+            loading,
+            email,
+            displayName,
+            userId,
+            city,
+            login,
+            logout,
+            updateProfile,
+            refreshUser
+        }}>
             {children}
         </AuthContext.Provider>
     );

@@ -3,74 +3,49 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import styles from './MyProfileTab.module.css';
 
-function EyeIcon({ open }: { open: boolean }) {
-    return open ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-        </svg>
-    ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" />
-            <line x1="1" y1="1" x2="23" y2="23" />
-        </svg>
-    );
-}
-
-function getStrength(pw: string): { pct: number; label: string; color: string } {
-    if (!pw) return { pct: 0, label: '', color: '#e8edf8' };
-    if (pw.length < 6) return { pct: 25, label: 'Weak', color: '#ef4444' };
-    if (pw.length < 10 || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw)) return { pct: 60, label: 'Fair', color: '#f59e0b' };
-    return { pct: 100, label: 'Strong', color: '#3DBE8B' };
-}
-
 export default function MyProfileTab() {
-    const { email, displayName, updateProfile } = useAuth();
+    const { email, displayName, city, updateProfile } = useAuth();
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
-    // Profile form — pre-populate from AuthContext (which reads localStorage)
+    // Profile form — pre-populate from AuthContext
     const [formName, setFormName] = useState(displayName);
-    const [profileToast, setProfileToast] = useState<'idle' | 'success'>('idle');
+    const [formCity, setFormCity] = useState(city);
+    const [saving, setSaving] = useState(false);
+    const [profileToast, setProfileToast] = useState<'idle' | 'success' | 'error'>('idle');
+    const [profileToastMsg, setProfileToastMsg] = useState('');
 
-    // Sync if context values change (e.g. after login)
+    // Sync if context values change (e.g. after login / page refresh)
     useEffect(() => {
         setFormName(displayName);
     }, [displayName]);
 
-    // Password form
-    const [newPw, setNewPw] = useState('');
-    const [confirmPw, setConfirmPw] = useState('');
-    const [showNew, setShowNew] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
-    const [pwToast, setPwToast] = useState<'idle' | 'success' | 'error'>('idle');
+    useEffect(() => {
+        setFormCity(city);
+    }, [city]);
 
-    const strength = getStrength(newPw);
-
-    // Avatar initials: from saved name (if available) or first 2 chars of email
+    // Avatar initials: from name or first 2 chars of email
     const avatarInitials = formName.trim()
         ? formName.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
         : email ? email.slice(0, 2).toUpperCase() : 'CB';
 
-    const handleProfileSave = (e: React.FormEvent) => {
+    const handleProfileSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        updateProfile(formName);
-        setProfileToast('success');
-        setTimeout(() => setProfileToast('idle'), 3000);
-    };
+        if (!formName.trim()) return;
+        setSaving(true);
+        setProfileToast('idle');
 
-    const handlePwSave = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newPw || !confirmPw) return;
-        if (newPw !== confirmPw) {
-            setPwToast('error');
-            setTimeout(() => setPwToast('idle'), 3500);
-            return;
+        const result = await updateProfile(formName.trim(), formCity.trim());
+
+        if (result.success) {
+            setProfileToast('success');
+            setProfileToastMsg('✅ Profile updated successfully!');
+        } else {
+            setProfileToast('error');
+            setProfileToastMsg(`❌ ${result.message || 'Failed to update profile.'}`);
         }
-        setPwToast('success');
-        setNewPw('');
-        setConfirmPw('');
-        setTimeout(() => setPwToast('idle'), 3000);
+        setSaving(false);
+        setTimeout(() => setProfileToast('idle'), 3500);
     };
 
     const d = isDark ? styles.dark : '';
@@ -97,22 +72,37 @@ export default function MyProfileTab() {
                         <div className={styles.bigAvatar}>{avatarInitials}</div>
                         <div className={styles.avatarInfo}>
                             <p>{formName || 'Your Name'}</p>
-                            <button type="button" className={`${styles.changeAvatarBtn} ${d}`}>Change Photo</button>
+                            <span className={styles.avatarEmailBadge}>{email}</span>
                         </div>
                     </div>
 
                     <form onSubmit={handleProfileSave}>
+                        {/* Display Name */}
                         <div className={styles.field}>
-                            <label className={`${styles.label} ${d}`}>Display Name</label>
+                            <label className={`${styles.label} ${d}`}>Display Name <span style={{ color: '#ef4444' }}>*</span></label>
                             <input
                                 className={`${styles.input} ${d}`}
                                 type="text"
                                 placeholder="e.g. Trunal Dungarani"
                                 value={formName}
                                 onChange={e => setFormName(e.target.value)}
+                                required
                             />
                         </div>
 
+                        {/* City */}
+                        <div className={styles.field}>
+                            <label className={`${styles.label} ${d}`}>City</label>
+                            <input
+                                className={`${styles.input} ${d}`}
+                                type="text"
+                                placeholder="e.g. Mumbai"
+                                value={formCity}
+                                onChange={e => setFormCity(e.target.value)}
+                            />
+                        </div>
+
+                        {/* Email (read-only) */}
                         <div className={styles.field}>
                             <label className={`${styles.label} ${d}`}>Email Address</label>
                             <input
@@ -121,115 +111,73 @@ export default function MyProfileTab() {
                                 value={email || '—'}
                                 readOnly
                                 aria-label="Email address (read only — login identifier)"
+                                style={{ opacity: 0.6, cursor: 'not-allowed' }}
                             />
                         </div>
 
-                        <button type="submit" className={styles.saveBtn}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
-                                <polyline points="17 21 17 13 7 13 7 21" />
-                                <polyline points="7 3 7 8 15 8" />
-                            </svg>
-                            Save Profile
+                        <button
+                            type="submit"
+                            className={styles.saveBtn}
+                            disabled={saving || !formName.trim()}
+                        >
+                            {saving ? (
+                                <span className={styles.spinner} />
+                            ) : (
+                                <>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                                        <polyline points="17 21 17 13 7 13 7 21" />
+                                        <polyline points="7 3 7 8 15 8" />
+                                    </svg>
+                                    Save Profile
+                                </>
+                            )}
                         </button>
 
-                        {profileToast === 'success' && (
-                            <div className={`${styles.toast} ${styles.success}`}>✅ Profile updated successfully!</div>
+                        {profileToast !== 'idle' && (
+                            <div className={`${styles.toast} ${profileToast === 'success' ? styles.success : styles.error}`}>
+                                {profileToastMsg}
+                            </div>
                         )}
                     </form>
                 </div>
 
-                {/* ── Reset Password ── */}
+                {/* ── Account Info Card ── */}
                 <div className={`${styles.card} ${d}`}>
                     <div className={styles.cardHeader}>
                         <div className={`${styles.cardIcon} ${styles.green}`}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                                <path d="M7 11V7a5 5 0 0110 0v4" />
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
                             </svg>
                         </div>
-                        <h2 className={`${styles.cardTitle} ${d}`}>Reset Password</h2>
+                        <h2 className={`${styles.cardTitle} ${d}`}>Account Info</h2>
                     </div>
-                    <p className={styles.cardSub}>Update your account password</p>
+                    <p className={styles.cardSub}>Your account details managed by CrickBoss</p>
 
-                    <form onSubmit={handlePwSave}>
-                        {/* New Password */}
-                        <div className={styles.field}>
-                            <label className={`${styles.label} ${d}`}>New Password</label>
-                            <div className={styles.pwWrap}>
-                                <input
-                                    className={`${styles.input} ${d}`}
-                                    type={showNew ? 'text' : 'password'}
-                                    placeholder="Enter new password"
-                                    value={newPw}
-                                    onChange={e => setNewPw(e.target.value)}
-                                    autoComplete="new-password"
-                                />
-                                <button
-                                    type="button"
-                                    className={styles.pwToggle}
-                                    onClick={() => setShowNew(v => !v)}
-                                    aria-label={showNew ? 'Hide password' : 'Show password'}
-                                >
-                                    <EyeIcon open={showNew} />
-                                </button>
-                            </div>
-                            {newPw && (
-                                <>
-                                    <div className={styles.strengthBar}>
-                                        <div
-                                            className={styles.strengthFill}
-                                            style={{ width: `${strength.pct}%`, background: strength.color }}
-                                        />
-                                    </div>
-                                    <div className={styles.strengthText} style={{ color: strength.color }}>
-                                        {strength.label}
-                                    </div>
-                                </>
-                            )}
+                    <div className={styles.infoList}>
+                        <div className={`${styles.infoRow} ${d}`}>
+                            <span className={styles.infoLabel}>Login Method</span>
+                            <span className={styles.infoBadge}>📧 Email OTP</span>
                         </div>
-
-                        {/* Confirm Password */}
-                        <div className={styles.field}>
-                            <label className={`${styles.label} ${d}`}>Confirm Password</label>
-                            <div className={styles.pwWrap}>
-                                <input
-                                    className={`${styles.input} ${d}`}
-                                    type={showConfirm ? 'text' : 'password'}
-                                    placeholder="Re-enter new password"
-                                    value={confirmPw}
-                                    onChange={e => setConfirmPw(e.target.value)}
-                                    autoComplete="new-password"
-                                />
-                                <button
-                                    type="button"
-                                    className={styles.pwToggle}
-                                    onClick={() => setShowConfirm(v => !v)}
-                                    aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
-                                >
-                                    <EyeIcon open={showConfirm} />
-                                </button>
-                            </div>
-                            {confirmPw && newPw !== confirmPw && (
-                                <div className={styles.fieldError}>Passwords do not match</div>
-                            )}
+                        <div className={`${styles.infoRow} ${d}`}>
+                            <span className={styles.infoLabel}>Email</span>
+                            <span className={styles.infoValue}>{email || '—'}</span>
                         </div>
+                        <div className={`${styles.infoRow} ${d}`}>
+                            <span className={styles.infoLabel}>City</span>
+                            <span className={styles.infoValue}>{city || '—'}</span>
+                        </div>
+                        <div className={`${styles.infoRow} ${d}`}>
+                            <span className={styles.infoLabel}>Name</span>
+                            <span className={styles.infoValue}>{displayName || '—'}</span>
+                        </div>
+                    </div>
 
-                        <button type="submit" className={`${styles.saveBtn} ${styles.green}`}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                                <path d="M7 11V7a5 5 0 0110 0v4" />
-                            </svg>
-                            Update Password
-                        </button>
-
-                        {pwToast === 'success' && (
-                            <div className={`${styles.toast} ${styles.success}`}>✅ Password updated successfully!</div>
-                        )}
-                        {pwToast === 'error' && (
-                            <div className={`${styles.toast} ${styles.error}`}>❌ Passwords don't match. Please try again.</div>
-                        )}
-                    </form>
+                    <p className={styles.infoNote}>
+                        Your account uses secure <strong>Email OTP</strong> authentication — no password needed.
+                    </p>
                 </div>
 
             </div>

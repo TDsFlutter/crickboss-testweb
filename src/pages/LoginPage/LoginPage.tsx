@@ -5,8 +5,7 @@ import logoImg from '../../assets/crickboss_trans.png';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import styles from './LoginPage.module.css';
-
-const STATIC_OTP = '123456';
+import { api } from '../../utils/api';
 
 function isValidEmail(val: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
@@ -33,6 +32,8 @@ export default function LoginPage() {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [otpError, setOtpError] = useState('');
     const [verifying, setVerifying] = useState(false);
+    const [resending, setResending] = useState(false);
+    const [resendMsg, setResendMsg] = useState('');
     const [countdown, setCountdown] = useState(60);
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -53,19 +54,41 @@ export default function LoginPage() {
         return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, [step]);
 
-    const handleSendOtp = () => {
+    const startOtpTimer = () => {
+        setCountdown(60);
+        if (timerRef.current) clearInterval(timerRef.current);
+        timerRef.current = setInterval(() => {
+            setCountdown(prev => {
+                if (prev <= 1) { clearInterval(timerRef.current!); return 0; }
+                return prev - 1;
+            });
+        }, 1000);
+    };
+
+    const handleSendOtp = async () => {
         if (!isValidEmail(email)) {
             setEmailError('Please enter a valid email address.');
             return;
         }
         setSending(true);
-        setTimeout(() => {
+        try {
+            const res = await api.login(email.trim().toLowerCase());
+            if (res.success) {
+                setStep(2);
+                setOtp(['', '', '', '', '', '']);
+                setOtpError('');
+                setResendMsg('');
+                setTimeout(() => otpRefs.current[0]?.focus(), 100);
+            } else {
+                // Show helpful message if user not found
+                const msg = res.message || 'Failed to send OTP. Please try again.';
+                setEmailError(msg);
+            }
+        } catch {
+            setEmailError('Connection error. Please check your internet.');
+        } finally {
             setSending(false);
-            setStep(2);
-            setOtp(['', '', '', '', '', '']);
-            setOtpError('');
-            setTimeout(() => otpRefs.current[0]?.focus(), 100);
-        }, 600);
+        }
     };
 
     const handleOtpChange = (i: number, e: ChangeEvent<HTMLInputElement>) => {
@@ -94,21 +117,57 @@ export default function LoginPage() {
         otpRefs.current[focusIdx]?.focus();
     };
 
-    const handleVerify = () => {
+    const handleVerify = async () => {
         const entered = otp.join('');
         if (entered.length < 6) { setOtpError('Please enter the 6-digit OTP.'); return; }
         setVerifying(true);
-        setTimeout(() => {
-            setVerifying(false);
-            if (entered === STATIC_OTP) {
-                login(email.trim().toLowerCase());
+        try {
+            const res = await api.verifyLoginOtp(email.trim().toLowerCase(), entered);
+            if (res.success && res.data && res.token && res.refresh_token) {
+                login(
+                    {
+                        email: res.data.email,
+                        name: res.data.name,
+                        id: res.data.id || res.data._id,
+                        city: res.data.city,
+                    },
+                    {
+                        access: res.token,
+                        refresh: res.refresh_token,
+                    }
+                );
                 navigate('/dashboard', { replace: true });
             } else {
-                setOtpError('Invalid OTP. Please try again.');
+                setOtpError(res.message || 'Invalid OTP. Please try again.');
                 setOtp(['', '', '', '', '', '']);
                 setTimeout(() => otpRefs.current[0]?.focus(), 50);
             }
-        }, 600);
+        } catch {
+            setOtpError('Connection error. Please try again.');
+        } finally {
+            setVerifying(false);
+        }
+    };
+
+    const handleResend = async () => {
+        setResending(true);
+        setResendMsg('');
+        setOtpError('');
+        try {
+            const res = await api.resendOtp(email.trim().toLowerCase());
+            if (res.success) {
+                setOtp(['', '', '', '', '', '']);
+                startOtpTimer();
+                setResendMsg('✅ A new OTP has been sent to your email.');
+                setTimeout(() => otpRefs.current[0]?.focus(), 100);
+            } else {
+                setResendMsg(res.message || 'Failed to resend OTP. Please try again.');
+            }
+        } catch {
+            setResendMsg('Connection error. Please try again.');
+        } finally {
+            setResending(false);
+        }
     };
 
     const isEmailValid = isValidEmail(email);
@@ -153,7 +212,14 @@ export default function LoginPage() {
                                     }}
                                 />
                             </div>
-                            {emailError && <p className={styles.errorMsg}>{emailError}</p>}
+                            {emailError && (
+                                <p className={styles.errorMsg}>
+                                    {emailError}
+                                    {emailError.toLowerCase().includes('not found') || emailError.toLowerCase().includes('no account') ? (
+                                        <> &mdash; <Link to="/register">Create one here</Link></>
+                                    ) : null}
+                                </p>
+                            )}
                         </div>
 
                         <button
@@ -199,10 +265,8 @@ export default function LoginPage() {
                             ))}
                         </div>
 
-                        {otpError
-                            ? <p className={styles.errorMsg}>{otpError}</p>
-                            : <p className={styles.demoHint}>🔑 Demo OTP: <strong>123456</strong></p>
-                        }
+                        {otpError && <p className={styles.errorMsg}>{otpError}</p>}
+                        {resendMsg && <p className={styles.resendMsg}>{resendMsg}</p>}
 
                         <button
                             className={`${styles.primaryBtn} ${verifying ? styles.loading : ''}`}
@@ -215,11 +279,19 @@ export default function LoginPage() {
                         <div className={styles.timerRow}>
                             {countdown > 0
                                 ? <span className={styles.timer}>Resend OTP in <strong>{countdown}s</strong></span>
-                                : <button className={styles.resendBtn} onClick={() => { setStep(1); setOtp(['', '', '', '', '', '']); setOtpError(''); }}>Resend OTP</button>
+                                : (
+                                    <button
+                                        className={styles.resendBtn}
+                                        onClick={handleResend}
+                                        disabled={resending}
+                                    >
+                                        {resending ? 'Sending…' : 'Resend OTP'}
+                                    </button>
+                                )
                             }
                         </div>
 
-                        <button className={styles.changeBtn} onClick={() => { setStep(1); setOtpError(''); }}>
+                        <button className={styles.changeBtn} onClick={() => { setStep(1); setOtpError(''); setResendMsg(''); }}>
                             ← Change email
                         </button>
                     </div>

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, KeyboardEvent, ClipboardEvent, ChangeEvent } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import logoImg from '../../assets/crickboss_trans.png';
@@ -6,8 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import FormField from '../../components/FormField/FormField';
 import styles from './RegisterPage.module.css';
-
-const STATIC_OTP = '123456';
+import { api } from '../../utils/api';
 
 function maskEmail(email: string): string {
     const [user, domain] = email.split('@');
@@ -38,6 +37,8 @@ export default function RegisterPage() {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [otpError, setOtpError] = useState('');
     const [verifying, setVerifying] = useState(false);
+    const [resending, setResending] = useState(false);
+    const [resendMsg, setResendMsg] = useState('');
     const [countdown, setCountdown] = useState(60);
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -80,18 +81,32 @@ export default function RegisterPage() {
         }, 1000);
     };
 
-    const handleRegister = (e: FormEvent) => {
+    const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
         setRegistering(true);
-        setTimeout(() => {
+        try {
+            const res = await api.register({
+                name: name.trim(),
+                email: email.trim().toLowerCase(),
+                city: city.trim(),
+            });
+            if (res.success) {
+                setStep(2);
+                setOtp(['', '', '', '', '', '']);
+                setOtpError('');
+                setResendMsg('');
+                startOtpTimer();
+                setTimeout(() => otpRefs.current[0]?.focus(), 100);
+            } else {
+                // Backend may return "Account already exists" or similar
+                setErrors({ email: res.message || 'Registration failed. Please try again.' });
+            }
+        } catch {
+            setErrors({ email: 'Connection error. Please check your internet.' });
+        } finally {
             setRegistering(false);
-            setStep(2);
-            setOtp(['', '', '', '', '', '']);
-            setOtpError('');
-            startOtpTimer();
-            setTimeout(() => otpRefs.current[0]?.focus(), 100);
-        }, 600);
+        }
     };
 
     const handleOtpChange = (i: number, e: ChangeEvent<HTMLInputElement>) => {
@@ -120,21 +135,57 @@ export default function RegisterPage() {
         otpRefs.current[focusIdx]?.focus();
     };
 
-    const handleVerify = () => {
+    const handleVerify = async () => {
         const entered = otp.join('');
         if (entered.length < 6) { setOtpError('Please enter the 6-digit OTP.'); return; }
         setVerifying(true);
-        setTimeout(() => {
-            setVerifying(false);
-            if (entered === STATIC_OTP) {
-                login(email.trim().toLowerCase());
+        try {
+            const res = await api.verifyOtp(email.trim().toLowerCase(), entered);
+            if (res.success && res.data && res.token && res.refresh_token) {
+                login(
+                    {
+                        email: res.data.email,
+                        name: res.data.name,
+                        id: res.data.id || res.data._id,
+                        city: res.data.city,
+                    },
+                    {
+                        access: res.token,
+                        refresh: res.refresh_token,
+                    }
+                );
                 navigate('/dashboard', { replace: true });
             } else {
-                setOtpError('Invalid OTP. Please try again.');
+                setOtpError(res.message || 'Invalid OTP. Please try again.');
                 setOtp(['', '', '', '', '', '']);
                 setTimeout(() => otpRefs.current[0]?.focus(), 50);
             }
-        }, 600);
+        } catch {
+            setOtpError('Connection error. Please try again.');
+        } finally {
+            setVerifying(false);
+        }
+    };
+
+    const handleResend = async () => {
+        setResending(true);
+        setResendMsg('');
+        setOtpError('');
+        try {
+            const res = await api.resendOtp(email.trim().toLowerCase());
+            if (res.success) {
+                setOtp(['', '', '', '', '', '']);
+                startOtpTimer();
+                setResendMsg('✅ A new OTP has been sent to your email.');
+                setTimeout(() => otpRefs.current[0]?.focus(), 100);
+            } else {
+                setResendMsg(res.message || 'Failed to resend OTP. Please try again.');
+            }
+        } catch {
+            setResendMsg('Connection error. Please try again.');
+        } finally {
+            setResending(false);
+        }
     };
 
     const isOtpFilled = otp.every(d => d !== '');
@@ -267,10 +318,8 @@ export default function RegisterPage() {
                             ))}
                         </div>
 
-                        {otpError
-                            ? <p className={styles.errorMsg}>{otpError}</p>
-                            : <p className={styles.demoHint}>🔑 Demo OTP: <strong>123456</strong></p>
-                        }
+                        {otpError && <p className={styles.errorMsg}>{otpError}</p>}
+                        {resendMsg && <p className={styles.resendMsg}>{resendMsg}</p>}
 
                         <button
                             className={`${styles.primaryBtn} ${verifying ? styles.loading : ''}`}
@@ -283,11 +332,19 @@ export default function RegisterPage() {
                         <div className={styles.timerRow}>
                             {countdown > 0
                                 ? <span className={styles.timer}>Resend OTP in <strong>{countdown}s</strong></span>
-                                : <button className={styles.resendBtn} onClick={() => { setOtp(['', '', '', '', '', '']); setOtpError(''); startOtpTimer(); }}>Resend OTP</button>
+                                : (
+                                    <button
+                                        className={styles.resendBtn}
+                                        onClick={handleResend}
+                                        disabled={resending}
+                                    >
+                                        {resending ? 'Sending…' : 'Resend OTP'}
+                                    </button>
+                                )
                             }
                         </div>
 
-                        <button className={styles.changeBtn} onClick={() => { setStep(1); setOtpError(''); if (timerRef.current) clearInterval(timerRef.current); }}>
+                        <button className={styles.changeBtn} onClick={() => { setStep(1); setOtpError(''); setResendMsg(''); if (timerRef.current) clearInterval(timerRef.current); }}>
                             ← Change email
                         </button>
                     </div>

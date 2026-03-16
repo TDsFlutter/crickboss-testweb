@@ -339,6 +339,104 @@
     color: #ef4444;
 }
 
+/* Spinner (inside saveBtn) */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Avatar email badge */
+.avatarEmailBadge {
+    font-size: 0.78rem;
+    color: #9fafc4;
+    display: block;
+    margin-top: 2px;
+    word-break: break-all;
+}
+
+/* Account Info card */
+.infoList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #f8faff;
+    border: 1.5px solid #e8edf8;
+    font-size: 0.86rem;
+}
+
+.dark .infoRow {
+    background: #1a2031;
+    border-color: #2d3a53;
+}
+
+.infoLabel {
+    color: #7a8ba6;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.infoValue {
+    color: #1a2340;
+    font-weight: 500;
+    text-align: right;
+    word-break: break-all;
+}
+
+.dark .infoValue {
+    color: #d0d8ee;
+}
+
+.infoBadge {
+    background: rgba(31, 60, 136, 0.08);
+    color: #1F3C88;
+    border-radius: 8px;
+    padding: 3px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.dark .infoBadge {
+    background: rgba(91, 130, 232, 0.12);
+    color: #5b82e8;
+}
+
+.infoNote {
+    font-size: 0.78rem;
+    color: #9fafc4;
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #f8faff;
+    border: 1.5px dashed #dde3ef;
+    line-height: 1.5;
+}
+
+.dark .infoNote {
+    background: #131820;
+    border-color: #2d3a53;
+    color: #5a6e8a;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 900px) {
     .grid {
         grid-template-columns: 1fr;
