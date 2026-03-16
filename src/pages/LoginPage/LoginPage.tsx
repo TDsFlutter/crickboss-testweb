@@ -38,7 +38,9 @@ export default function LoginPage() {
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    if (isLoggedIn) return <Navigate to="/dashboard" replace />;
+    useEffect(() => {
+        if (isLoggedIn) navigate('/dashboard', { replace: true });
+    }, [isLoggedIn, navigate]);
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {

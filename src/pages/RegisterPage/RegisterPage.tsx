@@ -22,14 +22,18 @@ export default function RegisterPage() {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
-    const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+    // Load persisted state on mount
+    const [step, setStep] = useState<1 | 2 | 3 | 4>(() => {
+        const saved = sessionStorage.getItem('register_step');
+        return (saved ? parseInt(saved, 10) : 1) as 1 | 2 | 3 | 4;
+    });
 
     // ── Step 1: registration form fields ──
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [mobile, setMobile] = useState('');
-    const [countryCode, setCountryCode] = useState('+91');
-    const [city, setCity] = useState('');
+    const [name, setName] = useState(() => sessionStorage.getItem('register_name') || '');
+    const [email, setEmail] = useState(() => sessionStorage.getItem('register_email') || '');
+    const [mobile, setMobile] = useState(() => sessionStorage.getItem('register_mobile') || '');
+    const [countryCode, setCountryCode] = useState(() => sessionStorage.getItem('register_countryCode') || '+91');
+    const [city, setCity] = useState(() => sessionStorage.getItem('register_city') || '');
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [registering, setRegistering] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,8 +53,30 @@ export default function RegisterPage() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
 
-    // ── GUARD: Redirect if already logged in and at Step 1 ──
-    if (isLoggedIn && step === 1) return <Navigate to="/dashboard" replace />;
+    // Persist state changes
+    useEffect(() => { sessionStorage.setItem('register_step', step.toString()); }, [step]);
+    useEffect(() => { sessionStorage.setItem('register_name', name); }, [name]);
+    useEffect(() => { sessionStorage.setItem('register_email', email); }, [email]);
+    useEffect(() => { sessionStorage.setItem('register_mobile', mobile); }, [mobile]);
+    useEffect(() => { sessionStorage.setItem('register_countryCode', countryCode); }, [countryCode]);
+    useEffect(() => { sessionStorage.setItem('register_city', city); }, [city]);
+
+    // Check if user is already logged in ONLY if they land here fresh (Step 1 with no data)
+    useEffect(() => {
+        if (isLoggedIn && step === 1 && !name && !email) {
+            navigate('/dashboard', { replace: true });
+        }
+    }, [isLoggedIn, navigate, step, name, email]);
+
+    // Clear registration data on success (Step 4 -> Dashboard) or manual link
+    const clearRegistrationState = () => {
+        sessionStorage.removeItem('register_step');
+        sessionStorage.removeItem('register_name');
+        sessionStorage.removeItem('register_email');
+        sessionStorage.removeItem('register_mobile');
+        sessionStorage.removeItem('register_countryCode');
+        sessionStorage.removeItem('register_city');
+    };
 
     const getCountryISO = (code: string): string => {
         const mapping: { [key: string]: string } = {
@@ -471,7 +497,10 @@ export default function RegisterPage() {
 
                         <button
                             className={styles.primaryBtn}
-                            onClick={() => navigate('/dashboard', { replace: true })}
+                            onClick={() => {
+                                clearRegistrationState();
+                                navigate('/dashboard', { replace: true });
+                            }}
                         >
                             Go to Dashboard →
                         </button>

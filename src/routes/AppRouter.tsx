@@ -45,10 +45,7 @@ export default function AppRouter() {
 
                 {/* Public layout routes */}
                 <Route element={<PublicLayout />}>
-                    <Route
-                        path="/login"
-                        element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <LoginPage />}
-                    />
+                    <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/" element={<HomePage />} />
                     <Route path="/auctions/today" element={<TodayAuctionsPage />} />

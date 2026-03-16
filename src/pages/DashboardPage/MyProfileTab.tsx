@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import styles from './MyProfileTab.module.css';
+import { api } from '../../utils/api';
 
 export default function MyProfileTab() {
     const { email, displayName, city, updateProfile } = useAuth();
@@ -12,8 +13,10 @@ export default function MyProfileTab() {
     const [formName, setFormName] = useState(displayName);
     const [formCity, setFormCity] = useState(city);
     const [saving, setSaving] = useState(false);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
     const [profileToast, setProfileToast] = useState<'idle' | 'success' | 'error'>('idle');
     const [profileToastMsg, setProfileToastMsg] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Sync if context values change (e.g. after login / page refresh)
     useEffect(() => {
@@ -48,6 +51,40 @@ export default function MyProfileTab() {
         setTimeout(() => setProfileToast('idle'), 3500);
     };
 
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploadingAvatar(true);
+        setProfileToast('idle');
+        try {
+            const res = await api.uploadAvatar(file);
+            if (res.success && res.data) {
+                const updateRes = await updateProfile(displayName, city, res.data);
+                if (updateRes.success) {
+                    setProfileToast('success');
+                    setProfileToastMsg('✅ Profile photo updated!');
+                } else {
+                    setProfileToast('error');
+                    setProfileToastMsg('❌ Failed to link photo to profile.');
+                }
+            } else {
+                setProfileToast('error');
+                setProfileToastMsg('❌ Failed to upload photo.');
+            }
+        } catch {
+            setProfileToast('error');
+            setProfileToastMsg('❌ Connection error during upload.');
+        } finally {
+            setUploadingAvatar(false);
+            setTimeout(() => setProfileToast('idle'), 3500);
+        }
+    };
+
     const d = isDark ? styles.dark : '';
 
     return (
@@ -69,10 +106,37 @@ export default function MyProfileTab() {
 
                     {/* Avatar */}
                     <div className={`${styles.avatarRow} ${d}`}>
-                        <div className={styles.bigAvatar}>{avatarInitials}</div>
+                        <div
+                            className={`${styles.bigAvatar} ${uploadingAvatar ? styles.loading : ''}`}
+                            onClick={handleAvatarClick}
+                            style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+                        >
+                            {useAuth().avatar ? (
+                                <img
+                                    src={useAuth().avatar}
+                                    alt="Avatar"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            ) : avatarInitials}
+                            {uploadingAvatar && <div className={styles.avatarOverlay}><span className={styles.spinner} /></div>}
+                        </div>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            onChange={handleAvatarChange}
+                        />
                         <div className={styles.avatarInfo}>
                             <p>{formName || 'Your Name'}</p>
-                            <span className={styles.avatarEmailBadge}>{email}</span>
+                            <button
+                                type="button"
+                                className={styles.changeAvatarBtn}
+                                onClick={handleAvatarClick}
+                                disabled={uploadingAvatar}
+                            >
+                                {uploadingAvatar ? 'Uploading...' : 'Change Photo'}
+                            </button>
                         </div>
                     </div>
 
