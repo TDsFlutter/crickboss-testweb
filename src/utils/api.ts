@@ -1,4 +1,4 @@
-const BASE_URL = 'http://crickboss.live/v2/api';
+const BASE_URL = 'https://crickboss.live/v2/api';
 
 export interface APIResponse<T = any> {
   success: boolean;
