@@ -49,10 +49,7 @@ export default function AppRouter() {
                         path="/login"
                         element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <LoginPage />}
                     />
-                    <Route
-                        path="/register"
-                        element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <RegisterPage />}
-                    />
+                    <Route path="/register" element={<RegisterPage />} />
                     <Route path="/" element={<HomePage />} />
                     <Route path="/auctions/today" element={<TodayAuctionsPage />} />
                     <Route path="/auctions/upcoming" element={<UpcomingAuctionsPage />} />
