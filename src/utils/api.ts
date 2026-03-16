@@ -4,8 +4,11 @@ export interface APIResponse<T = any> {
   success: boolean;
   message: string;
   data?: T;
-  token?: string;
+  token?: string;         // mapped from access_token
+  access_token?: string;  // direct from backend
   refresh_token?: string;
+  token_type?: string;
+  user?: any;             // direct from backend
 }
 
 const getHeaders = () => {
@@ -17,12 +20,38 @@ const getHeaders = () => {
 };
 
 async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {
-  const data = await response.json();
-  // If HTTP status indicates error but backend didn't set success:false, patch it
-  if (!response.ok && data.success === undefined) {
-    return { success: false, message: data.message || `HTTP ${response.status}` };
+  let data: any;
+  try {
+    data = await response.json();
+  } catch (e) {
+    // If not JSON, return current text or status
+    const text = await response.text();
+    return { success: response.ok, message: text || `HTTP ${response.status}` };
   }
-  return data;
+
+  // Normalize response structure
+  const result: APIResponse<T> = {
+    success: response.ok,
+    message: data.message || (response.ok ? 'Success' : `Error ${response.status}`),
+    ...data
+  };
+
+  // Ensure success is true if response was 2xx
+  if (response.ok && result.success !== false) {
+    result.success = true;
+  }
+
+  // Map access_token to token for backward compatibility with our context
+  if (data.access_token && !result.token) {
+    result.token = data.access_token;
+  }
+
+  // If user object is provided directly, put it in data if data is missing
+  if (data.user && !result.data) {
+    result.data = data.user;
+  }
+
+  return result;
 }
 
 export const api = {
@@ -36,7 +65,13 @@ export const api = {
     return handleResponse(response);
   },
 
-  register: async (data: { name: string; email: string; city: string }): Promise<APIResponse> => {
+  register: async (data: { 
+    name: string; 
+    email: string; 
+    city: string;
+    mobile: string;
+    country_code: string;
+  }): Promise<APIResponse> => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
       headers: getHeaders(),

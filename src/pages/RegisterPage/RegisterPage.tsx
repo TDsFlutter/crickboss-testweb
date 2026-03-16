@@ -28,6 +28,8 @@ export default function RegisterPage() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [mobile, setMobile] = useState('');
+    const [countryCode, setCountryCode] = useState('+91');
     const [city, setCity] = useState('');
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [registering, setRegistering] = useState(false);
@@ -62,6 +64,11 @@ export default function RegisterPage() {
             newErrors.email = 'Please enter a valid email address.';
         }
         if (!city.trim()) newErrors.city = 'City is required.';
+        if (!mobile.trim()) {
+            newErrors.mobile = 'Mobile number is required.';
+        } else if (!/^\d{10}$/.test(mobile.trim())) {
+            newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -89,6 +96,8 @@ export default function RegisterPage() {
             const res = await api.register({
                 name: name.trim(),
                 email: email.trim().toLowerCase(),
+                mobile: mobile.trim(),
+                country_code: countryCode,
                 city: city.trim(),
             });
             if (res.success) {
@@ -263,6 +272,32 @@ export default function RegisterPage() {
                                 error={errors.email}
                                 required
                             />
+
+                            {/* Mobile Number & Country Code */}
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                <div style={{ width: '90px' }}>
+                                    <FormField
+                                        label="Code"
+                                        id="reg-code"
+                                        type="text"
+                                        value={countryCode}
+                                        onChange={e => setCountryCode(e.target.value)}
+                                        placeholder="+91"
+                                    />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <FormField
+                                        label="Mobile Number"
+                                        id="reg-mobile"
+                                        type="tel"
+                                        placeholder="9876543210"
+                                        value={mobile}
+                                        onChange={e => { setMobile(e.target.value); clearError('mobile'); }}
+                                        error={errors.mobile}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
                             {/* City */}
                             <FormField
