@@ -8,6 +8,7 @@ interface UserData {
     id?: string;
     city?: string;
     avatar?: string;
+    avatar_url?: string;
 }
 
 interface AuthContextType {
@@ -46,7 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDisplayName(userData.name || '');
         setUserId(userData.id || '');
         setCity(userData.city || '');
-        setAvatar(userData.avatar || '');
+        const rawAvatar = userData.avatar_url || userData.avatar || '';
+        setAvatar(api.formatAvatarUrl(rawAvatar));
     }, []);
 
     const logout = useCallback(() => {
@@ -107,7 +109,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setDisplayName(userData.name || '');
                 setUserId(userData.id || userData._id || '');
                 setCity(userData.city || '');
-                setAvatar(userData.avatar || '');
+                const rawAvatar = userData.avatar_url || userData.avatar || '';
+                setAvatar(api.formatAvatarUrl(rawAvatar));
             } else {
                 logout();
             }
@@ -135,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (res.success) {
                 if (name) setDisplayName(name);
                 if (cityVal !== undefined) setCity(cityVal);
-                if (avatarVal !== undefined) setAvatar(avatarVal);
+                if (avatarVal !== undefined) setAvatar(api.formatAvatarUrl(avatarVal));
             }
             return { success: res.success, message: res.message };
         } catch (error) {

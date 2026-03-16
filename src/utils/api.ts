@@ -1,4 +1,11 @@
-const BASE_URL = 'https://crickboss.live/v2/api';
+export const BASE_URL = 'https://crickboss.live/v2/api';
+export const MEDIA_BASE = 'https://crickboss.live';
+
+export const formatAvatarUrl = (url?: string): string => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${MEDIA_BASE}${url.startsWith('/') ? '' : '/'}${url}`;
+};
 
 export interface APIResponse<T = any> {
   success: boolean;
@@ -168,4 +175,5 @@ export const api = {
     });
     return handleResponse(response);
   },
+  formatAvatarUrl,
 };
