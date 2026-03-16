@@ -206,7 +206,9 @@ export default function RegisterPage() {
         setUploading(true);
         try {
             const res = await api.uploadAvatar(selectedFile);
-            if (res.success) {
+            if (res.success && res.data) {
+                // Link the uploaded image URL to the user profile
+                await api.updateMe({ avatar: res.data });
                 setStep(4);
             } else {
                 // On failure, we can still move to success but show a message or just move on

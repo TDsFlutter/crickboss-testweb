@@ -7,6 +7,7 @@ interface UserData {
     name?: string;
     id?: string;
     city?: string;
+    avatar?: string;
 }
 
 interface AuthContextType {
@@ -16,9 +17,10 @@ interface AuthContextType {
     displayName: string;
     userId: string;
     city: string;
+    avatar: string;
     login: (userData: UserData, tokens?: { access: string; refresh: string }) => void;
     logout: () => void;
-    updateProfile: (name: string, city?: string) => Promise<{ success: boolean; message: string }>;
+    updateProfile: (name: string, city?: string, avatar?: string) => Promise<{ success: boolean; message: string }>;
     refreshUser: () => Promise<void>;
 }
 
@@ -31,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [displayName, setDisplayName] = useState<string>('');
     const [userId, setUserId] = useState<string>('');
     const [city, setCity] = useState<string>('');
+    const [avatar, setAvatar] = useState<string>('');
 
     const login = useCallback((userData: UserData, tokens?: { access: string; refresh: string }) => {
         if (tokens) {
@@ -43,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDisplayName(userData.name || '');
         setUserId(userData.id || '');
         setCity(userData.city || '');
+        setAvatar(userData.avatar || '');
     }, []);
 
     const logout = useCallback(() => {
@@ -53,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDisplayName('');
         setUserId('');
         setCity('');
+        setAvatar('');
     }, []);
 
     /** Tries to refresh the access token using the stored refresh token.
@@ -102,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setDisplayName(userData.name || '');
                 setUserId(userData.id || userData._id || '');
                 setCity(userData.city || '');
+                setAvatar(userData.avatar || '');
             } else {
                 logout();
             }
@@ -116,17 +122,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     /** Update profile via API and sync state on success */
     const updateProfile = useCallback(async (
         name: string,
-        cityVal?: string
+        cityVal?: string,
+        avatarVal?: string
     ): Promise<{ success: boolean; message: string }> => {
         try {
-            const payload: { name?: string; city?: string } = {};
+            const payload: { name?: string; city?: string; avatar?: string } = {};
             if (name) payload.name = name;
             if (cityVal !== undefined) payload.city = cityVal;
+            if (avatarVal !== undefined) payload.avatar = avatarVal;
 
             const res = await api.updateMe(payload);
             if (res.success) {
-                setDisplayName(name);
+                if (name) setDisplayName(name);
                 if (cityVal !== undefined) setCity(cityVal);
+                if (avatarVal !== undefined) setAvatar(avatarVal);
             }
             return { success: res.success, message: res.message };
         } catch (error) {
@@ -146,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             displayName,
             userId,
             city,
+            avatar,
             login,
             logout,
             updateProfile,
