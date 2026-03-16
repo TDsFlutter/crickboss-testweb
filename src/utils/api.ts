@@ -154,4 +154,18 @@ export const api = {
     });
     return handleResponse(response);
   },
+
+  uploadAvatar: async (file: File): Promise<APIResponse<string>> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const token = localStorage.getItem('access_token');
+    const response = await fetch(`${BASE_URL}/upload/avatar`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    });
+    return handleResponse(response);
+  },
 };

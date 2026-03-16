@@ -22,10 +22,9 @@ export default function RegisterPage() {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
-    const [step, setStep] = useState<1 | 2>(1);
+    const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
     // ── Step 1: registration form fields ──
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [mobile, setMobile] = useState('');
@@ -45,11 +44,33 @@ export default function RegisterPage() {
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    if (isLoggedIn) return <Navigate to="/dashboard" replace />;
+    // ── Step 3: Profile Image ──
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+
+    if (isLoggedIn && step < 3) return <Navigate to="/dashboard" replace />;
+
+    const getCountryISO = (code: string): string => {
+        const mapping: { [key: string]: string } = {
+            '+91': 'IN',
+            '+1': 'US',
+            '+44': 'GB',
+            '+61': 'AU',
+            '+92': 'PK',
+            '+880': 'BD',
+            '+971': 'AE',
+            '+94': 'LK',
+            '+27': 'ZA',
+            '+64': 'NZ'
+        };
+        return mapping[code] || 'IN';
+    };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setSelectedFile(file);
             const tempUrl = URL.createObjectURL(file);
             setImagePreview(tempUrl);
         }
@@ -66,8 +87,8 @@ export default function RegisterPage() {
         if (!city.trim()) newErrors.city = 'City is required.';
         if (!mobile.trim()) {
             newErrors.mobile = 'Mobile number is required.';
-        } else if (!/^\d{10}$/.test(mobile.trim())) {
-            newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
+        } else if (!/^\d/.test(mobile.trim())) {
+            newErrors.mobile = 'Please enter a valid mobile number.';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -97,7 +118,7 @@ export default function RegisterPage() {
                 name: name.trim(),
                 email: email.trim().toLowerCase(),
                 mobile: mobile.trim(),
-                country_code: countryCode,
+                country_code: getCountryISO(countryCode),
                 city: city.trim(),
             });
             if (res.success) {
@@ -108,7 +129,6 @@ export default function RegisterPage() {
                 startOtpTimer();
                 setTimeout(() => otpRefs.current[0]?.focus(), 100);
             } else {
-                // Backend may return "Account already exists" or similar
                 setErrors({ email: res.message || 'Registration failed. Please try again.' });
             }
         } catch {
@@ -150,9 +170,9 @@ export default function RegisterPage() {
         setVerifying(true);
         try {
             const res = await api.verifyOtp(email.trim().toLowerCase(), entered);
-            // Accept success if we have a token (refresh_token is optional)
             const userPayload = res.data || res.user;
             if (res.success && res.token) {
+                // Log in first so Step 3 can use the token for image upload
                 login(
                     {
                         email: userPayload?.email || email,
@@ -165,7 +185,7 @@ export default function RegisterPage() {
                         refresh: res.refresh_token || '',
                     }
                 );
-                navigate('/dashboard', { replace: true });
+                setStep(3);
             } else {
                 setOtpError(res.message || 'Invalid OTP. Please try again.');
                 setOtp(['', '', '', '', '', '']);
@@ -175,6 +195,27 @@ export default function RegisterPage() {
             setOtpError('Connection error. Please try again.');
         } finally {
             setVerifying(false);
+        }
+    };
+
+    const handleUploadAvatar = async () => {
+        if (!selectedFile) {
+            setStep(4);
+            return;
+        }
+        setUploading(true);
+        try {
+            const res = await api.uploadAvatar(selectedFile);
+            if (res.success) {
+                setStep(4);
+            } else {
+                // On failure, we can still move to success but show a message or just move on
+                setStep(4);
+            }
+        } catch {
+            setStep(4);
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -221,36 +262,6 @@ export default function RegisterPage() {
                         <p className={styles.sub}>Join CrickBoss to manage your tournaments</p>
 
                         <form onSubmit={handleRegister} className={styles.form} noValidate>
-                            {/* Image Upload */}
-                            <div className={styles.imageUploadGroup}>
-                                <div
-                                    className={styles.imagePreviewCircle}
-                                    onClick={() => fileInputRef.current?.click()}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label="Upload profile image"
-                                    onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
-                                >
-                                    {imagePreview ? (
-                                        <img src={imagePreview} alt="Profile preview" className={styles.previewImg} />
-                                    ) : (
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                                            <circle cx="12" cy="13" r="4"></circle>
-                                        </svg>
-                                    )}
-                                </div>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    ref={fileInputRef}
-                                    onChange={handleImageChange}
-                                    className={styles.hiddenInput}
-                                    aria-label="Upload profile photo"
-                                />
-                                <span className={styles.imageLabel}>Add Profile Photo</span>
-                            </div>
-
                             {/* Full Name */}
                             <FormField
                                 label="Full Name"
@@ -363,7 +374,7 @@ export default function RegisterPage() {
                             disabled={!isOtpFilled || verifying}
                             onClick={handleVerify}
                         >
-                            {verifying ? <span className={styles.spinner} /> : 'Verify & Create Account →'}
+                            {verifying ? <span className={styles.spinner} /> : 'Verify & Continue →'}
                         </button>
 
                         <div className={styles.timerRow}>
@@ -387,10 +398,85 @@ export default function RegisterPage() {
                     </div>
                 )}
 
+                {/* ── STEP 3: Profile Image Upload ── */}
+                {step === 3 && (
+                    <div className={styles.formPanel}>
+                        <h1 className={styles.title}>Add Photo 📸</h1>
+                        <p className={styles.sub}>Show the world your CrickBoss avatar!</p>
+
+                        <div className={styles.form}>
+                            <div className={styles.imageUploadGroup}>
+                                <div
+                                    className={styles.imagePreviewCircle}
+                                    style={{ width: '120px', height: '120px' }}
+                                    onClick={() => fileInputRef.current?.click()}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-label="Upload profile image"
+                                    onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
+                                >
+                                    {imagePreview ? (
+                                        <img src={imagePreview} alt="Profile preview" className={styles.previewImg} />
+                                    ) : (
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                            <circle cx="12" cy="13" r="4"></circle>
+                                        </svg>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    ref={fileInputRef}
+                                    onChange={handleImageChange}
+                                    className={styles.hiddenInput}
+                                />
+                                <span className={styles.imageLabel}>{selectedFile ? selectedFile.name : 'Tap to select image'}</span>
+                            </div>
+
+                            <button
+                                className={`${styles.primaryBtn} ${uploading ? styles.loading : ''}`}
+                                onClick={handleUploadAvatar}
+                                disabled={uploading || !selectedFile}
+                            >
+                                {uploading ? <span className={styles.spinner} /> : 'Upload & Continue'}
+                            </button>
+
+                            <button className={styles.skipBtn} onClick={() => setStep(4)} disabled={uploading}>
+                                Skip for now
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── STEP 4: Success Screen ── */}
+                {step === 4 && (
+                    <div className={styles.formPanel} style={{ textAlign: 'center' }}>
+                        <div className={styles.successIcon}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <h1 className={styles.title}>All Set! 🎉</h1>
+                        <p className={styles.sub}>
+                            Registration complete. Welcome to <strong>CrickBoss</strong>.
+                        </p>
+
+                        <button
+                            className={styles.primaryBtn}
+                            onClick={() => navigate('/dashboard', { replace: true })}
+                        >
+                            Go to Dashboard →
+                        </button>
+                    </div>
+                )}
+
                 {/* Progress dots */}
                 <div className={styles.dots}>
                     <span className={`${styles.dot} ${step === 1 ? styles.dotActive : styles.dotDone}`} />
-                    <span className={`${styles.dot} ${step === 2 ? styles.dotActive : ''}`} />
+                    <span className={`${styles.dot} ${step === 2 ? (step === 2 ? styles.dotActive : styles.dotDone) : (step > 2 ? styles.dotDone : '')}`} />
+                    <span className={`${styles.dot} ${step === 3 ? (step === 3 ? styles.dotActive : styles.dotDone) : (step > 3 ? styles.dotDone : '')}`} />
+                    <span className={`${styles.dot} ${step === 4 ? styles.dotActive : ''}`} />
                 </div>
             </div>
 
