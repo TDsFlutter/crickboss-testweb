@@ -5,7 +5,7 @@ import styles from './MyProfileTab.module.css';
 import { api } from '../../utils/api';
 
 export default function MyProfileTab() {
-    const { email, displayName, city, updateProfile } = useAuth();
+    const { email, displayName, city, avatar, updateProfile, refreshUser } = useAuth();
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
@@ -111,9 +111,9 @@ export default function MyProfileTab() {
                             onClick={handleAvatarClick}
                             style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
                         >
-                            {useAuth().avatar ? (
+                            {avatar ? (
                                 <img
-                                    src={useAuth().avatar}
+                                    src={avatar}
                                     alt="Avatar"
                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />

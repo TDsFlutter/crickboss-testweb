@@ -73,7 +73,7 @@ const PAGE_META: Record<DashTab, { title: string; subtitle: string }> = {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [tab, setTab] = useState<DashTab>('auctions');
-    const { email, displayName, logout } = useAuth();
+    const { email, displayName, logout, avatar } = useAuth();
     const navigate = useNavigate();
 
     // Show display name if set, otherwise first 2 chars of email username, fallback to 'CB'
@@ -123,7 +123,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 {/* Bottom — user info + sign out */}
                 <div className={styles.sidebarBottom}>
                     <div className={styles.userRow}>
-                        <div className={styles.avatar}>{avatarInitials}</div>
+                        <div className={styles.avatar}>
+                            {avatar ? (
+                                <img
+                                    src={avatar}
+                                    alt="User Avatar"
+                                    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                />
+                            ) : avatarInitials}
+                        </div>
                         <div className={styles.userInfo}>
                             <div className={styles.userName}>{userLabel}</div>
                             <div className={styles.userMobile}>{email || '—'}</div>

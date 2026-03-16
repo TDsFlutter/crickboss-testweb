@@ -17,7 +17,7 @@ function maskEmail(email: string): string {
 }
 
 export default function RegisterPage() {
-    const { isLoggedIn, login } = useAuth();
+    const { isLoggedIn, login, refreshUser } = useAuth();
     const navigate = useNavigate();
     const { theme } = useTheme();
     const isDark = theme === 'dark';
@@ -236,6 +236,7 @@ export default function RegisterPage() {
             if (res.success && res.data) {
                 // Link the uploaded image URL to the user profile
                 await api.updateMe({ avatar: res.data });
+                await refreshUser(); // Sync the context state
                 setStep(4);
             } else {
                 // On failure, we can still move to success but show a message or just move on
