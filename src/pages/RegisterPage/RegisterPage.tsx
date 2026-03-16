@@ -455,9 +455,13 @@ export default function RegisterPage() {
                 {step === 4 && (
                     <div className={styles.formPanel} style={{ textAlign: 'center' }}>
                         <div className={styles.successIcon}>
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
+                            {imagePreview ? (
+                                <img src={imagePreview} alt="Profile" className={styles.previewImg} style={{ borderRadius: '50%', width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            )}
                         </div>
                         <h1 className={styles.title}>All Set! 🎉</h1>
                         <p className={styles.sub}>
