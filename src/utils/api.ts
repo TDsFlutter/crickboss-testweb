@@ -3,7 +3,12 @@ export const BASE_URL = 'https://crickboss.live/v2/api';
 export const formatAvatarUrl = (url?: string): string => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+  
+  // Strip leading /api if BASE_URL already ends with /api
+  const cleanedUrl = url.startsWith('/api') ? url.slice(4) : url;
+  const separator = (cleanedUrl.startsWith('/') || BASE_URL.endsWith('/')) ? '' : '/';
+  
+  return `${BASE_URL}${separator}${cleanedUrl}`;
 };
 
 export interface APIResponse<T = any> {
