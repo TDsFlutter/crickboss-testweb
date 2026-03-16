@@ -561,3 +561,62 @@
     background: #064e3b;
     color: #34d399;
 }
+
+.imageUploadGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.imagePreviewCircle {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    color: #64748b;
+}
+
+.imagePreviewCircle:hover {
+    border-color: #1F3C88;
+    background: #f1f5f9;
+    color: #1F3C88;
+}
+
+.previewImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hiddenInput {
+    display: none;
+}
+
+.imageLabel {
+    font-size: 0.88rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.dark .imagePreviewCircle {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+.dark .imagePreviewCircle:hover {
+    border-color: #5b82e8;
+    color: #5b82e8;
+}
+
+.dark .imageLabel {
+    color: #94a3b8;
+}

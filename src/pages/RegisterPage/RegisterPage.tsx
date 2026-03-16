@@ -49,7 +49,8 @@ export default function RegisterPage() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
 
-    if (isLoggedIn && step < 3) return <Navigate to="/dashboard" replace />;
+    // ── GUARD: Redirect if already logged in and at Step 1 ──
+    if (isLoggedIn && step === 1) return <Navigate to="/dashboard" replace />;
 
     const getCountryISO = (code: string): string => {
         const mapping: { [key: string]: string } = {
