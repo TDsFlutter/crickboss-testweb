@@ -2,20 +2,22 @@ import { useState, useRef, useEffect } from 'react';
 import type { KeyboardEvent, ClipboardEvent, ChangeEvent } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import logoImg from '../../assets/crickboss_trans.png';
-import { isValidPhoneNumber } from 'react-phone-number-input';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import PhoneField from '../../components/PhoneField/PhoneField';
 import styles from './LoginPage.module.css';
 
 const STATIC_OTP = '123456';
 
-function maskMobile(phone: string): string {
-    if (!phone || phone.length < 5) return phone;
-    const first4 = phone.slice(0, 4);
-    const last2 = phone.slice(-2);
-    const stars = '*'.repeat(Math.max(0, phone.length - 6));
-    return `${first4}${stars}${last2}`;
+function isValidEmail(val: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+}
+
+function maskEmail(email: string): string {
+    const [user, domain] = email.split('@');
+    if (!user || !domain) return email;
+    const visible = user[0] ?? '';
+    const masked = visible + '*'.repeat(Math.max(0, user.length - 1));
+    return `${masked}@${domain}`;
 }
 
 export default function LoginPage() {
@@ -24,8 +26,8 @@ export default function LoginPage() {
     const { theme } = useTheme();
 
     const [step, setStep] = useState<1 | 2>(1);
-    const [mobile, setMobile] = useState('');
-    const [mobileError, setMobileError] = useState('');
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [sending, setSending] = useState(false);
 
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -52,8 +54,8 @@ export default function LoginPage() {
     }, [step]);
 
     const handleSendOtp = () => {
-        if (!mobile || !isValidPhoneNumber(mobile)) {
-            setMobileError('Please enter a valid mobile number.');
+        if (!isValidEmail(email)) {
+            setEmailError('Please enter a valid email address.');
             return;
         }
         setSending(true);
@@ -99,7 +101,7 @@ export default function LoginPage() {
         setTimeout(() => {
             setVerifying(false);
             if (entered === STATIC_OTP) {
-                login(mobile);
+                login(email.trim().toLowerCase());
                 navigate('/dashboard', { replace: true });
             } else {
                 setOtpError('Invalid OTP. Please try again.');
@@ -109,7 +111,7 @@ export default function LoginPage() {
         }, 600);
     };
 
-    const isMobileValid = mobile ? isValidPhoneNumber(mobile) : false;
+    const isEmailValid = isValidEmail(email);
     const isOtpFilled = otp.every(d => d !== '');
     const isDark = theme === 'dark';
 
@@ -130,31 +132,39 @@ export default function LoginPage() {
                 {step === 1 && (
                     <div className={styles.stepPanel}>
                         <h1 className={styles.title}>Welcome Back 👋</h1>
-                        <p className={styles.sub}>Enter your mobile number to continue</p>
+                        <p className={styles.sub}>Enter your email address to continue</p>
 
-                        <PhoneField
-                            value={mobile}
-                            onChange={(value) => {
-                                setMobileError('');
-                                setMobile(value || '');
-                            }}
-                            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-                                if (e.key === 'Enter' && isMobileValid) handleSendOtp();
-                            }}
-                            error={mobileError}
-                            defaultCountry="IN"
-                            id="login-mobile"
-                        />
+                        <div className={styles.emailField}>
+                            <div className={`${styles.emailInputWrap} ${emailError ? styles.inputError : ''}`}>
+                                <svg className={styles.emailIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                <input
+                                    className={styles.emailInput}
+                                    type="email"
+                                    placeholder="you@example.com"
+                                    value={email}
+                                    id="login-email"
+                                    autoComplete="email"
+                                    onChange={e => { setEmailError(''); setEmail(e.target.value); }}
+                                    onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                                        if (e.key === 'Enter' && isEmailValid) handleSendOtp();
+                                    }}
+                                />
+                            </div>
+                            {emailError && <p className={styles.errorMsg}>{emailError}</p>}
+                        </div>
 
                         <button
                             className={`${styles.primaryBtn} ${sending ? styles.loading : ''}`}
-                            disabled={!isMobileValid || sending}
+                            disabled={!isEmailValid || sending}
                             onClick={handleSendOtp}
                         >
                             {sending ? <span className={styles.spinner} /> : 'Send OTP →'}
                         </button>
 
-                        <p className={styles.hint}>We'll send a one-time password to verify your number.</p>
+                        <p className={styles.hint}>We'll send a one-time password to verify your email.</p>
 
                         <div className={styles.registerLink}>
                             Don't have an account? <Link to="/register">Register here</Link>
@@ -167,7 +177,7 @@ export default function LoginPage() {
                     <div className={styles.stepPanel}>
                         <h1 className={styles.title}>Verify OTP</h1>
                         <p className={styles.sub}>
-                            Code sent to <strong>{maskMobile(mobile)}</strong>
+                            Code sent to <strong>{maskEmail(email)}</strong>
                         </p>
 
                         <div className={styles.otpRow}>
@@ -210,7 +220,7 @@ export default function LoginPage() {
                         </div>
 
                         <button className={styles.changeBtn} onClick={() => { setStep(1); setOtpError(''); }}>
-                            ← Change number
+                            ← Change email
                         </button>
                     </div>
                 )}

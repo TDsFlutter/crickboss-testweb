@@ -162,56 +162,73 @@
     color: #8da0ba;
 }
 
-/* Mobile row wrapper for PhoneInput */
-.phoneInputContainer {
+/* Email field */
+.emailField {
+    margin-bottom: 6px;
+}
+
+.emailInputWrap {
     display: flex;
     align-items: center;
+    gap: 10px;
     background: #f5f7fc;
     border: 1.5px solid #dde3ef;
     border-radius: 12px;
     height: 52px;
     padding: 0 16px;
-    margin-bottom: 6px;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
-.phoneInputContainer:focus-within {
+.emailInputWrap:focus-within {
     border-color: #1F3C88;
     box-shadow: 0 0 0 3px rgba(31, 60, 136, 0.12);
     background: #fff;
 }
 
-.phoneInputContainer.inputError {
+.emailInputWrap.inputError {
     border-color: #e84040;
 }
 
-/* PhoneInput overrides */
-.phoneInputContainer :global(.PhoneInputCountry) {
-    margin-right: 12px;
+.emailIcon {
+    flex-shrink: 0;
+    color: #9fafc4;
+    transition: color 0.2s;
 }
 
-.phoneInputContainer :global(.PhoneInputInput) {
+.emailInputWrap:focus-within .emailIcon {
+    color: #1F3C88;
+}
+
+.emailInput {
     flex: 1;
     border: none;
     background: transparent;
     font-size: 1rem;
     color: #1a2340;
     outline: none;
-    letter-spacing: 1px;
+    min-width: 0;
 }
 
-.dark .phoneInputContainer {
+.emailInput::placeholder {
+    color: #b0bdd0;
+}
+
+.dark .emailInputWrap {
     background: #1e2636;
     border-color: #2d3a53;
 }
 
-.dark .phoneInputContainer:focus-within {
+.dark .emailInputWrap:focus-within {
     border-color: #5b82e8;
     box-shadow: 0 0 0 3px rgba(91, 130, 232, 0.18);
     background: #232d42;
 }
 
-.dark .phoneInputContainer :global(.PhoneInputInput) {
+.dark .emailInputWrap:focus-within .emailIcon {
+    color: #5b82e8;
+}
+
+.dark .emailInput {
     color: #e8edf8;
 }
 

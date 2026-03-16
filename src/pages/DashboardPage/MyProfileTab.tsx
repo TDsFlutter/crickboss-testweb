@@ -25,22 +25,18 @@ function getStrength(pw: string): { pct: number; label: string; color: string } 
 }
 
 export default function MyProfileTab() {
-    const { mobile, displayName, email, updateProfile } = useAuth();
+    const { email, displayName, updateProfile } = useAuth();
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
     // Profile form — pre-populate from AuthContext (which reads localStorage)
     const [formName, setFormName] = useState(displayName);
-    const [formEmail, setFormEmail] = useState(email);
     const [profileToast, setProfileToast] = useState<'idle' | 'success'>('idle');
-    const [emailError, setEmailError] = useState('');
 
     // Sync if context values change (e.g. after login)
     useEffect(() => {
         setFormName(displayName);
-        setFormEmail(email);
-        setEmailError('');
-    }, [displayName, email]);
+    }, [displayName]);
 
     // Password form
     const [newPw, setNewPw] = useState('');
@@ -51,20 +47,14 @@ export default function MyProfileTab() {
 
     const strength = getStrength(newPw);
 
-    // Avatar initials: from saved name (if available) or last-4 digits of mobile
+    // Avatar initials: from saved name (if available) or first 2 chars of email
     const avatarInitials = formName.trim()
         ? formName.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
-        : mobile ? mobile.slice(-4, -2) || 'CB' : 'CB';
+        : email ? email.slice(0, 2).toUpperCase() : 'CB';
 
     const handleProfileSave = (e: React.FormEvent) => {
         e.preventDefault();
-        // Validate email format
-        if (formEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formEmail.trim())) {
-            setEmailError('Please enter a valid email address.');
-            return;
-        }
-        setEmailError('');
-        updateProfile(formName, formEmail);
+        updateProfile(formName);
         setProfileToast('success');
         setTimeout(() => setProfileToast('idle'), 3000);
     };
@@ -124,26 +114,14 @@ export default function MyProfileTab() {
                         </div>
 
                         <div className={styles.field}>
-                            <label className={`${styles.label} ${d}`}>Mobile Number</label>
-                            <input
-                                className={`${styles.input} ${d}`}
-                                type="text"
-                                value={mobile || '—'}
-                                readOnly
-                                aria-label="Mobile number (read only)"
-                            />
-                        </div>
-
-                        <div className={styles.field}>
                             <label className={`${styles.label} ${d}`}>Email Address</label>
                             <input
-                                className={`${styles.input} ${d} ${emailError ? styles.inputError : ''}`}
+                                className={`${styles.input} ${d}`}
                                 type="email"
-                                placeholder="e.g. trunal@example.com"
-                                value={formEmail}
-                                onChange={e => { setFormEmail(e.target.value); if (emailError) setEmailError(''); }}
+                                value={email || '—'}
+                                readOnly
+                                aria-label="Email address (read only — login identifier)"
                             />
-                            {emailError && <div className={styles.fieldError}>{emailError}</div>}
                         </div>
 
                         <button type="submit" className={styles.saveBtn}>

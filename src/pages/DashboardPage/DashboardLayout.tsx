@@ -73,13 +73,13 @@ const PAGE_META: Record<DashTab, { title: string; subtitle: string }> = {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [tab, setTab] = useState<DashTab>('auctions');
-    const { mobile, displayName, logout } = useAuth();
+    const { email, displayName, logout } = useAuth();
     const navigate = useNavigate();
 
-    // Show display name if set, otherwise last 4 digits of mobile, fallback to 'CB'
+    // Show display name if set, otherwise first 2 chars of email username, fallback to 'CB'
     const avatarInitials = displayName
         ? displayName.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
-        : mobile ? mobile.slice(-4, -2) || 'CB' : 'CB';
+        : email ? email.slice(0, 2).toUpperCase() : 'CB';
 
     const userLabel = displayName || 'Organizer';
 
@@ -126,7 +126,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         <div className={styles.avatar}>{avatarInitials}</div>
                         <div className={styles.userInfo}>
                             <div className={styles.userName}>{userLabel}</div>
-                            <div className={styles.userMobile}>{mobile || '—'}</div>
+                            <div className={styles.userMobile}>{email || '—'}</div>
                         </div>
                     </div>
                     <button className={styles.logoutBtn} onClick={handleLogout} aria-label="Sign out">

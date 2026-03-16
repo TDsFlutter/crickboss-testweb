@@ -332,4 +332,193 @@
     .title {
         font-size: 1.45rem;
     }
+
+    .otpBox {
+        width: 42px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .otpRow {
+        gap: 7px;
+    }
+}
+
+/* OTP Row */
+.otpRow {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 6px;
+}
+
+.otpBox {
+    width: 48px;
+    height: 56px;
+    border-radius: 12px;
+    border: 1.5px solid #dde3ef;
+    background: #f5f7fc;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: #1F3C88;
+    outline: none;
+    caret-color: #1F3C88;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    font-family: inherit;
+}
+
+.otpBox:focus {
+    border-color: #1F3C88;
+    box-shadow: 0 0 0 3px rgba(31, 60, 136, 0.14);
+    background: #fff;
+}
+
+.otpBox.otpBoxFilled {
+    border-color: #3DBE8B;
+    background: #f0fdf7;
+}
+
+.otpBox.otpBoxError {
+    border-color: #e84040;
+    background: #fff5f5;
+}
+
+.dark .otpBox {
+    background: #1e2636;
+    border-color: #2d3a53;
+    color: #5b82e8;
+}
+
+.dark .otpBox:focus {
+    border-color: #5b82e8;
+    box-shadow: 0 0 0 3px rgba(91, 130, 232, 0.18);
+    background: #232d42;
+}
+
+.dark .otpBox.otpBoxFilled {
+    border-color: #3DBE8B;
+    background: #162a22;
+}
+
+.dark .otpBox.otpBoxError {
+    border-color: #e84040;
+    background: #2a1616;
+}
+
+/* Error message */
+.errorMsg {
+    color: #e84040;
+    font-size: 0.82rem;
+    margin: 4px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.errorMsg::before {
+    content: '⚠';
+}
+
+/* Demo hint */
+.demoHint {
+    font-size: 0.8rem;
+    color: #3DBE8B;
+    margin: 4px 0 0;
+    text-align: center;
+}
+
+.demoHint strong {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Timer row */
+.timerRow {
+    text-align: center;
+    margin-top: 14px;
+}
+
+.timer {
+    font-size: 0.85rem;
+    color: #9fafc4;
+}
+
+.timer strong {
+    color: #1F3C88;
+}
+
+.dark .timer strong {
+    color: #5b82e8;
+}
+
+.resendBtn {
+    background: none;
+    border: none;
+    color: #1F3C88;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    font-family: inherit;
+}
+
+.dark .resendBtn {
+    color: #5b82e8;
+}
+
+/* Change email btn */
+.changeBtn {
+    display: block;
+    margin: 14px auto 0;
+    background: none;
+    border: none;
+    color: #7a8ba6;
+    font-size: 0.84rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+    font-family: inherit;
+}
+
+.changeBtn:hover {
+    color: #1F3C88;
+}
+
+.dark .changeBtn:hover {
+    color: #5b82e8;
+}
+
+/* Progress dots */
+.dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dde3ef;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.dot.dotActive {
+    background: #1F3C88;
+    transform: scale(1.3);
+}
+
+.dot.dotDone {
+    background: #3DBE8B;
+}
+
+.dark .dot {
+    background: #2d3a53;
+}
+
+.dark .dot.dotActive {
+    background: #5b82e8;
 }
