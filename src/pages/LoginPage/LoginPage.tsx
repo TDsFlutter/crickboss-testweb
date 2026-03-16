@@ -123,17 +123,19 @@ export default function LoginPage() {
         setVerifying(true);
         try {
             const res = await api.verifyLoginOtp(email.trim().toLowerCase(), entered);
-            if (res.success && res.data && res.token && res.refresh_token) {
+            // Accept success if we have a token (refresh_token is optional)
+            const userPayload = res.data || res.user;
+            if (res.success && res.token) {
                 login(
                     {
-                        email: res.data.email,
-                        name: res.data.name,
-                        id: res.data.id || res.data._id,
-                        city: res.data.city,
+                        email: userPayload?.email || email,
+                        name: userPayload?.name,
+                        id: userPayload?.id || userPayload?._id,
+                        city: userPayload?.city,
                     },
                     {
                         access: res.token,
-                        refresh: res.refresh_token,
+                        refresh: res.refresh_token || '',
                     }
                 );
                 navigate('/dashboard', { replace: true });

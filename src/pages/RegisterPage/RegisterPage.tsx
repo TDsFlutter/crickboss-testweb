@@ -150,17 +150,19 @@ export default function RegisterPage() {
         setVerifying(true);
         try {
             const res = await api.verifyOtp(email.trim().toLowerCase(), entered);
-            if (res.success && res.data && res.token && res.refresh_token) {
+            // Accept success if we have a token (refresh_token is optional)
+            const userPayload = res.data || res.user;
+            if (res.success && res.token) {
                 login(
                     {
-                        email: res.data.email,
-                        name: res.data.name,
-                        id: res.data.id || res.data._id,
-                        city: res.data.city,
+                        email: userPayload?.email || email,
+                        name: userPayload?.name || name,
+                        id: userPayload?.id || userPayload?._id,
+                        city: userPayload?.city || city,
                     },
                     {
                         access: res.token,
-                        refresh: res.refresh_token,
+                        refresh: res.refresh_token || '',
                     }
                 );
                 navigate('/dashboard', { replace: true });

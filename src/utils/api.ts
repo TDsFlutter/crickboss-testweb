@@ -23,31 +23,34 @@ async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {
   let data: any;
   try {
     data = await response.json();
-  } catch (e) {
-    // If not JSON, return current text or status
-    const text = await response.text();
-    return { success: response.ok, message: text || `HTTP ${response.status}` };
+  } catch {
+    // Body is already consumed or not JSON — return a safe fallback
+    return { success: response.ok, message: response.ok ? 'Success' : `HTTP ${response.status}` };
   }
 
-  // Normalize response structure
+  // Normalize response structure — spread backend data, override success from HTTP status
   const result: APIResponse<T> = {
     success: response.ok,
-    message: data.message || (response.ok ? 'Success' : `Error ${response.status}`),
-    ...data
+    message: data?.message || (response.ok ? 'Success' : `Error ${response.status}`),
+    ...data,
   };
 
-  // Ensure success is true if response was 2xx
+  // Force success=true on 2xx (in case backend omits it)
   if (response.ok && result.success !== false) {
     result.success = true;
   }
+  // Force success=false on non-2xx (even if backend says success:true)
+  if (!response.ok) {
+    result.success = false;
+  }
 
-  // Map access_token to token for backward compatibility with our context
-  if (data.access_token && !result.token) {
+  // Map access_token → token for backward compat
+  if (data?.access_token && !result.token) {
     result.token = data.access_token;
   }
 
-  // If user object is provided directly, put it in data if data is missing
-  if (data.user && !result.data) {
+  // If backend sends user directly at root, promote to data
+  if (data?.user && !result.data) {
     result.data = data.user;
   }
 

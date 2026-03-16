@@ -62,8 +62,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!refreshToken) return false;
         try {
             const res = await api.refreshToken(refreshToken);
-            if (res.success && res.token) {
-                localStorage.setItem('access_token', res.token);
+            const newToken = res.token || res.access_token;
+            if (res.success && newToken) {
+                localStorage.setItem('access_token', newToken);
                 if (res.refresh_token) {
                     localStorage.setItem('refresh_token', res.refresh_token);
                 }
@@ -85,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             let res = await api.getMe();
 
-            // On 401-style failure, try to refresh the token once and retry
+            // On failure, try to refresh the token once and retry
             if (!res.success) {
                 const refreshed = await tryRefreshToken();
                 if (refreshed) {
@@ -93,12 +94,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            if (res.success && res.data) {
+            // Handle both nested (res.data) and flat (res.user) user objects
+            const userData = res.data || res.user;
+            if (res.success && userData) {
                 setIsLoggedIn(true);
-                setEmail(res.data.email || '');
-                setDisplayName(res.data.name || '');
-                setUserId(res.data.id || res.data._id || '');
-                setCity(res.data.city || '');
+                setEmail(userData.email || '');
+                setDisplayName(userData.name || '');
+                setUserId(userData.id || userData._id || '');
+                setCity(userData.city || '');
             } else {
                 logout();
             }
