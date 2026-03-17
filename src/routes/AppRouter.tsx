@@ -29,6 +29,14 @@ function ScrollToTop() {
     return null;
 }
 
+// Redirects to dashboard if already logged in
+function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
+    const { isLoggedIn, loading } = useAuth();
+    if (loading) return null; // Wait for auth check
+    if (isLoggedIn) return <Navigate to="/dashboard" replace />;
+    return <>{children}</>;
+}
+
 export default function AppRouter() {
     const { isLoggedIn } = useAuth();
 
@@ -45,8 +53,8 @@ export default function AppRouter() {
 
                 {/* Public layout routes */}
                 <Route element={<PublicLayout />}>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+                    <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
                     <Route path="/" element={<HomePage />} />
                     <Route path="/auctions/today" element={<TodayAuctionsPage />} />
                     <Route path="/auctions/upcoming" element={<UpcomingAuctionsPage />} />
