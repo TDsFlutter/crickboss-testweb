@@ -1429,3 +1429,317 @@
         align-self: flex-start;
     }
 }
+
+/* ── Visibility Buttons ── */
+.visibilityToggle {
+    display: flex;
+    gap: 12px;
+    background: #f0f4f9;
+    padding: 6px;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.dark .visibilityToggle {
+    background: #1a2031;
+}
+
+.visBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: #5a6e8a;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.dark .visBtn {
+    color: #9fafc4;
+}
+
+.visActive {
+    background: #1F3C88;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(31, 60, 136, 0.2);
+}
+
+.dark .visActive {
+    background: #5b82e8;
+}
+
+.slabWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ── Teams & Players ── */
+.teamsList, .playersList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 48px 24px;
+    background: #ffffff;
+    border: 1.5px dashed #dde3ef;
+    border-radius: 16px;
+    color: #5a6e8a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.dark .emptyState {
+    background: #161b27;
+    border-color: #2d3a53;
+    color: #8da0ba;
+}
+
+.emptyIcon {
+    width: 64px;
+    height: 64px;
+    background: #f0f4ff;
+    color: #1F3C88;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.dark .emptyIcon {
+    background: #1e2636;
+    color: #5b82e8;
+}
+
+.teamCard, .playerCard {
+    background: #ffffff;
+    border: 1.5px solid #e8edf8;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dark .teamCard, .dark .playerCard {
+    background: #161b27;
+    border-color: #1e2636;
+}
+
+.teamCard:hover, .playerCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.teamBrand, .playerBrand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.teamAvatar, .playerAvatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: #f0f4ff;
+    color: #1F3C88;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.dark .teamAvatar, .dark .playerAvatar {
+    background: #1e2636;
+    color: #e8edf8;
+}
+
+.teamAvatarImg, .playerAvatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.teamInfo, .playerInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.teamNameText, .playerNameText {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a2340;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dark .teamNameText, .dark .playerNameText {
+    color: #e8edf8;
+}
+
+.teamShortText, .playerSubText {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #9fafc4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.teamStats, .playerDetailsRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: #f8faff;
+    border-radius: 10px;
+}
+
+.dark .teamStats, .dark .playerDetailsRow {
+    background: #1a2031;
+}
+
+.statLine, .playerValue {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #5a6e8a;
+}
+
+.dark .statLine, .dark .playerValue {
+    color: #8da0ba;
+}
+
+.pointsLabel, .playerPrice {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1F3C88;
+}
+
+.dark .pointsLabel, .dark .playerPrice {
+    color: #5b82e8;
+}
+
+.deleteTeamBtn, .deletePlayerBtn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(232, 64, 64, 0.06);
+    color: #e84040;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    opacity: 0.6;
+}
+
+.deleteTeamBtn:hover, .deletePlayerBtn:hover {
+    background: rgba(232, 64, 64, 0.15);
+    opacity: 1;
+}
+
+.addBtnLarge {
+    width: 100%;
+    height: 54px;
+    border: 1.5px dashed #cdd6e8;
+    border-radius: 12px;
+    background: #f8faff;
+    color: #1F3C88;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 24px;
+}
+
+.addBtnLarge:hover {
+    border-color: #1F3C88;
+    background: rgba(31, 60, 136, 0.04);
+}
+
+.dark .addBtnLarge {
+    background: #161b27;
+    border-color: #2d3a53;
+    color: #5b82e8;
+}
+
+.dark .addBtnLarge:hover {
+    border-color: #5b82e8;
+    background: rgba(91, 130, 232, 0.06);
+}
+
+.addTeamForm, .addPlayerForm {
+    background: #ffffff;
+    border: 1.5px solid #1F3C88;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 32px rgba(31, 60, 136, 0.12);
+}
+
+.dark .addTeamForm, .dark .addPlayerForm {
+    background: #161b27;
+    border-color: #5b82e8;
+}
+
+.formActions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.primaryBtn {
+    flex: 1;
+    height: 44px;
+    background: #1F3C88;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.primaryBtn:hover {
+    background: #162f6b;
+}
+
+.dark .primaryBtn {
+    background: #5b82e8;
+}
+
+.dark .primaryBtn:hover {
+    background: #4a71d8;
+}
