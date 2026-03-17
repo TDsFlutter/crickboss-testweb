@@ -116,24 +116,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            // If we are NOT logged in (401), we just stop here on initial load.
-            // We only try to refresh if there's a reason to believe a session exists (like a refresh_token in storage)
-            const refreshToken = localStorage.getItem('refresh_token');
-            if (refreshToken) {
-                const refreshed = await tryRefreshToken();
-                if (refreshed) {
-                    const retryRes = await api.getMe();
-                    const retryData = retryRes.data || retryRes.user || (retryRes.email ? retryRes : null);
-                    if (retryRes.success && retryData && retryData.email) {
-                        setIsLoggedIn(true);
-                        setEmail(retryData.email || '');
-                        setDisplayName(retryData.name || '');
-                        setUserId(retryData.id || retryData._id || '');
-                        setCity(retryData.city || '');
-                        const rawAvatar = retryData.avatar_url || retryData.avatar || '';
-                        setAvatar(api.formatAvatarUrl(rawAvatar));
-                        return;
-                    }
+            // If /me failed (401), we try to refresh the session.
+            // Even if no local token, we try because the backend might have an HttpOnly refresh cookie.
+            const refreshed = await tryRefreshToken();
+            if (refreshed) {
+                const retryRes = await api.getMe();
+                const retryData = retryRes.data || retryRes.user || (retryRes.email ? retryRes : null);
+                if (retryRes.success && retryData && retryData.email) {
+                    setIsLoggedIn(true);
+                    localStorage.setItem('cb_has_session', 'true');
+                    setEmail(retryData.email || '');
+                    setDisplayName(retryData.name || '');
+                    setUserId(retryData.id || retryData._id || '');
+                    setCity(retryData.city || '');
+                    const rawAvatar = retryData.avatar_url || retryData.avatar || '';
+                    setAvatar(api.formatAvatarUrl(rawAvatar));
+                    return;
                 }
             }
 
