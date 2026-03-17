@@ -24,9 +24,14 @@ export interface APIResponse<T = any> {
 }
 
 const getHeaders = () => {
-  return {
+  const token = localStorage.getItem('access_token');
+  const headers: any = {
     'Content-Type': 'application/json',
   };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
 };
 
 async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {

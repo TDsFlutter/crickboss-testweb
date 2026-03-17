@@ -37,11 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [avatar, setAvatar] = useState<string>('');
 
     const login = useCallback((userData: UserData, tokens?: { access: string; refresh: string }) => {
-        // We no longer save tokens to localStorage for Web to prevent XSS.
-        // The backend now handles this via HttpOnly cookies.
-        // (Accessing tokens from JSON is only for secondary/mobile-like use cases).
+        // Reverting to localStorage-based token storage
+        if (tokens) {
+            localStorage.setItem('access_token', tokens.access);
+            localStorage.setItem('refresh_token', tokens.refresh);
+        }
+        
         setIsLoggedIn(true);
-        localStorage.setItem('cb_has_session', 'true');
 
         setEmail(userData.email);
         setDisplayName(userData.name || '');
@@ -53,14 +55,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = useCallback(async () => {
         try {
-            // Tell backend to clear HttpOnly cookies
             await api.logout();
         } catch {
             // ignore
         }
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        localStorage.setItem('cb_has_session', 'false');
+        localStorage.removeItem('cb_has_session');
         setIsLoggedIn(false);
         setEmail('');
         setDisplayName('');
@@ -69,21 +70,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAvatar('');
     }, []);
 
-    /** Tries to refresh the access token using the stored refresh token.
-     *  Returns true if successful, false otherwise. */
     const tryRefreshToken = useCallback(async (): Promise<boolean> => {
         const refreshToken = localStorage.getItem('refresh_token');
-        // Even if no local token, we try calling refresh because the backend might have an HttpOnly cookie.
+        if (!refreshToken) return false;
+
         try {
-            const res = await api.refreshToken(refreshToken || undefined);
+            const res = await api.refreshToken(refreshToken);
             const newToken = res.token || res.access_token;
             if (res.success && newToken) {
-                // We keep access_token in state if needed, but for Web we rely on cookies.
-                // We stop updating localStorage for cookies to be the primary source.
+                localStorage.setItem('access_token', newToken);
                 return true;
             }
-            // If backend returned success without JSON tokens, it means it updated the HttpOnly cookies.
-            if (res.success) return true;
         } catch {
             // ignore
         }
@@ -91,30 +88,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const refreshUser = useCallback(async () => {
-        const path = window.location.pathname;
-        const isProtectedRoute = path.includes('/dashboard') || path.includes('/manage');
-        const sessionHint = localStorage.getItem('cb_has_session');
+        const refreshToken = localStorage.getItem('refresh_token');
+        const accessToken = localStorage.getItem('access_token');
 
-        console.log('[Auth] Check started. Path:', path, 'Hint:', sessionHint);
-
-        // If we are on a protected route, we MUST probe the server even if hint is missing.
-        // Otherwise, we only probe if we think we have a session.
-        if (!isProtectedRoute && sessionHint !== 'true') {
-            console.log('[Auth] Guest on public route, skipping probe.');
+        // If we have no tokens at all, we assume guest
+        if (!refreshToken && !accessToken) {
             setLoading(false);
             return;
         }
 
         try {
-            console.log('[Auth] Probing /me...');
             const res = await api.getMe();
 
             if (res.success) {
-                console.log('[Auth] /me success!');
                 const userData = res.data || res.user || (res.email ? res : null);
                 if (userData && userData.email) {
                     setIsLoggedIn(true);
-                    localStorage.setItem('cb_has_session', 'true');
                     setEmail(userData.email || '');
                     setDisplayName(userData.name || '');
                     setUserId(userData.id || userData._id || '');
@@ -125,15 +114,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            console.log('[Auth] /me unauthorized or failed. Trying refresh...');
+            // If /me failed, try refresh
             const refreshed = await tryRefreshToken();
             if (refreshed) {
-                console.log('[Auth] Refresh success! Retrying /me...');
                 const retryRes = await api.getMe();
                 const retryData = retryRes.data || retryRes.user || (retryRes.email ? retryRes : null);
                 if (retryRes.success && retryData && retryData.email) {
                     setIsLoggedIn(true);
-                    localStorage.setItem('cb_has_session', 'true');
                     setEmail(retryData.email || '');
                     setDisplayName(retryData.name || '');
                     setUserId(retryData.id || retryData._id || '');
@@ -144,15 +131,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            console.log('[Auth] All auth attempts failed.');
+            // Final fallback: clear local state
             setIsLoggedIn(false);
             setEmail('');
         } catch (error) {
-            console.error('[Auth] Error in refreshUser:', error);
+            console.error('[Auth] Refresh user error:', error);
             setIsLoggedIn(false);
         } finally {
             setLoading(false);
-            console.log('[Auth] Check finished. Loading set to false.');
         }
     }, [tryRefreshToken]);
 
