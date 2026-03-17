@@ -763,6 +763,471 @@
     }
 }
 
+/* ── Wizard Layout & Progress ── */
+.wizardHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.wizardTopBar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+}
+
+.backCaret {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1a2340;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.dark .backCaret {
+    color: #e8edf8;
+}
+
+.wizardTitle {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a2340;
+}
+
+.dark .wizardTitle {
+    color: #e8edf8;
+}
+
+.progressCard {
+    background: #ffffff;
+    border: 1.5px solid #e8edf8;
+    border-radius: 16px;
+    padding: 16px 20px;
+}
+
+.dark .progressCard {
+    background: #161b27;
+    border-color: #1e2636;
+}
+
+.progressTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.progressLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1F3C88;
+}
+
+.dark .progressLabel {
+    color: #5b82e8;
+}
+
+.progressCount {
+    font-size: 0.8rem;
+    color: #9fafc4;
+    font-weight: 500;
+}
+
+.progressBarBg {
+    height: 6px;
+    background: #f0f4ff;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.dark .progressBarBg {
+    background: #1a2031;
+}
+
+.progressBarFill {
+    height: 100%;
+    background: #1F3C88;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.dark .progressBarFill {
+    background: #5b82e8;
+}
+
+.progressStepsRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #b0bdd0;
+}
+
+.stepActive {
+    color: #1a2340;
+}
+
+.dark .stepActive {
+    color: #e8edf8;
+}
+
+/* ── Wizard Content ── */
+.stepContent {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: slideIn 0.3s ease;
+}
+
+/* ── Dummy UI ── */
+.dummyPlaceholder {
+    background: #ffffff;
+    border: 1.5px dashed #cdd6e8;
+    border-radius: 16px;
+    padding: 40px 24px;
+    text-align: center;
+    color: #5a6e8a;
+}
+
+.dark .dummyPlaceholder {
+    background: #161b27;
+    border-color: #2d3a53;
+    color: #8da0ba;
+}
+
+.dummyIcon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.dummyPlaceholder h3 {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+    color: #1a2340;
+}
+
+.dark .dummyPlaceholder h3 {
+    color: #e8edf8;
+}
+
+.dummyPlaceholder p {
+    margin: 0 0 20px;
+    font-size: 0.9rem;
+}
+
+.secondaryBtn {
+    padding: 10px 20px;
+    border: 1.5px solid #dde3ef;
+    border-radius: 8px;
+    background: transparent;
+    color: #1a2340;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.secondaryBtn:hover {
+    border-color: #1F3C88;
+    color: #1F3C88;
+}
+
+.dark .secondaryBtn {
+    border-color: #2d3a53;
+    color: #e8edf8;
+}
+
+.dark .secondaryBtn:hover {
+    border-color: #5b82e8;
+    color: #5b82e8;
+}
+
+/* ── Verify Step ── */
+.verifyCard {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dark .verifyCard {
+    background: #161b27;
+}
+
+.verifyRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #5a6e8a;
+}
+
+.dark .verifyRow {
+    color: #9fafc4;
+}
+
+.verifyRow strong {
+    color: #1a2340;
+    font-weight: 600;
+}
+
+.dark .verifyRow strong {
+    color: #e8edf8;
+}
+
+.verifySection {
+    margin-top: 8px;
+}
+
+.verifySecTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: #1a2340;
+    margin: 0 0 12px 4px;
+}
+
+.dark .verifySecTitle {
+    color: #e8edf8;
+}
+
+.secTitleIcon {
+    background: #f0f4ff;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    font-size: 0.9rem;
+}
+
+.dark .secTitleIcon {
+    background: #202b42;
+}
+
+.previewCard {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.dark .previewCard {
+    background: #161b27;
+}
+
+.previewTeamImg {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.previewTeamInfo {
+    flex: 1;
+}
+
+.previewTeamName {
+    font-weight: 700;
+    color: #1a2340;
+    font-size: 0.95rem;
+}
+
+.dark .previewTeamName {
+    color: #e8edf8;
+}
+
+.previewTeamTag {
+    font-size: 0.75rem;
+    color: #9fafc4;
+    text-transform: uppercase;
+}
+
+.previewBadgeBlue {
+    background: #f0f4ff;
+    color: #1F3C88;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.dark .previewBadgeBlue {
+    background: rgba(91, 130, 232, 0.15);
+    color: #7ba4f5;
+}
+
+.previewPlayerAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e8edf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.dark .previewPlayerAvatar {
+    background: #1e2636;
+}
+
+.previewPlayerInfo {
+    flex: 1;
+}
+
+.previewPlayerName {
+    font-weight: 600;
+    color: #1a2340;
+    font-size: 0.9rem;
+}
+
+.dark .previewPlayerName {
+    color: #e8edf8;
+}
+
+.previewBadgeOrange {
+    background: #fff4e6;
+    color: #d97706;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.dark .previewBadgeOrange {
+    background: rgba(217, 119, 6, 0.15);
+    color: #fbbf24;
+}
+
+.previewPrice {
+    font-weight: 700;
+    color: #1a2340;
+    font-size: 0.9rem;
+}
+
+.dark .previewPrice {
+    color: #e8edf8;
+}
+
+/* ── Sticky Footer ── */
+.stickyFooter {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid #e8edf8;
+    padding: 16px 24px;
+    z-index: 100;
+}
+
+.dark .stickyFooter {
+    background: #0f131c;
+    border-top-color: #1e2636;
+}
+
+.footerInner {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.footerBackBtn {
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: #5a6e8a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.dark .footerBackBtn {
+    color: #9fafc4;
+}
+
+.footerNextBtn {
+    flex: 1;
+    max-width: 300px;
+    margin-left: auto;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    background: #1F3C88;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.footerNextBtn:hover {
+    background: #162f6b;
+}
+
+.footerSubmitCol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.footerSubmitBtn {
+    width: 100%;
+    max-width: 400px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    background: #1a2340;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(26, 35, 64, 0.3);
+}
+
+.dark .footerSubmitBtn {
+    background: #e8edf8;
+    color: #0f131c;
+    box-shadow: 0 4px 12px rgba(232, 237, 248, 0.1);
+}
+
+.footerTextBack {
+    background: none;
+    border: none;
+    color: #5a6e8a;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.dark .footerTextBack {
+    color: #9fafc4;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
     .grid3 {
@@ -797,5 +1262,26 @@
 
     .section {
         padding: 16px;
+    }
+
+    .footerInner {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+    
+    .footerNextBtn, .footerBackBtn {
+        width: 100%;
+        max-width: none;
+        text-align: center;
+    }
+
+    .previewCard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .previewBadgeBlue, .previewBadgeOrange, .previewPrice {
+        align-self: flex-start;
     }
 }

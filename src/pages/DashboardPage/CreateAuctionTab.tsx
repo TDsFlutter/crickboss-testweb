@@ -52,6 +52,7 @@ export default function CreateAuctionTab() {
     const [remoteBidding, setRemoteBidding] = useState(false);
     const [errors, setErrors] = useState<FormErrors>({});
     const [submitted, setSubmitted] = useState(false);
+    const [activeStep, setActiveStep] = useState(1);
     const slabId = useRef(1);
 
     const field = (k: keyof typeof form, v: string) => {
@@ -94,11 +95,26 @@ export default function CreateAuctionTab() {
         return Object.keys(e).length === 0;
     };
 
+    const handleNext = () => {
+        if (activeStep === 1) {
+            if (!validate()) return;
+        }
+        setActiveStep(prev => Math.min(prev + 1, 4));
+        window.scrollTo(0, 0);
+    };
+
+    const handleBack = () => {
+        setActiveStep(prev => Math.max(prev - 1, 1));
+        window.scrollTo(0, 0);
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!validate()) return;
         setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 4000);
+        setTimeout(() => {
+            setSubmitted(false);
+            // reset or navigate
+        }, 4000);
     };
 
     return (
@@ -112,7 +128,41 @@ export default function CreateAuctionTab() {
 
             <form className={`${styles.wrap} ${d}`} onSubmit={handleSubmit} noValidate>
 
-                {/* ── BANNER — no section card, full-width 16:9 zone ── */}
+                {/* ── WIZARD PROGRESS ── */}
+                <div className={styles.wizardHeader}>
+                    {activeStep === 4 && (
+                        <div className={styles.wizardTopBar}>
+                            <button type="button" className={styles.backCaret} onClick={handleBack}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
+                            </button>
+                            <h1 className={styles.wizardTitle}>Create Auction</h1>
+                        </div>
+                    )}
+                    
+                    <div className={styles.progressCard}>
+                        <div className={styles.progressTop}>
+                            <div className={styles.progressLabel}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                                {activeStep === 1 ? 'Details' : activeStep === 2 ? 'Teams' : activeStep === 3 ? 'Players' : 'Verify'}
+                            </div>
+                            <div className={styles.progressCount}>Step {activeStep} of 4</div>
+                        </div>
+                        <div className={styles.progressBarBg}>
+                            <div className={styles.progressBarFill} style={{ width: `${(activeStep / 4) * 100}%` }} />
+                        </div>
+                        <div className={styles.progressStepsRow}>
+                            <span className={activeStep >= 1 ? styles.stepActive : ''}>Details</span>
+                            <span className={activeStep >= 2 ? styles.stepActive : ''}>Teams</span>
+                            <span className={activeStep >= 3 ? styles.stepActive : ''}>Players</span>
+                            <span className={activeStep >= 4 ? styles.stepActive : ''}>Verify</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── STEP 1: DETAILS ── */}
+                {activeStep === 1 && (
+                    <div className={styles.stepContent}>
+                        {/* ── BANNER — no section card, full-width 16:9 zone ── */}
                 <div
                     className={`${styles.bannerZone} ${d} ${isDraggingBanner ? styles.bannerZoneDrag : ''}`}
                     onClick={banner.openPicker}
@@ -223,21 +273,21 @@ export default function CreateAuctionTab() {
                     </div>
                 </div>
 
-                {/* ── 02. Auction Settings ───────────────────────── */}
-                <div className={`${styles.section} ${d}`}>
-                    <div className={styles.sectionHead}>
-                        <span className={styles.sectionBadge}>02</span>
-                        <div>
-                            <h2 className={`${styles.sectionTitle} ${d}`}>Auction Settings</h2>
-                            <p className={styles.sectionDesc}>Configure purse, bids, and player limits</p>
-                        </div>
-                    </div>
-                    <div className={styles.grid4}>
-                        {[
-                            { key: 'pointsPerTeam', label: 'Team Purse Value', ph: '100' },
-                            { key: 'baseValue', label: 'Player Base Price', ph: '100' },
-                            { key: 'bidIncrement', label: 'Bid Increment (₹)', ph: '50' },
-                            { key: 'playersPerTeam', label: 'Players per Team', ph: '11' },
+                        {/* ── 02. Auction Settings ───────────────────────── */}
+                        <div className={`${styles.section} ${d}`}>
+                            <div className={styles.sectionHead}>
+                                <span className={styles.sectionBadge}>02</span>
+                                <div>
+                                    <h2 className={`${styles.sectionTitle} ${d}`}>Auction Settings</h2>
+                                    <p className={styles.sectionDesc}>Configure allocations, points, and player limits</p>
+                                </div>
+                            </div>
+                            <div className={styles.grid4}>
+                                {[
+                                    { key: 'pointsPerTeam', label: 'Points/Team', ph: '94994' },
+                                    { key: 'baseValue', label: 'Player Base Value', ph: '49944' },
+                                    { key: 'bidIncrement', label: 'Increment Value', ph: '4664' },
+                                    { key: 'playersPerTeam', label: 'Players per Team', ph: '11' },
                         ].map(f => (
                             <div key={f.key} className={styles.fieldGroup}>
                                 <label className={`${styles.label} ${d}`}>{f.label} <span className={styles.req}>*</span></label>
@@ -252,7 +302,7 @@ export default function CreateAuctionTab() {
                         ))}
                     </div>
                     <p className={styles.settingsNote}>
-                        💡 Base price and bid increment can be changed per-category or per-player after creating.
+                        💡 Base value and increment can be changed per-category or per-player later.
                     </p>
                 </div>
 
@@ -313,19 +363,102 @@ export default function CreateAuctionTab() {
                         </label>
                     </div>
                 </div>
+                    </div>
+                )}
+
+                {/* ── STEP 2: TEAMS (Dummy UI) ── */}
+                {activeStep === 2 && (
+                    <div className={styles.stepContent}>
+                        <div className={styles.dummyPlaceholder}>
+                            <div className={styles.dummyIcon}>🛡️</div>
+                            <h3>Add Teams</h3>
+                            <p>Upload your team logos, names, and allocate points here.</p>
+                            <button type="button" className={styles.secondaryBtn}>+ Add Team Manually</button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── STEP 3: PLAYERS (Dummy UI) ── */}
+                {activeStep === 3 && (
+                    <div className={styles.stepContent}>
+                        <div className={styles.dummyPlaceholder}>
+                            <div className={styles.dummyIcon}>👥</div>
+                            <h3>Add Players</h3>
+                            <p>Upload player data, photos, and set their base values.</p>
+                            <button type="button" className={styles.secondaryBtn}>Upload CSV</button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── STEP 4: VERIFY ── */}
+                {activeStep === 4 && (
+                    <div className={styles.stepContent}>
+                        <div className={styles.verifyCard}>
+                            <div className={styles.verifyRow}><span>Play Type:</span><strong>{form.sport}</strong></div>
+                            <div className={styles.verifyRow}><span>Points/Team:</span><strong>{form.pointsPerTeam || '94994'}</strong></div>
+                            <div className={styles.verifyRow}><span>Base Value / Increment:</span><strong>{form.baseValue || '49944'} / {form.bidIncrement || '4664'}</strong></div>
+                            <div className={styles.verifyRow}><span>Players/Team:</span><strong>{form.playersPerTeam || '96494'}</strong></div>
+                            <div className={styles.verifyRow}><span>Visibility:</span><strong>Private</strong></div>
+                        </div>
+
+                        <div className={styles.verifySection}>
+                            <h3 className={styles.verifySecTitle}>
+                                <div className={styles.secTitleIcon}>👥</div> Teams (1)
+                            </h3>
+                            <div className={styles.previewCard}>
+                                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150" alt="Team" className={styles.previewTeamImg} />
+                                <div className={styles.previewTeamInfo}>
+                                    <div className={styles.previewTeamName}>Bsbs</div>
+                                    <div className={styles.previewTeamTag}>SHEH</div>
+                                </div>
+                                <div className={styles.previewBadgeBlue}>0 players</div>
+                            </div>
+                        </div>
+
+                        <div className={styles.verifySection}>
+                            <h3 className={styles.verifySecTitle}>
+                                <div className={styles.secTitleIcon}>👤</div> Players (1)
+                            </h3>
+                            <div className={styles.previewCard}>
+                                <div className={styles.previewPlayerAvatar}>🏏</div>
+                                <div className={styles.previewPlayerInfo}>
+                                    <div className={styles.previewPlayerName}>Ejjshss</div>
+                                </div>
+                                <div className={styles.previewBadgeOrange}>All-Rounder</div>
+                                <div className={styles.previewPrice}>100</div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {submitted && (
                     <div className={styles.successToast}>✅ Auction created successfully! (Demo mode)</div>
                 )}
 
-                <div className={styles.submitRow}>
-                    <button type="submit" className={styles.submitBtn}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34" /><polygon points="18 2 22 6 12 16 8 16 8 12 18 2" />
-                        </svg>
-                        Create Auction
-                    </button>
-                    <p className={styles.submitNote}>You can edit all details after creating.</p>
+                <div className={styles.stickyFooter}>
+                    <div className={styles.footerInner}>
+                        {activeStep > 1 && activeStep < 4 && (
+                            <button type="button" className={styles.footerBackBtn} onClick={handleBack}>Back</button>
+                        )}
+                        {activeStep < 4 ? (
+                            <button type="button" className={styles.footerNextBtn} onClick={handleNext}>
+                                Next Step
+                            </button>
+                        ) : (
+                            <div className={styles.footerSubmitCol}>
+                                <button type="submit" className={styles.footerSubmitBtn}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34" /><polygon points="18 2 22 6 12 16 8 16 8 12 18 2" />
+                                    </svg>
+                                    Create Auction
+                                </button>
+                                <button type="button" className={styles.footerTextBack} onClick={handleBack}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+                                    Back to Players
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </form>
         </>

@@ -1,1356 +1,562 @@
-/* ── ManageAuctionTab ─────────────────────────────────────── */
-
+/* ── Base Wrapper ── */
 .wrap {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding-bottom: 40px;
-    animation: fadeIn 0.4s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ── Hero / Header ── */
-.hero {
+    min-height: 100%;
     position: relative;
-    width: 100%;
-    height: 180px;
-    /* Fixed height for banner */
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding-bottom: 80px; /* Space for sticky footer */
+    background: #f8fafc;
 }
 
-.heroBack {
-    position: absolute;
-    top: 15px;
-    left: 15px;
+.wrap.dark {
+    background: #0f131c;
+}
+
+/* ── App Header ── */
+.appHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #e8edf8;
+    position: sticky;
+    top: 0;
     z-index: 10;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.9);
+}
+
+.dark .appHeader {
+    background: #161b27;
+    border-bottom-color: #1e2636;
+}
+
+.iconBtn {
+    background: transparent;
     border: none;
     color: #1a2340;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
 }
 
-.heroBack:hover {
-    transform: translateX(-2px);
-    background: #fff;
+.iconBtn:hover {
+    background: #f0f4ff;
 }
 
-.heroBg {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-}
-
-.heroImg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
-/* Subtle overlay only at top/bottom for rounded corners effect */
-.heroOverlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.1) 100%);
-    z-index: 2;
-}
-
-.codeBadgeHero {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    z-index: 10;
-    padding: 6px 14px;
-    border-radius: 20px;
-    background: #fff;
-    color: #1F3C88;
-    font-size: 0.8rem;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    cursor: copy;
-}
-
-/* ── Info Card ── */
-.infoCard {
-    background: #fff;
-    border-radius: 24px;
-    padding: 24px;
-    border: 1.5px solid #e8edf8;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.dark .infoCard {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.infoTop {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    /* Logo on left, Name on right */
-    gap: 20px;
-    align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1.5px solid #f0f4ff;
-}
-
-.dark .infoTop {
-    border-color: #2d3a53;
-}
-
-.infoMain {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.infoAuctionTitle {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #1a2340;
-}
-
-.dark .infoAuctionTitle {
-    color: #fff;
-}
-
-.logoBox {
-    width: 80px;
-    height: 80px;
-    background: #f8faff;
-    border: 2px dashed #cce3ff;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #1F3C88;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.dark .logoBox {
-    background: rgba(31, 60, 136, 0.1);
-    border-color: #2d3a53;
-    color: #5b82e8;
-}
-
-.logoBox:hover {
-    border-color: #1F3C88;
-    background: #fff;
-}
-
-.logoTxt {
-    font-size: 2rem;
-}
-
-.logoLabel {
-    font-size: 0.65rem;
-    font-weight: 700;
-    margin-top: 4px;
-}
-
-.infoGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.fLabel {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #9fafc4;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.fVal {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1a2340;
-}
-
-.dark .fVal {
+.dark .iconBtn {
     color: #e8edf8;
 }
 
-.statusBadge {
-    display: inline-flex;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
+.dark .iconBtn:hover {
+    background: #202b42;
 }
 
-.draftBadge {
-    background: #f3f4f6;
-    color: #4b5563;
+.appTitle {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a2340;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 12px;
 }
 
-.liveBadge {
-    background: #fee2e2;
-    color: #dc2626;
-    animation: pulse 2s infinite;
+.dark .appTitle {
+    color: #e8edf8;
 }
 
-@keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.7;
-    }
-
-    100% {
-        opacity: 1;
-    }
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 /* ── Tabs Navigation ── */
-.tabsNav {
-    display: flex;
-    gap: 8px;
-    padding: 5px;
-    background: #f0f4ff;
-    border-radius: 14px;
-    margin-bottom: 10px;
-    overflow-x: auto;
-    scrollbar-width: none;
+.tabsNavWrapper {
+    background: #ffffff;
+    border-bottom: 1px solid #e8edf8;
 }
 
-.dark .tabsNav {
-    background: #1a2031;
+.dark .tabsNavWrapper {
+    background: #161b27;
+    border-bottom-color: #1e2636;
+}
+
+.tabsNavScroll {
+    display: flex;
+    overflow-x: auto;
+    padding: 12px 20px;
+    gap: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.tabsNavScroll::-webkit-scrollbar {
+    display: none;
 }
 
 .tabBtn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #dde3ef;
     background: transparent;
     color: #5a6e8a;
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s;
 }
 
-.tabBtn:hover {
-    color: #1F3C88;
+.dark .tabBtn {
+    border-color: #2d3a53;
+    color: #9fafc4;
 }
 
-.dark .tabBtn:hover {
-    color: #5b82e8;
-}
-
-.activeTab {
-    background: #fff;
-    color: #1F3C88;
-    box-shadow: 0 4px 12px rgba(31, 60, 136, 0.1);
-}
-
-.dark .activeTab {
+.tabBtn.activeTab {
     background: #1F3C88;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    border-color: #1F3C88;
 }
 
-/* ── Stats Cards ── */
-.statsGrid {
+.dark .tabBtn.activeTab {
+    background: #5b82e8;
+    color: #ffffff;
+    border-color: #5b82e8;
+}
+
+/* ── Tab Content Area ── */
+.tabContentArea {
+    padding: 20px;
+    flex: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ── Details Tab ── */
+.statusCardsRow {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-.statCard {
-    padding: 24px;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #fff;
-    transition: transform 0.2s;
-}
-
-.statCard:hover {
-    transform: translateY(-3px);
-}
-
-.statBlue {
-    background: linear-gradient(135deg, #4A90E2, #1F3C88);
-}
-
-.statGreen {
-    background: linear-gradient(135deg, #48c774, #1b8a4f);
-}
-
-.statGray {
-    background: linear-gradient(135deg, #a0aec0, #4a5568);
-}
-
-.statIcon {
-    margin-bottom: 8px;
-    opacity: 0.9;
-}
-
-.statValue {
-    font-size: 1.75rem;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 4px;
-}
-
-.statLabel {
-    font-size: 0.85rem;
-    font-weight: 600;
-    opacity: 0.8;
-}
-
-/* ── QR Code Card ── */
-.qrCard {
-    background: linear-gradient(135deg, #1F3C88 0%, #2a52b8 100%);
-    border-radius: 24px;
-    padding: 30px;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.qrBgShape {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    top: -50px;
-    right: -50px;
-}
-
-.qrBgShape2 {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    bottom: -30px;
-    left: -30px;
-}
-
-.qrHeader {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    gap: 12px;
     margin-bottom: 24px;
 }
 
-.qrTitleBox {
+.statusCard {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.dark .statusCard {
+    background: #161b27;
+}
+
+.scIcon {
+    font-size: 1.5rem;
+}
+
+.scVal {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a2340;
+}
+
+.dark .scVal {
+    color: #e8edf8;
+}
+
+.scLabel {
+    font-size: 0.8rem;
+    color: #5a6e8a;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.dark .scLabel {
+    color: #9fafc4;
+}
+
+.cardPlayers.statusCard { border-top: 4px solid #5b82e8; }
+.cardTeams.statusCard { border-top: 4px solid #3dbe8b; }
+.cardDraft.statusCard { border-top: 4px solid #9fafc4; }
+
+/* ── QR Hero Card ── */
+.qrHeroCard {
+    background: #1F3C88;
+    border-radius: 20px;
+    color: white;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(31, 60, 136, 0.2);
+}
+
+.dark .qrHeroCard {
+    background: #1e2636;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.qrHeroTop {
+    display: flex;
+    width: 100%;
     align-items: center;
     gap: 12px;
 }
 
-.qrIconBox {
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+.qrHeroIconBox {
+    background: rgba(255,255,255,0.15);
+    padding: 10px;
+    border-radius: 12px;
     display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.qrLabel {
+.qrHeroTexts {
+    flex: 1;
+}
+
+.qrHeroTitle {
     font-size: 1.1rem;
     font-weight: 700;
-    margin-bottom: 2px;
 }
 
-.qrSub {
+.qrHeroSub {
     font-size: 0.8rem;
-    opacity: 0.7;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
 }
 
-.copyBtn {
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.2);
+.qrCopyBtn {
+    background: rgba(255,255,255,0.15);
     border: none;
-    border-radius: 10px;
-    color: #fff;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     transition: background 0.2s;
 }
 
-.copyBtn:hover {
-    background: rgba(255, 255, 255, 0.3);
+.qrCopyBtn:hover {
+    background: rgba(255,255,255,0.25);
 }
 
-.qrContainer {
-    background: #fff;
+.qrHeroCenter {
     padding: 16px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.qrImg {
-    width: 180px;
-    height: 180px;
-}
-
-.codeBox {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 30px;
-    padding: 8px 24px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.codeHash {
-    opacity: 0.5;
-    font-size: 0.9rem;
-}
-
-/* ── Start Auction Button ── */
-.startBtn {
+    background: rgba(255,255,255,0.05);
+    border-radius: 24px;
     width: 100%;
-    height: 56px;
-    background: linear-gradient(135deg, #1F3C88, #2a52b8);
-    border: none;
+    display: flex;
+    justify-content: center;
+}
+
+.qrWhiteBlock {
+    background: white;
+    padding: 16px;
     border-radius: 16px;
-    color: #fff;
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.qrImgMain {
+    display: block;
+    width: 200px;
+    height: 200px;
+}
+
+.qrCenterLogo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 6px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.qrHeroBottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.qrCodePill {
+    background: rgba(255,255,255,0.15);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-family: monospace;
     font-size: 1.1rem;
     font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.qrHeroEventName {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+}
+
+/* ── Sticky Action Footer ── */
+.stickyActionFooter {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid #e8edf8;
+    padding: 16px 20px;
+    z-index: 10;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
+}
+
+.dark .stickyActionFooter {
+    background: #0f131c;
+    border-top-color: #1e2636;
+}
+
+.footerInnerMax {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.mainActionBtn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: #3dbe8b; /* Or brand primary */
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    cursor: pointer;
-    box-shadow: 0 8px 25px rgba(31, 60, 136, 0.3);
-    transition: all 0.2s;
-    margin-top: 10px;
+    transition: transform 0.2s, background 0.2s;
 }
 
-.startBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(31, 60, 136, 0.4);
+.mainActionBtn:hover {
+    background: #32a175;
 }
 
-.startBtn:active {
-    transform: none;
+.mainActionBtn:active {
+    transform: scale(0.98);
 }
 
-/* ── Players Tab ── */
+/* ── Generic Players / Teams tabs ── */
 .playerStatsRow {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
     gap: 12px;
     margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
 }
 
 .pStat {
-    padding: 12px;
-    border-radius: 12px;
-    background: #fff;
-    border: 1.5px solid #e8edf8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: all 0.2s;
-}
-
-.dark .pStat {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.pStatVal {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #1F3C88;
-}
-
-.dark .pStatVal {
-    color: #5b82e8;
-}
-
-.pStatLabel {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #9fafc4;
-}
-
-.pAvailable .pStatVal {
-    color: #48c774;
-}
-
-.pSold .pStatVal {
-    color: #4A90E2;
-}
-
-.pUnsold .pStatVal {
-    color: #e84040;
-}
-
-.playerGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.playerCard {
-    background: #fff;
-    border: 1.5px solid #e8edf8;
-    border-radius: 16px;
-    padding: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-}
-
-.dark .playerCard {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.playerCard::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: transparent;
-}
-
-.pAvailableCard::before {
-    background: #48c774;
-}
-
-.pSoldCard::before {
-    background: #4A90E2;
-}
-
-.pUnsoldCard::before {
-    background: #e84040;
-}
-
-.pLeft {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.pAvatar {
-    width: 54px;
-    height: 54px;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-    background: #f0f4ff;
-}
-
-.pImg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.roleIcon {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 18px;
-    height: 18px;
-    background: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.pName {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1a2340;
-    margin-bottom: 2px;
-}
-
-.dark .pName {
-    color: #e8edf8;
-}
-
-.roleBadge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.bowler {
-    background: #fee2e2;
-    color: #dc2626;
-}
-
-.batsman {
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-.allRounder {
-    background: #fef9c3;
-    color: #ca8a04;
-}
-
-.wk {
-    background: #e0f2fe;
-    color: #0284c7;
-}
-
-.pStatusChip {
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-}
-
-.chipAvailable {
-    background: rgba(72, 199, 116, 0.1);
-    color: #48c774;
-}
-
-.chipSold {
-    background: rgba(74, 144, 226, 0.1);
-    color: #4A90E2;
-}
-
-.chipUnsold {
-    background: rgba(232, 64, 64, 0.1);
-    color: #e84040;
-}
-
-/* FAB / Add Button */
-.fab {
-    position: fixed;
-    bottom: 100px;
-    right: 30px;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: #1F3C88;
-    color: #fff;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(31, 60, 136, 0.3);
-    cursor: pointer;
-    z-index: 10;
-}
-
-/* ── Teams Tab ── */
-.teamGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-}
-
-.teamCard {
-    background: #fff;
-    border-radius: 20px;
-    overflow: hidden;
-    border: 1.5px solid #e8edf8;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-}
-
-.dark .teamCard {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.teamHeader {
-    padding: 16px 20px;
-    background: linear-gradient(135deg, #1F3C88 0%, #2a52b8 100%);
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.teamInfoLeft {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.teamFlag {
-    width: 60px;
-    height: 44px;
-    border-radius: 8px;
-    object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.teamName {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-
-.teamTag {
-    font-size: 0.75rem;
-    opacity: 0.8;
-    font-weight: 600;
-}
-
-.teamPlayerCount {
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px 14px;
-    border-radius: 12px;
-    text-align: center;
-    min-width: 60px;
-}
-
-.tpCountVal {
-    font-size: 1.1rem;
-    font-weight: 800;
-    line-height: 1;
-}
-
-.tpCountLabel {
-    font-size: 0.65rem;
-    font-weight: 600;
-    opacity: 0.8;
-    margin-top: 2px;
-}
-
-.teamBody {
-    padding: 16px 20px;
-}
-
-.budgetBarHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.budgetLabelBox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #5a6e8a;
-}
-
-.dark .budgetLabelBox {
-    color: #9fafc4;
-}
-
-.budgetIcon {
-    color: #48c774;
-}
-
-.healthBox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.healthBadge {
-    padding: 2px 10px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-.budgetValue {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #1a2340;
-}
-
-.dark .budgetValue {
-    color: #e8edf8;
-}
-
-.progressTrack {
-    height: 10px;
-    background: #f0f4ff;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-}
-
-.dark .progressTrack {
-    background: #2d3a53;
-}
-
-.progressFill {
-    height: 100%;
-    background: linear-gradient(to right, #48c774, #36a35b);
-    border-radius: 10px;
-    width: 0%;
-    transition: width 1s cubic-bezier(0.1, 0.5, 0.5, 1);
-}
-
-/* ── Category Tab ── */
-.categoryTab {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.reorderHint {
+    background: white;
     padding: 12px 16px;
     border-radius: 12px;
-    background: #f0f7ff;
-    border: 1px solid #cce3ff;
-    color: #1F3C88;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.dark .reorderHint {
-    background: rgba(31, 60, 136, 0.2);
-    border-color: rgba(31, 60, 136, 0.4);
-    color: #5b82e8;
-}
-
-.roundCard {
-    background: #fff;
-    border-radius: 20px;
-    overflow: hidden;
-    border: 1.5px solid #e8edf8;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-}
-
-.dark .roundCard {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.roundHeader {
-    padding: 16px 20px;
-    background: linear-gradient(135deg, #1F3C88 0%, #2a52b8 100%);
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.roundLabelBox {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.roundBadge {
-    width: 48px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    min-width: 90px;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #e8edf8;
 }
+.dark .pStat { background: #161b27; border-color: #1e2636; }
 
-.rLabel {
-    font-size: 0.5rem;
-    font-weight: 700;
-    opacity: 0.8;
-    margin-bottom: 2px;
-}
+.pStatVal { font-size: 1.2rem; font-weight: 700; color: #1a2340; }
+.dark .pStatVal { color: #e8edf8; }
+.pStatLabel { font-size: 0.75rem; color: #5a6e8a; }
 
-.rNum {
-    font-size: 1.1rem;
-    font-weight: 800;
-    line-height: 1;
-}
-
-.roundTitle {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-
-.roundSub {
-    font-size: 0.75rem;
-    opacity: 0.7;
-    font-weight: 600;
-}
-
-.dragHandle {
-    opacity: 0.6;
-    cursor: grab;
-}
-
-.roundStatsRow {
-    padding: 20px;
+.playerGrid, .teamGrid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 12px;
 }
 
-.rStat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.rStatIcon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-}
-
-.rStatBlue {
-    background: #e0f2fe;
-    color: #0284c7;
-}
-
-.rStatGreen {
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-.rStatPurple {
-    background: #f3e8ff;
-    color: #9333ea;
-}
-
-.rStatVal {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #1a2340;
-    margin-bottom: 2px;
-}
-
-.dark .rStatVal {
-    color: #e8edf8;
-}
-
-.rStatLabel {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: #9fafc4;
-}
-
-/* ── Bid Slab Tab ── */
-.slabTab {
-    background: #fff;
-    border-radius: 20px;
-    border: 1.5px solid #e8edf8;
-    overflow: hidden;
-}
-
-.dark .slabTab {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.slabTable {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.slabTable th {
+.playerCard, .teamCard, .roundCard, .mvpCard {
+    background: white;
+    border-radius: 16px;
     padding: 16px;
-    text-align: left;
-    background: #f8faff;
-    color: #5a6e8a;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    border-bottom: 1.5px solid #e8edf8;
+    border: 1px solid #e8edf8;
 }
 
-.dark .slabTable th {
-    background: #1F3C88;
-    color: #fff;
-    border-color: #2d3a53;
+.dark .playerCard, .dark .teamCard, .dark .roundCard, .dark .mvpCard {
+    background: #161b27;
+    border-color: #1e2636;
 }
 
-.slabTable td {
-    padding: 16px;
-    border-bottom: 1.5px solid #e8edf8;
-    font-size: 0.9rem;
-    color: #1a2340;
-}
+.pLeft { display: flex; align-items: center; gap: 12px; }
+.pAvatar .pImg { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+.pName { font-weight: 600; color: #1a2340; margin-bottom: 4px; }
+.dark .pName { color: #e8edf8; }
+.roleBadge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; display: inline-block; font-weight: 600; text-transform: uppercase;}
+.roleBadge.bowler { background: #fff4e6; color: #d97706; }
+.roleBadge.allRounder { background: #f0f4ff; color: #1F3C88; }
+.pStatusChip { font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; }
+.chipAvailable { background: #e6f6ee; color: #3dbe8b; }
+.dark .chipAvailable { background: rgba(61, 190, 139, 0.15); }
 
-.dark .slabTable td {
-    border-color: #2d3a53;
-    color: #e8edf8;
-}
-
-.tierLabel {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 800;
-}
-
-.tierBase {
-    background: #f3f4f6;
-    color: #4b5563;
-}
-
-.tierMid {
-    background: #e0f2fe;
-    color: #0284c7;
-}
-
-.tierHigh {
-    background: #fef9c3;
-    color: #ca8a04;
-}
-
-.tierPremium {
-    background: #f3e8ff;
-    color: #9333ea;
-}
-
-/* ── MVP Tab ── */
-.mvpTab {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.mvpCard {
-    background: linear-gradient(135deg, #1F3C88 0%, #2a52b8 100%);
-    border-radius: 24px;
-    padding: 30px;
-    color: #fff;
-    text-align: center;
-    position: relative;
-}
-
-.crownBox {
+.fab {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
     width: 60px;
     height: 60px;
-    background: rgba(255, 255, 255, 0.15);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 16px;
-    font-size: 1.5rem;
-}
-
-.mvpTitle {
-    font-size: 1.25rem;
-    font-weight: 800;
-    margin-bottom: 20px;
-}
-
-.subStatsRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-.subCard {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-    padding: 16px;
-}
-
-.subLabel {
-    font-size: 0.75rem;
-    font-weight: 600;
-    opacity: 0.7;
-    margin-bottom: 4px;
-}
-
-.subVal {
-    font-size: 1.1rem;
-    font-weight: 800;
-}
-
-.heroBack {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-}
-
-.heroBack:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-/* ── Sponsors Tab ── */
-.sponsorsTab {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.sponsorTier {
-    background: #fff;
-    border-radius: 20px;
-    padding: 20px;
-    border: 1.5px solid #e8edf8;
-}
-
-.dark .sponsorTier {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.tierTitle {
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: #5a6e8a;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.dark .tierTitle {
-    color: #9fafc4;
-}
-
-.tierTitle::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e8edf8;
-}
-
-.dark .tierTitle::after {
-    background: #2d3a53;
-}
-
-.sponsorGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 16px;
-}
-
-.sponsorBox {
-    aspect-ratio: 1;
-    background: #f8faff;
-    border: 1px dashed #cce3ff;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #1F3C88;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.dark .sponsorBox {
-    background: rgba(31, 60, 136, 0.1);
-    border-color: #2d3a53;
-    color: #5b82e8;
-}
-
-.sponsorBox:hover {
-    background: #fff;
-    border-style: solid;
-    box-shadow: 0 4px 12px rgba(31, 60, 136, 0.1);
-}
-
-.dark .sponsorBox:hover {
     background: #1F3C88;
-    color: #fff;
-}
-
-.sIcon {
-    font-size: 1.5rem;
-    margin-bottom: 8px;
-}
-
-.sLabel {
-    font-size: 0.75rem;
-    font-weight: 700;
-    opacity: 0.7;
-}
-
-/* ── Links Tab ── */
-.linksTab {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.linkGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.linkCard {
-    background: #fff;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1.5px solid #e8edf8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    color: white;
+    font-size: 2rem;
+    border: none;
+    box-shadow: 0 4px 16px rgba(31, 60, 136, 0.3);
     cursor: pointer;
-    transition: all 0.2s;
-}
-
-.dark .linkCard {
-    background: #1a2031;
-    border-color: #2d3a53;
-}
-
-.linkCard:hover {
-    transform: translateY(-2px);
-    border-color: #1F3C88;
-    box-shadow: 0 4px 12px rgba(31, 60, 136, 0.1);
-}
-
-.lIcon {
-    width: 40px;
-    height: 40px;
-    background: #f0f4ff;
-    border-radius: 12px;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #1F3C88;
-    margin-bottom: 10px;
 }
 
-.dark .lIcon {
-    background: #2d3a53;
-    color: #5b82e8;
-}
+.dark .fab { background: #5b82e8; }
 
-.lTitle {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #1a2340;
-}
+.teamHeader { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.teamInfoLeft { display: flex; gap: 12px; }
+.teamFlag { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
+.teamName { font-weight: 700; color: #1a2340; }
+.dark .teamName { color: #e8edf8; }
+.teamTag { font-size: 0.8rem; color: #9fafc4; }
+.teamPlayerCount { text-align: right; }
+.tpCountVal { font-size: 1.2rem; font-weight: 800; color: #1F3C88; }
+.dark .tpCountVal { color: #5b82e8; }
+.tpCountLabel { font-size: 0.75rem; color: #5a6e8a; }
 
-.dark .lTitle {
-    color: #e8edf8;
-}
+.budgetBarHeader { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
+.budgetLabelBox { font-weight: 600; color: #1a2340; }
+.dark .budgetLabelBox { color: #e8edf8; }
+.healthBox { display: flex; gap: 8px; align-items: center; }
+.healthBadge { font-size: 0.7rem; color: #3dbe8b; font-weight: 700; background: #e6f6ee; padding: 2px 6px; border-radius: 4px; }
+.budgetValue { font-weight: 600; color: #5a6e8a; }
+.progressTrack { height: 6px; background: #f0f4ff; border-radius: 3px; overflow: hidden; }
+.dark .progressTrack { background: #1a2031; }
+.progressFill { height: 100%; background: #3dbe8b; }
+
+.reorderHint { text-align: center; font-size: 0.8rem; color: #9fafc4; margin-bottom: 12px; }
+.roundHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.roundLabelBox { display: flex; gap: 12px; align-items: center; }
+.roundBadge { background: #f0f4ff; border-radius: 8px; padding: 8px; text-align: center; }
+.dark .roundBadge { background: #202b42; }
+.rLabel { font-size: 0.65rem; font-weight: 800; color: #5b82e8; }
+.rNum { font-size: 1.2rem; font-weight: 800; color: #1F3C88; line-height: 1; margin-top: 2px;}
+.dark .rNum { color: #e8edf8; }
+.roundTitle { font-weight: 700; color: #1a2340; }
+.dark .roundTitle { color: #e8edf8; }
+.roundSub { font-size: 0.8rem; color: #5a6e8a; }
+.dragHandle { color: #cdd6e8; font-weight: 800; font-size: 1.2rem; cursor: grab; }
+
+.roundStatsRow { display: flex; gap: 12px; border-top: 1px solid #e8edf8; padding-top: 12px; }
+.dark .roundStatsRow { border-top-color: #1e2636; }
+.rStat { flex: 1; }
+.rStatVal { font-weight: 700; color: #1a2340; font-size: 0.95rem; }
+.dark .rStatVal { color: #e8edf8; }
+.rStatLabel { font-size: 0.75rem; color: #9fafc4; }
+
+.slabTable { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid #e8edf8; }
+.dark .slabTable { background: #161b27; border-color: #1e2636; }
+.slabTable th { background: #f8fafc; text-align: left; padding: 12px; font-weight: 600; font-size: 0.8rem; color: #5a6e8a; border-bottom: 1px solid #e8edf8; }
+.dark .slabTable th { background: #1e2636; border-bottom-color: #2d3a53; color: #9fafc4; }
+.slabTable td { padding: 12px; font-size: 0.9rem; border-bottom: 1px solid #e8edf8; color: #1a2340; font-weight: 500;}
+.dark .slabTable td { border-bottom-color: #1e2636; color: #e8edf8; }
+.tierLabel { font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
+.tierBase { background: #f0f4ff; color: #1F3C88; }
+.tierPremium { background: #fff4e6; color: #d97706; }
+
+.mvpCard { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+.crownBox { font-size: 3rem; background: #fff4e6; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.dark .crownBox { background: #2d261e; }
+.mvpTitle { font-size: 1.2rem; font-weight: 700; color: #1a2340; }
+.dark .mvpTitle { color: #e8edf8; }
+.subStatsRow { display: flex; gap: 12px; width: 100%; }
+.subCard { flex: 1; background: #f8fafc; padding: 12px; border-radius: 12px; }
+.dark .subCard { background: #1a2031; }
+.subLabel { font-size: 0.75rem; color: #5a6e8a; margin-bottom: 4px; }
+.subVal { font-weight: 700; color: #1a2340; font-size: 1rem; }
+.dark .subVal { color: #e8edf8; }
+
+.sponsorTier { margin-bottom: 24px; }
+.tierTitle { font-weight: 700; color: #1a2340; margin-bottom: 12px; }
+.dark .tierTitle { color: #e8edf8; }
+.sponsorGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.sponsorBox { background: transparent; border: 1.5px dashed #cdd6e8; border-radius: 12px; padding: 24px; text-align: center; color: #9fafc4; font-weight: 600; cursor: pointer; transition: all 0.2s;}
+.sponsorBox:hover { border-color: #1F3C88; color: #1F3C88; background: #f0f4ff;}
+.dark .sponsorBox { border-color: #2d3a53; }
+.dark .sponsorBox:hover { border-color: #5b82e8; color: #5b82e8; background: #202b42;}
+
+.linkGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.linkCard { background: white; border: 1px solid #e8edf8; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.2s;}
+.dark .linkCard { background: #161b27; border-color: #1e2636; }
+.linkCard:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05);}
+.lIcon { font-size: 1.2rem; background: #f0f4ff; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px;}
+.dark .lIcon { background: #202b42; }
+.lTitle { font-weight: 600; color: #1a2340; }
+.dark .lTitle { color: #e8edf8; }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
-    .statsGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .hero {
-        min-height: 200px;
-        padding: 20px;
-    }
-
-    .heroTitle {
-        font-size: 1.4rem;
-    }
-
-    .playerStatsRow {
+@media (min-width: 768px) {
+    .playerGrid, .teamGrid {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    .roundStatsRow {
-        grid-template-columns: 1fr;
+    
+    .statusCardsRow {
         gap: 20px;
     }
 
-    .subStatsRow {
-        grid-template-columns: 1fr;
+    .qrWhiteBlock {
+        padding: 24px;
+        border-radius: 24px;
     }
+    
+    .qrImgMain {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .tabsNavScroll {
+        justify-content: center;
+    }
+}
 
+@media (min-width: 1024px) {
+    .playerGrid, .teamGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .sponsorGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
     .linkGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(4, 1fr);
     }
 }
