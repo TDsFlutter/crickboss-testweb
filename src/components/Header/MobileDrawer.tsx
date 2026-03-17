@@ -14,8 +14,8 @@ export default function MobileDrawer({ open, onClose }: Props) {
     const { isLoggedIn, logout } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         onClose();
         navigate('/login', { replace: true });
     };

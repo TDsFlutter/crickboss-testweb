@@ -17,8 +17,8 @@ export default function Header() {
     const navigate = useNavigate();
     const { pathname } = useLocation();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate('/login', { replace: true });
     };
 

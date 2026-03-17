@@ -156,7 +156,7 @@ export const api = {
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
-    const response = await fetch(`${BASE_URL}/auth/logout`, {
+    const response = await fetch(`${BASE_URL}/logout`, {
       method: 'POST',
       headers,
       credentials: 'include',
