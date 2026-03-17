@@ -24,10 +24,8 @@ export interface APIResponse<T = any> {
 }
 
 const getHeaders = () => {
-  const token = localStorage.getItem('access_token');
   return {
     'Content-Type': 'application/json',
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
   };
 };
 
@@ -190,12 +188,9 @@ export const api = {
   uploadAvatar: async (file: File): Promise<APIResponse<string>> => {
     const formData = new FormData();
     formData.append('file', file);
-    const token = localStorage.getItem('access_token');
     const response = await fetch(`${BASE_URL}/upload/avatar`, {
       method: 'POST',
-      headers: {
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-      },
+      headers: {},
       body: formData,
       credentials: 'include',
     });

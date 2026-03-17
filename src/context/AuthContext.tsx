@@ -42,7 +42,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // (Accessing tokens from JSON is only for secondary/mobile-like use cases).
         setIsLoggedIn(true);
 
-        setIsLoggedIn(true);
         setEmail(userData.email);
         setDisplayName(userData.name || '');
         setUserId(userData.id || '');
@@ -92,8 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const refreshUser = useCallback(async () => {
         // We no longer check for a local token before starting. 
         // The browser will automatically send the HttpOnly cookie if it exists.
-        // However, we still support the Authorization header as a fallback/sync method.
-        const token = localStorage.getItem('access_token');
 
         try {
             let res = await api.getMe();
