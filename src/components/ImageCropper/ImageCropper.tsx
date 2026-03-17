@@ -97,6 +97,8 @@ export default function ImageCropper({
                         Zoom
                     </span>
                     <input
+                        id="zoom-slider"
+                        name="zoom"
                         type="range"
                         min={1}
                         max={3}

@@ -34,6 +34,7 @@ export default function JoinAsPlayerTab() {
                     <div className={styles.codeWrap}>
                         <input
                             id="join-code"
+                            name="joinCode"
                             className={`${styles.codeInput} ${d}`}
                             type="text"
                             placeholder="A84IGE"

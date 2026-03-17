@@ -296,6 +296,7 @@ export default function RegisterPage() {
                             <FormField
                                 label="Full Name"
                                 id="reg-name"
+                                name="name"
                                 type="text"
                                 placeholder="e.g. MS Dhoni"
                                 value={name}
@@ -308,6 +309,7 @@ export default function RegisterPage() {
                             <FormField
                                 label="Email Address"
                                 id="reg-email"
+                                name="email"
                                 type="email"
                                 placeholder="dhoni@example.com"
                                 value={email}
@@ -322,6 +324,7 @@ export default function RegisterPage() {
                                     <FormField
                                         label="Code"
                                         id="reg-code"
+                                        name="countryCode"
                                         type="text"
                                         value={countryCode}
                                         onChange={e => setCountryCode(e.target.value)}
@@ -332,6 +335,7 @@ export default function RegisterPage() {
                                     <FormField
                                         label="Mobile Number"
                                         id="reg-mobile"
+                                        name="mobile"
                                         type="tel"
                                         placeholder="9876543210"
                                         value={mobile}
@@ -346,6 +350,7 @@ export default function RegisterPage() {
                             <FormField
                                 label="City"
                                 id="reg-city"
+                                name="city"
                                 type="text"
                                 placeholder="e.g. Ranchi"
                                 value={city}

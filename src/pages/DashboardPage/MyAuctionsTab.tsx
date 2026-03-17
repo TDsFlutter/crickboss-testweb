@@ -87,7 +87,16 @@ export default function MyAuctionsTab({ onCreateClick, onManageClick }: Props) {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input className={styles.searchInput} type="text" placeholder="Search auctions..." value={query} onChange={e => setQuery(e.target.value)} aria-label="Search auctions" />
+                    <input 
+                        id="search-auctions"
+                        name="search"
+                        className={styles.searchInput} 
+                        type="text" 
+                        placeholder="Search auctions..." 
+                        value={query} 
+                        onChange={e => setQuery(e.target.value)} 
+                        aria-label="Search auctions" 
+                    />
                 </label>
                 <button className={styles.createBtn} onClick={() => onCreateClick('create')}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -122,6 +131,8 @@ export default function MyAuctionsTab({ onCreateClick, onManageClick }: Props) {
 
                                 {/* Hidden file input — triggers cropper */}
                                 <input
+                                    id={`banner-file-input-${a.id}`}
+                                    name="banner"
                                     type="file"
                                     accept="image/*"
                                     ref={el => { fileRefs.current[a.id] = el; }}
