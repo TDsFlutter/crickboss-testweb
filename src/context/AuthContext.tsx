@@ -54,9 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const logout = useCallback(async () => {
-        const token = localStorage.getItem('access_token');
         try {
-            await api.logout(token || undefined);
+            await api.logout();
         } catch {
             // ignore
         }

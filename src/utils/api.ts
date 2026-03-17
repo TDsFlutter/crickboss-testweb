@@ -151,14 +151,10 @@ export const api = {
     return handleResponse(response);
   },
   
-  logout: async (token?: string): Promise<APIResponse> => {
-    const headers = getHeaders();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    const response = await fetch(`${BASE_URL}/logout`, {
+  logout: async (): Promise<APIResponse> => {
+    const response = await fetch(`${BASE_URL}/auth/logout`, {
       method: 'POST',
-      headers,
+      headers: getHeaders(),
       credentials: 'include',
     });
     return handleResponse(response);
