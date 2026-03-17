@@ -41,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // The backend now handles this via HttpOnly cookies.
         // (Accessing tokens from JSON is only for secondary/mobile-like use cases).
         setIsLoggedIn(true);
+        localStorage.setItem('cb_has_session', 'true');
 
         setEmail(userData.email);
         setDisplayName(userData.name || '');
@@ -59,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        localStorage.setItem('cb_has_session', 'false');
         setIsLoggedIn(false);
         setEmail('');
         setDisplayName('');
@@ -89,6 +91,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const refreshUser = useCallback(async () => {
+        // If we have no hint that the user was logged in, don't even try to call the server.
+        // This stops the automatic 401 error in console for guest users.
+        const sessionHint = localStorage.getItem('cb_has_session');
+        if (sessionHint !== 'true') {
+            setLoading(false);
+            return;
+        }
+
         try {
             const res = await api.getMe();
 
