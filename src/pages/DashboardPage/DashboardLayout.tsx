@@ -83,8 +83,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     const userLabel = displayName || 'Organizer';
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate('/login', { replace: true });
     };
 
