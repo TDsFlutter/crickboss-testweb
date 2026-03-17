@@ -149,6 +149,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
+    /** Inactivity Timeout: 10 minutes (600,000 ms) */
+    useEffect(() => {
+        if (!isLoggedIn) return;
+
+        let timeoutId: any;
+
+        const resetTimer = () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                console.log('Session expired due to inactivity');
+                logout();
+            }, 600000); // 10 minutes
+        };
+
+        // Events to listen for activity
+        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        events.forEach(event => document.addEventListener(event, resetTimer));
+
+        // Initial start
+        resetTimer();
+
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            events.forEach(event => document.removeEventListener(event, resetTimer));
+        };
+    }, [isLoggedIn, logout]);
+
     useEffect(() => {
         refreshUser();
     }, [refreshUser]);
