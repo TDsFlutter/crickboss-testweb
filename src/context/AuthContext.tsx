@@ -37,10 +37,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [avatar, setAvatar] = useState<string>('');
 
     const login = useCallback((userData: UserData, tokens?: { access: string; refresh: string }) => {
-        if (tokens) {
-            localStorage.setItem('access_token', tokens.access);
-            localStorage.setItem('refresh_token', tokens.refresh);
-        }
+        // We no longer save tokens to localStorage for Web to prevent XSS.
+        // The backend now handles this via HttpOnly cookies.
+        // (Accessing tokens from JSON is only for secondary/mobile-like use cases).
+        setIsLoggedIn(true);
 
         setIsLoggedIn(true);
         setEmail(userData.email);
@@ -51,7 +51,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAvatar(api.formatAvatarUrl(rawAvatar));
     }, []);
 
-    const logout = useCallback(() => {
+    const logout = useCallback(async () => {
+        try {
+            // Tell backend to clear HttpOnly cookies
+            await api.logout();
+        } catch {
+            // ignore
+        }
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         setIsLoggedIn(false);
@@ -66,17 +72,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      *  Returns true if successful, false otherwise. */
     const tryRefreshToken = useCallback(async (): Promise<boolean> => {
         const refreshToken = localStorage.getItem('refresh_token');
-        if (!refreshToken) return false;
+        // Even if no local token, we try calling refresh because the backend might have an HttpOnly cookie.
         try {
-            const res = await api.refreshToken(refreshToken);
+            const res = await api.refreshToken(refreshToken || undefined);
             const newToken = res.token || res.access_token;
             if (res.success && newToken) {
-                localStorage.setItem('access_token', newToken);
-                if (res.refresh_token) {
-                    localStorage.setItem('refresh_token', res.refresh_token);
-                }
+                // We keep access_token in state if needed, but for Web we rely on cookies.
+                // We stop updating localStorage for cookies to be the primary source.
                 return true;
             }
+            // If backend returned success without JSON tokens, it means it updated the HttpOnly cookies.
+            if (res.success) return true;
         } catch {
             // ignore
         }
@@ -84,11 +90,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const refreshUser = useCallback(async () => {
+        // We no longer check for a local token before starting. 
+        // The browser will automatically send the HttpOnly cookie if it exists.
+        // However, we still support the Authorization header as a fallback/sync method.
         const token = localStorage.getItem('access_token');
-        if (!token) {
-            setLoading(false);
-            return;
-        }
 
         try {
             let res = await api.getMe();

@@ -76,6 +76,7 @@ export const api = {
     const response = await fetch(`${BASE_URL}/auth/check-email?email=${encodeURIComponent(email)}`, {
       method: 'GET',
       headers: getHeaders(),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -91,6 +92,7 @@ export const api = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -100,6 +102,7 @@ export const api = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ email, otp }),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -109,6 +112,7 @@ export const api = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ email }),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -118,6 +122,7 @@ export const api = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ email, otp }),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -127,15 +132,26 @@ export const api = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ email }),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
 
-  refreshToken: async (refresh_token: string): Promise<APIResponse> => {
+  refreshToken: async (refresh_token?: string): Promise<APIResponse> => {
     const response = await fetch(`${BASE_URL}/auth/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token }),
+      body: JSON.stringify(refresh_token ? { refresh_token } : {}),
+      credentials: 'include',
+    });
+    return handleResponse(response);
+  },
+  
+  logout: async (): Promise<APIResponse> => {
+    const response = await fetch(`${BASE_URL}/auth/logout`, {
+      method: 'POST',
+      headers: getHeaders(),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -146,6 +162,7 @@ export const api = {
     const response = await fetch(`${BASE_URL}/auth/me`, {
       method: 'GET',
       headers: getHeaders(),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -155,6 +172,7 @@ export const api = {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(data),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -163,6 +181,7 @@ export const api = {
     const response = await fetch(`${BASE_URL}/auth/me`, {
       method: 'DELETE',
       headers: getHeaders(),
+      credentials: 'include',
     });
     return handleResponse(response);
   },
@@ -177,6 +196,7 @@ export const api = {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       },
       body: formData,
+      credentials: 'include',
     });
     return handleResponse(response);
   },
