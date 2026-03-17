@@ -91,21 +91,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const refreshUser = useCallback(async () => {
-        // If we have no hint that the user was logged in, don't even try to call the server.
-        // This stops the automatic 401 error in console for guest users.
+        const path = window.location.pathname;
+        const isProtectedRoute = path.includes('/dashboard') || path.includes('/manage');
         const sessionHint = localStorage.getItem('cb_has_session');
-        if (sessionHint !== 'true') {
+
+        console.log('[Auth] Check started. Path:', path, 'Hint:', sessionHint);
+
+        // If we are on a protected route, we MUST probe the server even if hint is missing.
+        // Otherwise, we only probe if we think we have a session.
+        if (!isProtectedRoute && sessionHint !== 'true') {
+            console.log('[Auth] Guest on public route, skipping probe.');
             setLoading(false);
             return;
         }
 
         try {
+            console.log('[Auth] Probing /me...');
             const res = await api.getMe();
 
             if (res.success) {
+                console.log('[Auth] /me success!');
                 const userData = res.data || res.user || (res.email ? res : null);
                 if (userData && userData.email) {
                     setIsLoggedIn(true);
+                    localStorage.setItem('cb_has_session', 'true');
                     setEmail(userData.email || '');
                     setDisplayName(userData.name || '');
                     setUserId(userData.id || userData._id || '');
@@ -116,10 +125,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            // If /me failed (401), we try to refresh the session.
-            // Even if no local token, we try because the backend might have an HttpOnly refresh cookie.
+            console.log('[Auth] /me unauthorized or failed. Trying refresh...');
             const refreshed = await tryRefreshToken();
             if (refreshed) {
+                console.log('[Auth] Refresh success! Retrying /me...');
                 const retryRes = await api.getMe();
                 const retryData = retryRes.data || retryRes.user || (retryRes.email ? retryRes : null);
                 if (retryRes.success && retryData && retryData.email) {
@@ -135,15 +144,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            // If everything fails, we just ensure we are logged out locally.
-            // We DO NOT call api.logout() here to avoid unnecessary 404/401 errors in console on every refresh.
+            console.log('[Auth] All auth attempts failed.');
             setIsLoggedIn(false);
             setEmail('');
         } catch (error) {
-            console.error('Auth check skipped or failed:', error);
+            console.error('[Auth] Error in refreshUser:', error);
             setIsLoggedIn(false);
         } finally {
             setLoading(false);
+            console.log('[Auth] Check finished. Loading set to false.');
         }
     }, [tryRefreshToken]);
 

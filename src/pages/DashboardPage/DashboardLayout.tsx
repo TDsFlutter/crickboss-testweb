@@ -88,7 +88,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         navigate('/login', { replace: true });
     };
 
-    const meta = PAGE_META[tab];
+    const meta = PAGE_META[tab] || { title: 'Dashboard', subtitle: '' };
 
     return (
         <div className={styles.shell}>
@@ -166,9 +166,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                             className={`${styles.bottomNavItem} ${tab === item.id ? styles.active : ''}`}
                             onClick={() => setTab(item.id)}
                         >
-                            <svg className={styles.bottomNavIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                {item.icon.props.children}
-                            </svg>
+                            <div className={styles.bottomNavIcon}>
+                                {item.icon}
+                            </div>
                             {item.label.split(' ')[0]}
                         </button>
                     ))}
