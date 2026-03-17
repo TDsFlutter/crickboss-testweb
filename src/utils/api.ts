@@ -152,9 +152,14 @@ export const api = {
   },
   
   logout: async (): Promise<APIResponse> => {
-    const response = await fetch(`${BASE_URL}/auth/logout`, {
+    const token = localStorage.getItem('access_token');
+    const response = await fetch(`${BASE_URL}/logout`, {
       method: 'POST',
-      headers: getHeaders(),
+      headers: {
+        ...getHeaders(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token }),
       credentials: 'include',
     });
     return handleResponse(response);
