@@ -154,9 +154,12 @@
     text-overflow: ellipsis;
 }
 
-.userMobile {
+.userEmail {
     font-size: 0.73rem;
     color: #9fafc4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .logoutBtn {

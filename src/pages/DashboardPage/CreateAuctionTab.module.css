@@ -3,10 +3,152 @@
 .wrap {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding-bottom: 32px;
+    padding-bottom: 120px;
     font-family: inherit;
+    max-width: 1000px;
+    margin: 0 auto;
 }
+
+.layoutContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+@media (min-width: 992px) {
+    .layoutContainer {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .aside {
+        width: 280px;
+        position: sticky;
+        top: 24px;
+        flex-shrink: 0;
+    }
+
+    .mainContent {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+/* ── Wizard Header & Progress ── */
+.wizardHeader {
+    margin-bottom: 24px;
+}
+
+.wizardTopBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.backCaret {
+    background: none;
+    border: none;
+    color: #1F3C88;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark .backCaret {
+    color: #e8edf8;
+}
+
+.wizardTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a2340;
+    margin: 0;
+}
+
+.dark .wizardTitle {
+    color: #fff;
+}
+
+.progressCard {
+    background: #ffffff;
+    border: 1.5px solid #e8edf8;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.dark .progressCard {
+    background: #161b27;
+    border-color: #1e2636;
+}
+
+.progressTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.progressLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #1F3C88;
+    font-size: 0.95rem;
+}
+
+.dark .progressLabel {
+    color: #4c6ef5;
+}
+
+.progressCount {
+    font-size: 0.8rem;
+    color: #5a6e8a;
+    font-weight: 600;
+}
+
+.progressBarBg {
+    height: 8px;
+    background: #f0f4f9;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.dark .progressBarBg {
+    background: #1e2636;
+}
+
+.progressBarFill {
+    height: 100%;
+    background: linear-gradient(90deg, #1F3C88, #4c6ef5);
+    border-radius: 4px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progressStepsRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #9fafc4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stepActive {
+    color: #1F3C88;
+}
+
+.dark .stepActive {
+    color: #e8edf8;
+}
+
 
 /* ── Section card ── */
 .section {
@@ -1112,13 +1254,15 @@
     color: #fbbf24;
 }
 
-.previewPrice {
+.previewPrice,
+.previewValue {
     font-weight: 700;
     color: #1a2340;
     font-size: 0.9rem;
 }
 
-.dark .previewPrice {
+.dark .previewPrice,
+.dark .previewValue {
     color: #e8edf8;
 }
 

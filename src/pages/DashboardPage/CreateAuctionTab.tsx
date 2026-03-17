@@ -123,41 +123,44 @@ export default function CreateAuctionTab() {
             {icon.rawSrc && <ImageCropper src={icon.rawSrc} aspect={1} title="Crop Logo (1:1)" onCropComplete={icon.confirm} onCancel={icon.cancel} />}
 
             {/* Hidden file inputs */}
-            <input ref={banner.fileInputRef} type="file" accept="image/*" onChange={banner.handleFile} style={{ display: 'none' }} />
-            <input ref={icon.fileInputRef} type="file" accept="image/*" onChange={icon.handleFile} style={{ display: 'none' }} />
+            <input ref={banner.fileInputRef} type="file" id="auction-banner-input" name="banner" accept="image/*" onChange={banner.handleFile} style={{ display: 'none' }} />
+            <input ref={icon.fileInputRef} type="file" id="auction-logo-input" name="logo" accept="image/*" onChange={icon.handleFile} style={{ display: 'none' }} />
 
             <form className={`${styles.wrap} ${d}`} onSubmit={handleSubmit} noValidate>
-
-                {/* ── WIZARD PROGRESS ── */}
-                <div className={styles.wizardHeader}>
-                    {activeStep === 4 && (
-                        <div className={styles.wizardTopBar}>
-                            <button type="button" className={styles.backCaret} onClick={handleBack}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
-                            </button>
-                            <h1 className={styles.wizardTitle}>Create Auction</h1>
-                        </div>
-                    )}
-                    
-                    <div className={styles.progressCard}>
-                        <div className={styles.progressTop}>
-                            <div className={styles.progressLabel}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
-                                {activeStep === 1 ? 'Details' : activeStep === 2 ? 'Teams' : activeStep === 3 ? 'Players' : 'Verify'}
+                <div className={styles.layoutContainer}>
+                    <aside className={styles.aside}>
+                        <div className={styles.wizardHeader}>
+                            {activeStep === 4 && (
+                                <div className={styles.wizardTopBar}>
+                                    <button type="button" className={styles.backCaret} onClick={handleBack}>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
+                                    </button>
+                                    <h1 className={styles.wizardTitle}>Create Auction</h1>
+                                </div>
+                            )}
+                            
+                            <div className={styles.progressCard}>
+                                <div className={styles.progressTop}>
+                                    <div className={styles.progressLabel}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                                        {activeStep === 1 ? 'Details' : activeStep === 2 ? 'Teams' : activeStep === 3 ? 'Players' : 'Verify'}
+                                    </div>
+                                    <div className={styles.progressCount}>Step {activeStep} of 4</div>
+                                </div>
+                                <div className={styles.progressBarBg}>
+                                    <div className={styles.progressBarFill} style={{ width: `${(activeStep / 4) * 100}%` }} />
+                                </div>
+                                <div className={styles.progressStepsRow}>
+                                    <span className={activeStep >= 1 ? styles.stepActive : ''}>Details</span>
+                                    <span className={activeStep >= 2 ? styles.stepActive : ''}>Teams</span>
+                                    <span className={activeStep >= 3 ? styles.stepActive : ''}>Players</span>
+                                    <span className={activeStep >= 4 ? styles.stepActive : ''}>Verify</span>
+                                </div>
                             </div>
-                            <div className={styles.progressCount}>Step {activeStep} of 4</div>
                         </div>
-                        <div className={styles.progressBarBg}>
-                            <div className={styles.progressBarFill} style={{ width: `${(activeStep / 4) * 100}%` }} />
-                        </div>
-                        <div className={styles.progressStepsRow}>
-                            <span className={activeStep >= 1 ? styles.stepActive : ''}>Details</span>
-                            <span className={activeStep >= 2 ? styles.stepActive : ''}>Teams</span>
-                            <span className={activeStep >= 3 ? styles.stepActive : ''}>Players</span>
-                            <span className={activeStep >= 4 ? styles.stepActive : ''}>Verify</span>
-                        </div>
-                    </div>
-                </div>
+                    </aside>
+
+                    <main className={styles.mainContent}>
 
                 {/* ── STEP 1: DETAILS ── */}
                 {activeStep === 1 && (
@@ -216,7 +219,13 @@ export default function CreateAuctionTab() {
                             <div className={styles.fieldGroup}>
                                 <label className={`${styles.label} ${d}`}>Sport</label>
                                 <div className={styles.selectWrap}>
-                                    <select className={`${styles.input} ${styles.select} ${d}`} value={form.sport} onChange={e => field('sport', e.target.value)}>
+                                    <select
+                                        className={`${styles.input} ${styles.select} ${d}`}
+                                        id="auction-sport"
+                                        name="sport"
+                                        value={form.sport}
+                                        onChange={e => field('sport', e.target.value)}
+                                    >
                                         {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
                                     </select>
                                     <span className={styles.selectChev}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9" /></svg></span>
@@ -224,7 +233,15 @@ export default function CreateAuctionTab() {
                             </div>
                             <div className={styles.fieldGroup}>
                                 <label className={`${styles.label} ${d}`}>Auction Title <span className={styles.req}>*</span></label>
-                                <input className={`${styles.input} ${d} ${errors.name ? styles.inputErr : ''}`} type="text" placeholder="e.g. IPL Season 2026" value={form.name} onChange={e => field('name', e.target.value)} />
+                                <input
+                                    className={`${styles.input} ${d} ${errors.name ? styles.inputErr : ''}`}
+                                    type="text"
+                                    id="auction-name"
+                                    name="name"
+                                    placeholder="e.g. IPL Season 2026"
+                                    value={form.name}
+                                    onChange={e => field('name', e.target.value)}
+                                />
                                 {errors.name && <span className={styles.err}>{errors.name}</span>}
                             </div>
                         </div>
@@ -257,17 +274,39 @@ export default function CreateAuctionTab() {
                     <div className={styles.grid3}>
                         <div className={styles.fieldGroup}>
                             <label className={`${styles.label} ${d}`}>Date <span className={styles.req}>*</span></label>
-                            <input className={`${styles.input} ${d} ${errors.date ? styles.inputErr : ''}`} type="date" value={form.date} onChange={e => field('date', e.target.value)} />
+                            <input
+                                className={`${styles.input} ${d} ${errors.date ? styles.inputErr : ''}`}
+                                type="date"
+                                id="auction-date"
+                                name="date"
+                                value={form.date}
+                                onChange={e => field('date', e.target.value)}
+                            />
                             {errors.date && <span className={styles.err}>{errors.date}</span>}
                         </div>
                         <div className={styles.fieldGroup}>
                             <label className={`${styles.label} ${d}`}>Time <span className={styles.req}>*</span></label>
-                            <input className={`${styles.input} ${d} ${errors.time ? styles.inputErr : ''}`} type="time" value={form.time} onChange={e => field('time', e.target.value)} />
+                            <input
+                                className={`${styles.input} ${d} ${errors.time ? styles.inputErr : ''}`}
+                                type="time"
+                                id="auction-time"
+                                name="time"
+                                value={form.time}
+                                onChange={e => field('time', e.target.value)}
+                            />
                             {errors.time && <span className={styles.err}>{errors.time}</span>}
                         </div>
                         <div className={styles.fieldGroup}>
                             <label className={`${styles.label} ${d}`}>Venue <span className={styles.req}>*</span></label>
-                            <input className={`${styles.input} ${d} ${errors.venue ? styles.inputErr : ''}`} type="text" placeholder="e.g. Wankhede Stadium" value={form.venue} onChange={e => field('venue', e.target.value)} />
+                            <input
+                                className={`${styles.input} ${d} ${errors.venue ? styles.inputErr : ''}`}
+                                type="text"
+                                id="auction-venue"
+                                name="venue"
+                                placeholder="e.g. Wankhede Stadium"
+                                value={form.venue}
+                                onChange={e => field('venue', e.target.value)}
+                            />
                             {errors.venue && <span className={styles.err}>{errors.venue}</span>}
                         </div>
                     </div>
@@ -293,7 +332,11 @@ export default function CreateAuctionTab() {
                                 <label className={`${styles.label} ${d}`}>{f.label} <span className={styles.req}>*</span></label>
                                 <input
                                     className={`${styles.input} ${d} ${errors[f.key as keyof FormErrors] ? styles.inputErr : ''}`}
-                                    type="number" placeholder={f.ph} min={1}
+                                    type="number"
+                                    id={`auction-${f.key}`}
+                                    name={f.key}
+                                    placeholder={f.ph}
+                                    min={1}
                                     value={form[f.key as keyof typeof form]}
                                     onChange={e => field(f.key as keyof typeof form, e.target.value)}
                                 />
@@ -328,14 +371,41 @@ export default function CreateAuctionTab() {
                     ) : (
                         <div className={styles.slabTable}>
                             <div className={styles.slabTHead}>
-                                <span>#</span><span>From (₹)</span><span>To (₹)</span><span>Increment (₹)</span><span></span>
+                                <span>#</span><span>From (Pts)</span><span>To (Pts)</span><span>Incr. (Pts)</span><span></span>
                             </div>
                             {slabs.map((slab, idx) => (
                                 <div key={slab.id} className={`${styles.slabTRow} ${d}`}>
                                     <span className={styles.slabIdx}>{idx + 1}</span>
-                                    <input className={`${styles.slabInput} ${d}`} type="number" placeholder="0" min={0} value={slab.from} onChange={e => updateSlab(slab.id, 'from', e.target.value)} />
-                                    <input className={`${styles.slabInput} ${d}`} type="number" placeholder="5000" min={0} value={slab.to} onChange={e => updateSlab(slab.id, 'to', e.target.value)} />
-                                    <input className={`${styles.slabInput} ${d}`} type="number" placeholder="500" min={1} value={slab.increment} onChange={e => updateSlab(slab.id, 'increment', e.target.value)} />
+                                    <input
+                                        className={`${styles.slabInput} ${d}`}
+                                        type="number"
+                                        id={`slab-from-${slab.id}`}
+                                        name={`slab-from-${slab.id}`}
+                                        placeholder="0"
+                                        min={0}
+                                        value={slab.from}
+                                        onChange={e => updateSlab(slab.id, 'from', e.target.value)}
+                                    />
+                                    <input
+                                        className={`${styles.slabInput} ${d}`}
+                                        type="number"
+                                        id={`slab-to-${slab.id}`}
+                                        name={`slab-to-${slab.id}`}
+                                        placeholder="5000"
+                                        min={0}
+                                        value={slab.to}
+                                        onChange={e => updateSlab(slab.id, 'to', e.target.value)}
+                                    />
+                                    <input
+                                        className={`${styles.slabInput} ${d}`}
+                                        type="number"
+                                        id={`slab-increment-${slab.id}`}
+                                        name={`slab-increment-${slab.id}`}
+                                        placeholder="500"
+                                        min={1}
+                                        value={slab.increment}
+                                        onChange={e => updateSlab(slab.id, 'increment', e.target.value)}
+                                    />
                                     <button type="button" className={styles.slabDel} onClick={() => deleteSlab(slab.id)} aria-label="Remove">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                                     </button>
@@ -358,7 +428,13 @@ export default function CreateAuctionTab() {
                             <div className={styles.toggleSub}>Allow participants to join and bid from anywhere</div>
                         </div>
                         <label className={styles.toggle}>
-                            <input type="checkbox" checked={remoteBidding} onChange={e => setRemoteBidding(e.target.checked)} />
+                            <input
+                                type="checkbox"
+                                id="auction-remote"
+                                name="remoteBidding"
+                                checked={remoteBidding}
+                                onChange={e => setRemoteBidding(e.target.checked)}
+                            />
                             <span className={styles.toggleSlider} />
                         </label>
                     </div>
@@ -395,8 +471,8 @@ export default function CreateAuctionTab() {
                     <div className={styles.stepContent}>
                         <div className={styles.verifyCard}>
                             <div className={styles.verifyRow}><span>Play Type:</span><strong>{form.sport}</strong></div>
-                            <div className={styles.verifyRow}><span>Points/Team:</span><strong>{form.pointsPerTeam || '94994'}</strong></div>
-                            <div className={styles.verifyRow}><span>Base Value / Increment:</span><strong>{form.baseValue || '49944'} / {form.bidIncrement || '4664'}</strong></div>
+                            <div className={styles.verifyRow}><span>Points/Team:</span><strong>{form.pointsPerTeam || '94,994'}</strong></div>
+                            <div className={styles.verifyRow}><span>Base Value / Incr.:</span><strong>{form.baseValue || '49,944'} / {form.bidIncrement || '4,664'}</strong></div>
                             <div className={styles.verifyRow}><span>Players/Team:</span><strong>{form.playersPerTeam || '96494'}</strong></div>
                             <div className={styles.verifyRow}><span>Visibility:</span><strong>Private</strong></div>
                         </div>
@@ -425,11 +501,13 @@ export default function CreateAuctionTab() {
                                     <div className={styles.previewPlayerName}>Ejjshss</div>
                                 </div>
                                 <div className={styles.previewBadgeOrange}>All-Rounder</div>
-                                <div className={styles.previewPrice}>100</div>
+                                <div className={styles.previewValue}>100 Pts</div>
                             </div>
                         </div>
                     </div>
                 )}
+                </main>
+            </div>
 
                 {submitted && (
                     <div className={styles.successToast}>✅ Auction created successfully! (Demo mode)</div>

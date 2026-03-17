@@ -122,6 +122,8 @@ export default function MyProfileTab() {
                         </div>
                         <input
                             type="file"
+                            id="profile-avatar-input"
+                            name="avatar"
                             accept="image/*"
                             ref={fileInputRef}
                             style={{ display: 'none' }}
@@ -147,6 +149,8 @@ export default function MyProfileTab() {
                             <input
                                 className={`${styles.input} ${d}`}
                                 type="text"
+                                id="profile-name"
+                                name="displayName"
                                 placeholder="e.g. Trunal Dungarani"
                                 value={formName}
                                 onChange={e => setFormName(e.target.value)}
@@ -160,6 +164,8 @@ export default function MyProfileTab() {
                             <input
                                 className={`${styles.input} ${d}`}
                                 type="text"
+                                id="profile-city"
+                                name="city"
                                 placeholder="e.g. Mumbai"
                                 value={formCity}
                                 onChange={e => setFormCity(e.target.value)}
@@ -172,6 +178,8 @@ export default function MyProfileTab() {
                             <input
                                 className={`${styles.input} ${d}`}
                                 type="email"
+                                id="profile-email"
+                                name="email"
                                 value={email || '—'}
                                 readOnly
                                 aria-label="Email address (read only — login identifier)"

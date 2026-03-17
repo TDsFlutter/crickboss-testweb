@@ -386,6 +386,8 @@ export default function RegisterPage() {
                                     type="tel"
                                     maxLength={1}
                                     value={digit}
+                                    id={`reg-otp-${i}`}
+                                    name={`otp-digit-${i}`}
                                     onChange={e => handleOtpChange(i, e)}
                                     onKeyDown={e => handleOtpKeyDown(i, e)}
                                     onPaste={handleOtpPaste}
@@ -456,6 +458,8 @@ export default function RegisterPage() {
                                 </div>
                                 <input
                                     type="file"
+                                    id="reg-avatar-input"
+                                    name="avatar"
                                     accept="image/*"
                                     ref={fileInputRef}
                                     onChange={handleImageChange}

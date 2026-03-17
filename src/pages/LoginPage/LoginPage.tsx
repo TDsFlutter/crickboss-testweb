@@ -206,6 +206,7 @@ export default function LoginPage() {
                                 <input
                                     className={styles.emailInput}
                                     type="email"
+                                    name="email"
                                     placeholder="you@example.com"
                                     value={email}
                                     id="login-email"
@@ -259,6 +260,8 @@ export default function LoginPage() {
                                     type="tel"
                                     maxLength={1}
                                     value={digit}
+                                    id={`login-otp-${i}`}
+                                    name={`otp-digit-${i}`}
                                     onChange={e => handleOtpChange(i, e)}
                                     onKeyDown={e => handleOtpKeyDown(i, e)}
                                     onPaste={handleOtpPaste}

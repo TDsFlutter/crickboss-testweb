@@ -133,8 +133,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                             ) : avatarInitials}
                         </div>
                         <div className={styles.userInfo}>
-                            <div className={styles.userName}>{userLabel}</div>
-                            <div className={styles.userMobile}>{email || '—'}</div>
+                            <div className={styles.userName} title={userLabel}>{userLabel}</div>
+                            <div className={styles.userEmail} title={email || ''}>{email || '—'}</div>
                         </div>
                     </div>
                     <button className={styles.logoutBtn} onClick={handleLogout} aria-label="Sign out">
