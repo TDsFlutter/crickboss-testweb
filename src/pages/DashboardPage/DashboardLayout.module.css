@@ -26,6 +26,7 @@
     /* sticks to top of <main> which is already offset below header */
     height: calc(100vh - var(--total-offset, 108px));
     overflow-y: auto;
+    overflow-x: hidden;
     transition: background 0.3s, border-color 0.3s;
     z-index: 10;
 }
@@ -117,6 +118,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-width: 0;
 }
 
 .userRow {
@@ -124,6 +126,7 @@
     align-items: center;
     gap: 10px;
     padding: 6px 6px;
+    min-width: 0;
 }
 
 .avatar {
@@ -143,6 +146,7 @@
 .userInfo {
     flex: 1;
     min-width: 0;
+    width: 0;
 }
 
 .userName {
@@ -152,6 +156,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
 }
 
 .userEmail {
@@ -160,6 +165,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
 }
 
 .logoutBtn {
