@@ -101,9 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             }
 
-            // Handle both nested (res.data) and flat (res.user) user objects
-            const userData = res.data || res.user;
-            if (res.success && userData) {
+            // Handle nested (res.data), flat (res.user), or root-level user object (if backend returns user fields directly)
+            const userData = res.data || res.user || (res.email ? res : null);
+            
+            if (res.success && userData && userData.email) {
                 setIsLoggedIn(true);
                 setEmail(userData.email || '');
                 setDisplayName(userData.name || '');

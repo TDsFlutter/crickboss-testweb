@@ -20,6 +20,7 @@ export interface APIResponse<T = any> {
   refresh_token?: string;
   token_type?: string;
   user?: any;             // direct from backend
+  [key: string]: any;     // Allow additional fields at the root level like email
 }
 
 const getHeaders = () => {
