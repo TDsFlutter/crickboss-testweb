@@ -89,41 +89,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const refreshUser = useCallback(async () => {
-        // We no longer check for a local token before starting. 
-        // The browser will automatically send the HttpOnly cookie if it exists.
-
         try {
-            let res = await api.getMe();
+            const res = await api.getMe();
 
-            // On failure, try to refresh the token once and retry
-            if (!res.success) {
-                const refreshed = await tryRefreshToken();
-                if (refreshed) {
-                    res = await api.getMe();
+            if (res.success) {
+                const userData = res.data || res.user || (res.email ? res : null);
+                if (userData && userData.email) {
+                    setIsLoggedIn(true);
+                    setEmail(userData.email || '');
+                    setDisplayName(userData.name || '');
+                    setUserId(userData.id || userData._id || '');
+                    setCity(userData.city || '');
+                    const rawAvatar = userData.avatar_url || userData.avatar || '';
+                    setAvatar(api.formatAvatarUrl(rawAvatar));
+                    return;
                 }
             }
 
-            // Handle nested (res.data), flat (res.user), or root-level user object (if backend returns user fields directly)
-            const userData = res.data || res.user || (res.email ? res : null);
-            
-            if (res.success && userData && userData.email) {
-                setIsLoggedIn(true);
-                setEmail(userData.email || '');
-                setDisplayName(userData.name || '');
-                setUserId(userData.id || userData._id || '');
-                setCity(userData.city || '');
-                const rawAvatar = userData.avatar_url || userData.avatar || '';
-                setAvatar(api.formatAvatarUrl(rawAvatar));
-            } else {
-                logout();
+            // If we are NOT logged in (401), we just stop here on initial load.
+            // We only try to refresh if there's a reason to believe a session exists (like a refresh_token in storage)
+            const refreshToken = localStorage.getItem('refresh_token');
+            if (refreshToken) {
+                const refreshed = await tryRefreshToken();
+                if (refreshed) {
+                    const retryRes = await api.getMe();
+                    const retryData = retryRes.data || retryRes.user || (retryRes.email ? retryRes : null);
+                    if (retryRes.success && retryData && retryData.email) {
+                        setIsLoggedIn(true);
+                        setEmail(retryData.email || '');
+                        setDisplayName(retryData.name || '');
+                        setUserId(retryData.id || retryData._id || '');
+                        setCity(retryData.city || '');
+                        const rawAvatar = retryData.avatar_url || retryData.avatar || '';
+                        setAvatar(api.formatAvatarUrl(rawAvatar));
+                        return;
+                    }
+                }
             }
+
+            // If everything fails, we just ensure we are logged out locally.
+            // We DO NOT call api.logout() here to avoid unnecessary 404/401 errors in console on every refresh.
+            setIsLoggedIn(false);
+            setEmail('');
         } catch (error) {
-            console.error('Failed to fetch user:', error);
-            logout();
+            console.error('Auth check skipped or failed:', error);
+            setIsLoggedIn(false);
         } finally {
             setLoading(false);
         }
-    }, [logout, tryRefreshToken]);
+    }, [tryRefreshToken]);
 
     /** Update profile via API and sync state on success */
     const updateProfile = useCallback(async (
