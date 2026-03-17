@@ -56,18 +56,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = useCallback(async () => {
         try {
             await api.logout();
-        } catch {
-            // ignore
+        } catch (err) {
+            console.error('Logout error:', err);
+        } finally {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('cb_has_session');
+            setIsLoggedIn(false);
+            setEmail('');
+            setDisplayName('');
+            setUserId('');
+            setCity('');
+            setAvatar('');
         }
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('cb_has_session');
-        setIsLoggedIn(false);
-        setEmail('');
-        setDisplayName('');
-        setUserId('');
-        setCity('');
-        setAvatar('');
     }, []);
 
     const tryRefreshToken = useCallback(async (): Promise<boolean> => {

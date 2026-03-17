@@ -152,17 +152,8 @@ export const api = {
   },
   
   logout: async (): Promise<APIResponse> => {
-    const token = localStorage.getItem('access_token');
-    const response = await fetch(`${BASE_URL}/logout`, {
-      method: 'POST',
-      headers: {
-        ...getHeaders(),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token }),
-      credentials: 'include',
-    });
-    return handleResponse(response);
+    // Session is managed via JWT. Logout is handled by clearing tokens locally in AuthContext.
+    return { success: true, message: 'Logged out locally' };
   },
 
   // ── Profile Endpoints ─────────────────────────────────────────────────────
