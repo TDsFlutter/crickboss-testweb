@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './DashboardLayout.module.css';
 
-export type DashTab = 'auctions' | 'create' | 'join' | 'profile' | 'manage';
+export type DashTab = 'auctions' | 'tournaments' | 'create' | 'join' | 'profile' | 'manage' | 'manageTournament';
 
 interface DashboardLayoutProps {
     children: (tab: DashTab, setTab: (t: DashTab) => void) => ReactNode;
@@ -26,6 +26,19 @@ const NAV_ITEMS: NavItem[] = [
                 <rect x="14" y="3" width="7" height="7" rx="1" />
                 <rect x="3" y="14" width="7" height="7" rx="1" />
                 <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+        ),
+    },
+    {
+        id: 'tournaments',
+        label: 'Tournaments',
+        icon: (
+            <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+                <path d="M4 22h16" />
+                <path d="M10 14.66V17c0 5.5-3.6 6.3-6 7h16c-2.4-.7-6-1.5-6-7v-2.34" />
+                <path d="M7 4h10v6a5 5 0 01-10 0V4z" />
             </svg>
         ),
     },
@@ -65,10 +78,12 @@ const NAV_ITEMS: NavItem[] = [
 
 const PAGE_META: Record<DashTab, { title: string; subtitle: string }> = {
     auctions: { title: 'My Auctions', subtitle: 'View and manage all your auction events' },
+    tournaments: { title: 'Tournaments', subtitle: 'Create and manage your cricket tournaments' },
     create: { title: 'Create Auction', subtitle: 'Set up a new auction event' },
     join: { title: 'Join as Player', subtitle: 'Enter your code to join an auction' },
     profile: { title: 'My Profile', subtitle: 'Manage your account and security settings' },
     manage: { title: 'Manage Auction', subtitle: 'Dashboard for your specific auction event' },
+    manageTournament: { title: 'Manage Tournament', subtitle: 'Manage teams and players for this tournament' },
 };
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {

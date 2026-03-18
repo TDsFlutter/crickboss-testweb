@@ -1,0 +1,61 @@
+/* ManageTournamentTab.module.css */
+
+.wrap { animation: fadeUp 0.35s ease both; display: flex; flex-direction: column; hheight: 100%; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.backBtn { display: flex; align-items: center; gap: 6px; background: none; border: none; color: #1F3C88; font-weight: 600; cursor: pointer; padding: 0; font-family: inherit; font-size: 0.95rem; text-decoration: none; }
+.backBtn:hover { text-decoration: underline; }
+.dark .backBtn { color: #8da0ba; }
+
+.title { font-size: 1.6rem; font-weight: 800; color: #1a2340; margin: 0; }
+.dark .title { color: #e8edf8; }
+
+.tabsRow { display: flex; gap: 16px; border-bottom: 2px solid #e8edf8; margin-bottom: 24px; padding-bottom: 2px; }
+.dark .tabsRow { border-color: #1e2636; }
+
+.subTab { background: none; border: none; font-size: 1.05rem; font-weight: 600; color: #7a8ba6; padding: 8px 16px; cursor: pointer; position: relative; border-radius: 8px 8px 0 0; transition: color 0.2s; font-family: inherit; }
+.subTab.active { color: #1F3C88; }
+.subTab.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 4px; background: #1F3C88; border-radius: 4px; }
+.dark .subTab.active { color: #e8edf8; }
+.dark .subTab.active::after { background: #3DBE8B; }
+
+.content { flex: 1; }
+
+.actionBar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.actionBar h3 { font-size: 1.2rem; margin: 0; color: #1a2340; }
+.dark .actionBar h3 { color: #e8edf8; }
+
+.actBtn { background: #1F3C88; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.actBtn:hover { background: #2a52b8; }
+
+.list { display: flex; flex-direction: column; gap: 12px; }
+.listItem { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1.5px solid #e8edf8; padding: 16px; border-radius: 12px; transition: 0.2s; }
+.listItem:hover { border-color: #1F3C88; }
+.dark .listItem { background: #161b27; border-color: #1e2636; }
+
+.itemInfo { display: flex; flex-direction: column; gap: 4px; }
+.itemName { font-size: 1.05rem; font-weight: 700; color: #1a2340; }
+.dark .itemName { color: #e8edf8; }
+.itemSub { font-size: 0.85rem; color: #7a8ba6; }
+
+.deleteBtn { background: none; border: 1.5px solid #ff4444; color: #ff4444; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.deleteBtn:hover { background: #ff4444; color: #fff; }
+
+/* Empty state */
+.empty { text-align: center; padding: 60px 20px; color: #9fafc4; }
+
+/* Modals */
+.modalOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modalContent { background: #fff; border-radius: 16px; padding: 24px; width: 90%; max-width: 400px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+.dark .modalContent { background: #1a2340; color: #fff; }
+.modalContent h3 { margin: 0 0 20px; font-size: 1.3rem; }
+.formGroup { margin-bottom: 16px; }
+.formGroup label { display: block; font-size: 0.85rem; font-weight: 600; color: #5a6b86; margin-bottom: 6px; }
+.dark .formGroup label { color: #a1b0c8; }
+.formGroup input, .formGroup select { width: 100%; padding: 10px 14px; border: 1px solid #dde3ef; border-radius: 8px; font-size: 0.95rem; font-family: inherit; background: #fff; outline: none; }
+.dark .formGroup input, .dark .formGroup select { background: #121826; border-color: #2d3a53; color: #fff; }
+.modalActions { display: flex; gap: 10px; margin-top: 24px; }
+.cancelBtn { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #dde3ef; background: #fff; cursor: pointer; font-weight: 600; color: #5a6b86; }
+.dark .cancelBtn { background: #161b27; border-color: #2d3a53; color: #a1b0c8; }
+.submitBtn { flex: 1; padding: 12px; border-radius: 8px; border: none; background: #1F3C88; color: #fff; cursor: pointer; font-weight: 600; }

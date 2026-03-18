@@ -197,5 +197,91 @@ export const api = {
     });
     return handleResponse(response);
   },
+
+  // ── Tournaments Endpoints ──────────────────────────────────────────────────
+  tournaments: {
+    list: async (): Promise<APIResponse> => {
+      const response = await fetch(`${BASE_URL}/tournaments`, {
+        method: 'GET',
+        headers: getHeaders(),
+        credentials: 'include',
+      });
+      return handleResponse(response);
+    },
+    create: async (data: any): Promise<APIResponse> => {
+      const response = await fetch(`${BASE_URL}/tournaments`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      return handleResponse(response);
+    },
+    update: async (tournamentId: string | number, data: any): Promise<APIResponse> => {
+      const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}`, {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      return handleResponse(response);
+    },
+    teams: {
+      list: async (tournamentId: string | number): Promise<APIResponse> => {
+        const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/teams`, {
+          method: 'GET',
+          headers: getHeaders(),
+          credentials: 'include',
+        });
+        return handleResponse(response);
+      },
+      add: async (tournamentId: string | number, data: any): Promise<APIResponse> => {
+        const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/teams`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(data),
+          credentials: 'include',
+        });
+        return handleResponse(response);
+      },
+      update: async (tournamentId: string | number, teamId: string | number, data: any): Promise<APIResponse> => {
+        const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/teams/${teamId}`, {
+          method: 'PATCH',
+          headers: getHeaders(),
+          body: JSON.stringify(data),
+          credentials: 'include',
+        });
+        return handleResponse(response);
+      },
+      delete: async (tournamentId: string | number, teamId: string | number): Promise<APIResponse> => {
+        const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/teams/${teamId}`, {
+          method: 'DELETE',
+          headers: getHeaders(),
+          credentials: 'include',
+        });
+        return handleResponse(response);
+      },
+    },
+    players: {
+      list: async (tournamentId: string | number): Promise<APIResponse> => {
+        const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/players`, {
+          method: 'GET',
+          headers: getHeaders(),
+          credentials: 'include',
+        });
+        return handleResponse(response);
+      },
+      add: async (tournamentId: string | number, data: any): Promise<APIResponse> => {
+        const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/players`, {
+          method: 'POST',
+          headers: getHeaders(),
+          body: JSON.stringify(data),
+          credentials: 'include',
+        });
+        return handleResponse(response);
+      },
+    }
+  },
+
   formatAvatarUrl,
 };
