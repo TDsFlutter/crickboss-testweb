@@ -38,17 +38,32 @@ async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {
   let data: any;
   try {
     data = await response.json();
-  } catch {
-    // Body is already consumed or not JSON — return a safe fallback
-    return { success: response.ok, message: response.ok ? 'Success' : `HTTP ${response.status}` };
+  } catch (e) {
+    // Some responses might be empty or not JSON
+    // If response is not OK and body is empty, we still want to return an error
+    if (!response.ok) {
+      return { success: false, message: `HTTP Error ${response.status}` };
+    }
+    // If response is OK but body is empty, treat as success with no data
+    return { success: true, message: 'Success' };
   }
 
-  // Normalize response structure — spread backend data, override success from HTTP status
   const result: APIResponse<T> = {
     success: response.ok,
     message: data?.message || (response.ok ? 'Success' : `Error ${response.status}`),
-    ...data,
   };
+
+  // Promote direct data or arrays to result.data for consistency in consumers
+  if (data) {
+    if (data.data) {
+      result.data = data.data;
+    } else if (Array.isArray(data)) {
+      result.data = data as T;
+    } else if (typeof data === 'object' && !data.success && !data.message) {
+      // It's a raw object from backend (like tournament object) that isn't already an APIResponse structure
+      result.data = data as T;
+    }
+  }
 
   // Force success=true on 2xx (in case backend omits it)
   if (response.ok && result.success !== false) {

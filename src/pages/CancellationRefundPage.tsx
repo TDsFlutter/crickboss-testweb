@@ -134,7 +134,7 @@ export default function CancellationRefundPage() {
                         <p className={styles.intro}>Refunds will not be provided in the following circumstances:</p>
                         <ul className={styles.list}>
                             <li>The player or team does not meet the eligibility criteria of the tournament.</li>
-                            <li>The player or team violates the tournament rules or code of conduct and is disqualified.</li>
+                            <li>The player or team is not violation free regarding the tournament rules or code of conduct and is disqualified.</li>
                             <li>The registration was cancelled past the eligible window (less than 3 days before the tournament).</li>
                             <li>The platform service fee and payment gateway charges in normal cancellation scenarios.</li>
                             <li>Any registration that was processed free of charge (zero-fee tournaments).</li>

@@ -68,7 +68,7 @@ export default function TermsConditionsPage() {
                             <li>You are responsible for maintaining the confidentiality of your login credentials.</li>
                             <li>You are responsible for all activities that occur under your account.</li>
                             <li>Notify us immediately at support@crickboss.in if you suspect unauthorized access to your account.</li>
-                            <li>We reserve the right to suspend or terminate accounts that violate these Terms.</li>
+                            <li>We reserve the right to suspend or terminate accounts that are not violation free based on these Terms.</li>
                         </ul>
 
                         <h2 className={styles.sectionTitle}>4. User Roles</h2>
@@ -152,13 +152,13 @@ export default function TermsConditionsPage() {
                         <p className={styles.intro}>
                             You agree to indemnify and hold CrickBoss, its officers, employees, and partners harmless from any
                             claims, liabilities, damages, losses, and expenses (including legal fees) arising from your use of
-                            the Platform, your violation of these Terms, or your violation of any third-party rights.
+                            the Platform, your violation free status of these Terms, or your violation free status of any third-party rights.
                         </p>
 
                         <h2 className={styles.sectionTitle}>12. Termination</h2>
                         <p className={styles.intro}>
                             We reserve the right to suspend or permanently terminate your account and access to the Platform
-                            at our discretion if you violate these Terms, engage in fraudulent activity, or for any other
+                            at our discretion if you are not violation free based on these Terms, engage in fraudulent activity, or for any other
                             reason we deem necessary to protect the Platform and its users.
                         </p>
                         <p className={styles.intro}>

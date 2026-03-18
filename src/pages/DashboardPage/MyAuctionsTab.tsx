@@ -8,9 +8,12 @@ import { api } from '../../utils/api';
 interface Props {
     onCreateClick: (t: DashTab) => void;
     onManageClick: (id: number) => void;
+    auctions: Auction[];
+    isLoading: boolean;
+    onRefresh: () => void;
 }
 
-interface Auction {
+export interface Auction {
     id: number;
     name: string;
     sport: string;
@@ -24,49 +27,27 @@ interface Auction {
     bannerUrl?: string;
 }
 
-export default function MyAuctionsTab({ onCreateClick, onManageClick }: Props) {
+export default function MyAuctionsTab({ onCreateClick, onManageClick, auctions, isLoading, onRefresh }: Props) {
     const [query, setQuery] = useState('');
-    const [auctions, setAuctions] = useState<Auction[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [cropState, setCropState] = useState<{ id: number; rawSrc: string } | null>(null);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
-    useEffect(() => {
-        fetchTournaments();
-    }, []);
-
-    const fetchTournaments = async () => {
-        setIsLoading(true);
+    const handleConfirmCrop = async (url: string) => {
+        if (!cropState) return;
         try {
-            const res = await api.tournaments.list();
-            if (res.success && Array.isArray(res.data)) {
-                // Map the API data to our Auction interface
-                const mapped: Auction[] = res.data.map(t => ({
-                    id: t.id,
-                    name: t.name,
-                    sport: t.sport || 'Cricket',
-                    date: t.date || 'TBD',
-                    venue: t.venue || 'No Venue',
-                    teams: t.teamsCount || 0,
-                    players: t.playersCount || 0,
-                    status: (t.status === 'live' || t.status === 'upcoming' || t.status === 'draft') ? t.status : 'upcoming' as const,
-                    emoji: t.sport === 'Football' ? '⚽' : t.sport === 'Volleyball' ? '🏐' : '🏏',
-                    bannerClass: t.sport?.toLowerCase() || '',
-                    bannerUrl: t.banner
-                }));
-                setAuctions(mapped);
+            const res = await api.tournaments.update(cropState.id, { banner_url: url });
+            if (res.success) {
+                onRefresh();
             }
-        } catch (err) {
-            console.error('Fetch Error:', err);
         } finally {
-            setIsLoading(false);
+            setCropState(null);
         }
     };
+    const rawSrcRef = useRef<string>('');
 
     // One hidden file input per card — keyed by auction id
     const fileRefs = useRef<Record<number, HTMLInputElement | null>>({});
-    const rawSrcRef = useRef<string>('');
 
     const handleBannerPick = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -77,11 +58,9 @@ export default function MyAuctionsTab({ onCreateClick, onManageClick }: Props) {
         e.target.value = '';
     };
 
-    const handleCropDone = (croppedUrl: string) => {
+    const handleCropDone = () => {
         if (!cropState) return;
-        // Revoke old raw blob
         URL.revokeObjectURL(rawSrcRef.current);
-        setAuctions(prev => prev.map(a => a.id === cropState.id ? { ...a, bannerUrl: croppedUrl } : a));
         setCropState(null);
     };
 

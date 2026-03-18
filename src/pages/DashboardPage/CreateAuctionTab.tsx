@@ -119,40 +119,47 @@ export default function CreateAuctionTab({ onClose }: { onClose?: () => void }) 
             // 1. Create Tournament
             const tournamentRes = await api.tournaments.create({
                 name: form.name,
-                sport: form.sport,
-                date: form.date,
-                time: form.time,
+                play_type: form.sport.toLowerCase(),
+                start_date: form.date,
+                start_time: form.time,
                 venue: form.venue,
-                base_value: Number(form.baseValue),
+                budget_per_team: Number(form.pointsPerTeam),
+                min_bid: Number(form.baseValue),
                 bid_increment: Number(form.bidIncrement),
-                points_per_team: Number(form.pointsPerTeam),
-                players_per_team: Number(form.playersPerTeam),
-                status: 'upcoming'
+                min_players_per_team: Number(form.playersPerTeam),
+                max_players_per_team: Number(form.playersPerTeam),
+                is_private: form.visibility.toLowerCase() === 'private',
+                banner_url: banner.resultUrl,
+                icon_url: icon.resultUrl,
+                tournament_status: 'upcoming'
             });
 
-            if (!tournamentRes.success) {
+            if (!tournamentRes.success || !tournamentRes.data) {
                 throw new Error(tournamentRes.message || 'Failed to create tournament');
             }
 
-            const tournamentId = tournamentRes.data.id;
+            const tournamentId = (tournamentRes.data as any).id;
+            console.log('Tournament created with ID:', tournamentId);
 
             // 2. Add Teams
             if (teams.length > 0) {
+                console.log('Adding teams...');
                 await Promise.all(teams.map(team => 
                     api.tournaments.teams.add(tournamentId, {
                         name: team.name,
-                        short_name: team.shortName,
-                        logo: team.logo
+                        short_name: team.shortName || team.name.substring(0, 3).toUpperCase(),
+                        logo_url: team.logo
                     })
                 ));
             }
 
             // 3. Add Players
             if (players.length > 0) {
+                console.log('Adding players...');
                 await Promise.all(players.map(player => 
                     api.tournaments.players.add(tournamentId, {
                         name: player.name,
-                        photo: player.photo,
+                        photo_url: player.photo,
                         category: player.category,
                         base_price: Number(player.basePrice)
                     })
