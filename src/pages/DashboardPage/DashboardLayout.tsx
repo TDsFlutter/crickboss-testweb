@@ -30,7 +30,7 @@ const NAV_ITEMS: NavItem[] = [
         ),
     },
     {
-        id: 'tournaments',
+        id: 'create',
         label: 'Tournaments',
         icon: (
             <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -39,17 +39,6 @@ const NAV_ITEMS: NavItem[] = [
                 <path d="M4 22h16" />
                 <path d="M10 14.66V17c0 5.5-3.6 6.3-6 7h16c-2.4-.7-6-1.5-6-7v-2.34" />
                 <path d="M7 4h10v6a5 5 0 01-10 0V4z" />
-            </svg>
-        ),
-    },
-    {
-        id: 'create',
-        label: 'Create Auction',
-        icon: (
-            <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="9" />
-                <line x1="12" y1="8" x2="12" y2="16" />
-                <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
         ),
     },
@@ -78,8 +67,8 @@ const NAV_ITEMS: NavItem[] = [
 
 const PAGE_META: Record<DashTab, { title: string; subtitle: string }> = {
     auctions: { title: 'My Auctions', subtitle: 'View and manage all your auction events' },
-    tournaments: { title: 'Tournaments', subtitle: 'Create and manage your cricket tournaments' },
-    create: { title: 'Create Auction', subtitle: 'Set up a new auction event' },
+    tournaments: { title: 'Tournament List', subtitle: 'All your cricket tournaments' },
+    create: { title: 'Tournaments', subtitle: 'Create and manage your cricket tournaments' },
     join: { title: 'Join as Player', subtitle: 'Enter your code to join an auction' },
     profile: { title: 'My Profile', subtitle: 'Manage your account and security settings' },
     manage: { title: 'Manage Auction', subtitle: 'Dashboard for your specific auction event' },

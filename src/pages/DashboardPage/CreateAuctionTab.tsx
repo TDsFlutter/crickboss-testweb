@@ -129,8 +129,8 @@ export default function CreateAuctionTab() {
 
             <div className={styles.wizardContainer}>
                 <header className={styles.wizardHeader}>
-                    <h1 className={`${styles.wizardTitle} ${d}`}>Create Custom Auction</h1>
-                    <p className={styles.wizardSub}>Step-by-step setup for your league</p>
+                    <h1 className={`${styles.wizardTitle} ${d}`}>Create Tournament</h1>
+                    <p className={styles.wizardSub}>Step-by-step setup for your cricket tournament</p>
                 </header>
 
                 <AuctionStepper currentStep={activeStep} totalSteps={4} />
@@ -190,7 +190,7 @@ export default function CreateAuctionTab() {
             {submitted && (
                 <div className={styles.successToast}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
-                    Auction Created Successfully!
+                    🏆 Tournament Created Successfully!
                 </div>
             )}
         </div>
