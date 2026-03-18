@@ -115,7 +115,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({
                         </div>
                     </div>
 
-                    <div className={styles.fieldGroup}>
+                    <div className={styles.fieldGroup} style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <label className={`${styles.label} ${d}`}>Auction Icon</label>
                         <div
                             className={`${styles.logoZone} ${d} ${isDraggingIcon ? styles.logoZoneDrag : ''}`}
