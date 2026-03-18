@@ -94,29 +94,28 @@ export default function VerifyStep({ data, teams, players, onBack, onSubmit, isS
                 </div>
             </div>
 
-            <div className={styles.stickyFooter}>
-                <div className={styles.footerInner}>
-                    <button 
-                        type="button" 
-                        className={styles.footerBackBtn} 
-                        onClick={onBack} 
-                        disabled={isSubmitting}
-                    >
-                        <FaArrowLeft style={{ marginRight: '8px' }} /> Edit Details
-                    </button>
-                    <button 
-                        type="button" 
-                        className={styles.launchBtn} 
-                        onClick={onSubmit}
-                        disabled={isSubmitting || teams.length === 0}
-                    >
-                        {isSubmitting ? (
-                            <>Processing...</>
-                        ) : (
-                            <><FaRocket style={{ marginRight: '8px' }} /> Launch Auction</>
-                        )}
-                    </button>
-                </div>
+            <div className={styles.submitRow} style={{ marginTop: '10px' }}>
+                <button 
+                    type="button" 
+                    className={styles.footerBackBtn} 
+                    onClick={onBack} 
+                    disabled={isSubmitting}
+                >
+                    <FaArrowLeft style={{ marginRight: '6px' }} /> Edit Details
+                </button>
+                <button 
+                    type="button" 
+                    className={styles.submitBtn} 
+                    onClick={onSubmit}
+                    disabled={isSubmitting || teams.length === 0}
+                >
+                    {isSubmitting ? (
+                        <>Processing...</>
+                    ) : (
+                        <><FaRocket style={{ marginRight: '8px' }} /> Launch Auction</>
+                    )}
+                </button>
+                <p className={styles.submitNote}>Step 4 of 4: All set</p>
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import styles from '../../CreateAuctionTab.module.css';
 import { useTheme } from '../../../../context/ThemeContext';
-import { FaUser, FaPlus, FaTrash, FaArrowRight } from 'react-icons/fa';
+import { FaUser, FaPlus, FaTrash, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import { useImageCropper } from '../../../../components/ImageCropper/ImageCropper';
 import ImageCropper from '../../../../components/ImageCropper/ImageCropper';
 
@@ -191,13 +191,14 @@ export default function PlayersStep({ players, onAddPlayer, onDeletePlayer, onNe
                 </button>
             )}
 
-            <div className={styles.stickyFooter}>
-                <div className={styles.footerInner}>
-                    <button type="button" className={styles.footerBackBtn} onClick={onBack}>Back</button>
-                    <button type="button" className={styles.footerNextBtn} onClick={onNext} disabled={players.length === 0}>
-                        Next: Verify & Launch <FaArrowRight style={{ marginLeft: '8px' }} />
-                    </button>
-                </div>
+            <div className={styles.submitRow} style={{ marginTop: '30px' }}>
+                <button type="button" className={styles.footerBackBtn} onClick={onBack}>
+                    <FaArrowLeft style={{ marginRight: '6px' }} /> Back
+                </button>
+                <button type="button" className={styles.submitBtn} onClick={onNext} disabled={players.length === 0}>
+                    Next: Verify & Launch <FaArrowRight />
+                </button>
+                <p className={styles.submitNote}>Step 3 of 4: Add players</p>
             </div>
         </div>
     );

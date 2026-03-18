@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import styles from '../../CreateAuctionTab.module.css';
 import { useTheme } from '../../../../context/ThemeContext';
-import { FaUsers, FaPlus, FaTrash, FaArrowRight } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaTrash, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import { useImageCropper } from '../../../../components/ImageCropper/ImageCropper';
 import ImageCropper from '../../../../components/ImageCropper/ImageCropper';
 
@@ -169,13 +169,14 @@ export default function TeamsStep({ teams, onAddTeam, onDeleteTeam, onNext, onBa
                 </button>
             )}
 
-            <div className={styles.stickyFooter}>
-                <div className={styles.footerInner}>
-                    <button type="button" className={styles.footerBackBtn} onClick={onBack}>Back</button>
-                    <button type="button" className={styles.footerNextBtn} onClick={onNext} disabled={teams.length === 0}>
-                        Next: Add Players <FaArrowRight style={{ marginLeft: '8px' }} />
-                    </button>
-                </div>
+            <div className={styles.submitRow} style={{ marginTop: '30px' }}>
+                <button type="button" className={styles.footerBackBtn} onClick={onBack}>
+                    <FaArrowLeft style={{ marginRight: '6px' }} /> Back
+                </button>
+                <button type="button" className={styles.submitBtn} onClick={onNext} disabled={teams.length === 0}>
+                    Next: Add Players <FaArrowRight />
+                </button>
+                <p className={styles.submitNote}>Step 2 of 4: Add teams</p>
             </div>
         </div>
     );
