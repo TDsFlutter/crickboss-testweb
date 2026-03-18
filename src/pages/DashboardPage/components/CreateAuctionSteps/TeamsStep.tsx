@@ -164,18 +164,20 @@ export default function TeamsStep({ teams, onAddTeam, onDeleteTeam, onNext, onBa
                     </div>
                 </div>
             ) : (
-                <button className={styles.addBtnLarge} onClick={() => setIsAdding(true)}>
+                <button className={styles.btnPrimaryLarge} onClick={() => setIsAdding(true)}>
                     <FaPlus /> {teams.length === 0 ? 'Add First Team' : 'Add Another Team'}
                 </button>
             )}
 
-            <div className={styles.submitRow} style={{ marginTop: '30px' }}>
-                <button type="button" className={styles.footerBackBtn} onClick={onBack}>
-                    <FaArrowLeft style={{ marginRight: '6px' }} /> Back
-                </button>
-                <button type="button" className={styles.submitBtn} onClick={onNext} disabled={teams.length === 0}>
-                    Next: Add Players <FaArrowRight />
-                </button>
+            <div className={styles.mobileFooter}>
+                <div className={styles.footerRow}>
+                    <button type="button" className={styles.btnOutlineLarge} onClick={onBack}>
+                        <FaArrowLeft /> Back
+                    </button>
+                    <button type="button" className={styles.btnPrimaryLarge} onClick={onNext} disabled={teams.length === 0}>
+                        Next: Add Players <FaArrowRight />
+                    </button>
+                </div>
                 <p className={styles.submitNote}>Step 2 of 4: Add teams</p>
             </div>
         </div>

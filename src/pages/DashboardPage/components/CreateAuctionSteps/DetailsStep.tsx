@@ -298,8 +298,8 @@ const DetailsStep: React.FC<DetailsStepProps> = ({
                 </div>
             </div>
 
-            <div className={styles.submitRow}>
-                <button className={styles.submitBtn} onClick={onNext}>
+            <div className={styles.mobileFooter}>
+                <button className={styles.btnPrimaryLarge} onClick={onNext}>
                     Save & Continue <FaArrowRight />
                 </button>
                 <p className={styles.submitNote}>Step 1 of 4: All fields can be edited later</p>

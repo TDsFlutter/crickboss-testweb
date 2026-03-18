@@ -94,28 +94,30 @@ export default function VerifyStep({ data, teams, players, onBack, onSubmit, isS
                 </div>
             </div>
 
-            <div className={styles.submitRow} style={{ marginTop: '10px' }}>
+            <div className={styles.mobileFooter}>
                 <button 
                     type="button" 
-                    className={styles.footerBackBtn} 
-                    onClick={onBack} 
-                    disabled={isSubmitting}
-                >
-                    <FaArrowLeft style={{ marginRight: '6px' }} /> Edit Details
-                </button>
-                <button 
-                    type="button" 
-                    className={styles.submitBtn} 
+                    className={styles.btnPrimaryLarge} 
                     onClick={onSubmit}
                     disabled={isSubmitting || teams.length === 0}
                 >
                     {isSubmitting ? (
                         <>Processing...</>
                     ) : (
-                        <><FaRocket style={{ marginRight: '8px' }} /> Launch Auction</>
+                        <><FaHammer style={{ marginRight: '8px' }} /> Create Auction</>
                     )}
                 </button>
-                <p className={styles.submitNote}>Step 4 of 4: All set</p>
+
+                <button 
+                    type="button" 
+                    className={styles.btnTextLight} 
+                    onClick={onBack} 
+                    disabled={isSubmitting}
+                >
+                    <FaArrowLeft style={{ marginRight: '6px' }} /> Back to Players
+                </button>
+                
+                <p className={styles.submitNote} style={{ textAlign: 'center' }}>Step 4 of 4: All set</p>
             </div>
         </div>
     );
