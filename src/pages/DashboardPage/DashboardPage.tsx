@@ -30,7 +30,7 @@ export default function DashboardPage() {
                     case 'tournaments':
                         return <TournamentsTab onManageClick={onManageTournament} />;
                     case 'create':
-                        return <CreateAuctionTab />;
+                        return <CreateAuctionTab onClose={() => setTab('auctions')} />;
                     case 'join':
                         return <JoinAsPlayerTab />;
                     case 'profile':

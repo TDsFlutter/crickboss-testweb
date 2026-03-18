@@ -37,7 +37,10 @@ export default function AuctionStepper({ currentStep, totalSteps }: AuctionStepp
 
             {/* Progress Bar */}
             <div className={`${styles.progressBarBg} ${d}`}>
-                <div className={`${styles.progressBarFill} ${d}`} style={{ width: `${progressPercent}%` }} />
+                <div 
+                    className={`${styles.progressBarFill} ${d}`} 
+                    style={{ width: `${progressPercent}%` }} 
+                />
             </div>
 
             {/* Footer Labels */}

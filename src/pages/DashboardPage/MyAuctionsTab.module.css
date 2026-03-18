@@ -253,11 +253,6 @@
     min-width: 0;
 }
 
-.cardInfo {
-    flex: 1;
-    min-width: 0;
-}
-
 .cardName {
     font-size: 1rem;
     font-weight: 700;
@@ -375,6 +370,35 @@
     font-size: 0.84rem;
     color: #b0bdd0;
     margin-bottom: 20px;
+}
+
+/* Loading State */
+.loadingState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: #9fafc4;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e8edf8;
+    border-top-color: #1F3C88;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.dark .spinner {
+    border-color: #1e2636;
+    border-top-color: #60a5fa;
 }
 
 @media (max-width: 768px) {

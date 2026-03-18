@@ -10,6 +10,8 @@ import TeamsStep from './components/CreateAuctionSteps/TeamsStep';
 import PlayersStep from './components/CreateAuctionSteps/PlayersStep';
 import VerifyStep from './components/CreateAuctionSteps/VerifyStep';
 
+import { api } from '../../utils/api';
+
 interface BidSlab { id: number; from: string; to: string; increment: string; }
 const SPORTS = ['Cricket', 'Football', 'Volleyball', 'Basketball', 'Kabaddi', 'Badminton', 'Tennis', 'Hockey'];
 interface FormErrors {
@@ -17,7 +19,7 @@ interface FormErrors {
     pointsPerTeam?: string; baseValue?: string; bidIncrement?: string; playersPerTeam?: string; slabs?: string;
 }
 
-export default function CreateAuctionTab() {
+export default function CreateAuctionTab({ onClose }: { onClose?: () => void }) {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const d = isDark ? styles.dark : '';
@@ -27,6 +29,9 @@ export default function CreateAuctionTab() {
 
     const [isDraggingBanner, setIsDraggingBanner] = useState(false);
     const [isDraggingIcon, setIsDraggingIcon] = useState(false);
+    const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' } | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
     // Reusable drag handlers
     const makeDragHandlers = (setDragging: (v: boolean) => void, handleFile: (e: any) => void) => ({
@@ -56,8 +61,6 @@ export default function CreateAuctionTab() {
     const [teams, setTeams] = useState<any[]>([]);
     const [players, setPlayers] = useState<any[]>([]);
     const [errors, setErrors] = useState<FormErrors>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
     const [activeStep, setActiveStep] = useState(1);
 
     const handleAddSlab = () => {
@@ -112,11 +115,72 @@ export default function CreateAuctionTab() {
 
     const handleSubmit = async () => {
         setIsSubmitting(true);
-        // Simulate API call
-        await new Promise(r => setTimeout(r, 2000));
-        setIsSubmitting(false);
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 4000);
+        try {
+            // 1. Create Tournament
+            const tournamentRes = await api.tournaments.create({
+                name: form.name,
+                sport: form.sport,
+                date: form.date,
+                time: form.time,
+                venue: form.venue,
+                base_value: Number(form.baseValue),
+                bid_increment: Number(form.bidIncrement),
+                points_per_team: Number(form.pointsPerTeam),
+                players_per_team: Number(form.playersPerTeam),
+                status: 'upcoming'
+            });
+
+            if (!tournamentRes.success) {
+                throw new Error(tournamentRes.message || 'Failed to create tournament');
+            }
+
+            const tournamentId = tournamentRes.data.id;
+
+            // 2. Add Teams
+            if (teams.length > 0) {
+                await Promise.all(teams.map(team => 
+                    api.tournaments.teams.add(tournamentId, {
+                        name: team.name,
+                        short_name: team.shortName,
+                        logo: team.logo
+                    })
+                ));
+            }
+
+            // 3. Add Players
+            if (players.length > 0) {
+                await Promise.all(players.map(player => 
+                    api.tournaments.players.add(tournamentId, {
+                        name: player.name,
+                        photo: player.photo,
+                        category: player.category,
+                        base_price: Number(player.basePrice)
+                    })
+                ));
+            }
+
+            setToast({
+                show: true,
+                message: 'Auction created successfully!',
+                type: 'success'
+            });
+            
+            setSubmitted(true);
+            setTimeout(() => {
+                setSubmitted(false);
+                if (onClose) onClose(); // Switch to My Auctions tab
+            }, 2000);
+
+        } catch (err: any) {
+            console.error('Submit Error:', err);
+            setToast({
+                show: true,
+                message: err.message || 'Something went wrong. Please try again.',
+                type: 'error'
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (

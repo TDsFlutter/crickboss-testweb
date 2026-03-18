@@ -17,6 +17,8 @@
     border-color: #242f48;
 }
 
+.dark {}
+
 /* ── Header ── */
 .stepperHeader {
     display: flex;

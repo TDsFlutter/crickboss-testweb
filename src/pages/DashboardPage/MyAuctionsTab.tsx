@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { DashTab } from './DashboardLayout';
 import { useTheme } from '../../context/ThemeContext';
 import ImageCropper from '../../components/ImageCropper/ImageCropper';
 import styles from './MyAuctionsTab.module.css';
+import { api } from '../../utils/api';
 
 interface Props {
     onCreateClick: (t: DashTab) => void;
@@ -23,18 +24,45 @@ interface Auction {
     bannerUrl?: string;
 }
 
-const INITIAL_AUCTIONS: Auction[] = [
-    { id: 1, name: 'IPL Season 2026', sport: 'Cricket', date: '27 Feb 2026', venue: 'Wankhede Stadium', teams: 8, players: 120, status: 'live', emoji: '🏏', bannerClass: '' },
-    { id: 2, name: 'Premier Football League', sport: 'Football', date: '5 Mar 2026', venue: 'DY Patil Stadium', teams: 6, players: 90, status: 'upcoming', emoji: '⚽', bannerClass: 'football' },
-    { id: 3, name: 'Volleyball Open Cup', sport: 'Volleyball', date: '12 Mar 2026', venue: 'Indoor Arena', teams: 4, players: 48, status: 'draft', emoji: '🏐', bannerClass: 'volleyball' },
-];
-
 export default function MyAuctionsTab({ onCreateClick, onManageClick }: Props) {
     const [query, setQuery] = useState('');
-    const [auctions, setAuctions] = useState<Auction[]>(INITIAL_AUCTIONS);
+    const [auctions, setAuctions] = useState<Auction[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [cropState, setCropState] = useState<{ id: number; rawSrc: string } | null>(null);
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+
+    useEffect(() => {
+        fetchTournaments();
+    }, []);
+
+    const fetchTournaments = async () => {
+        setIsLoading(true);
+        try {
+            const res = await api.tournaments.list();
+            if (res.success && Array.isArray(res.data)) {
+                // Map the API data to our Auction interface
+                const mapped: Auction[] = res.data.map(t => ({
+                    id: t.id,
+                    name: t.name,
+                    sport: t.sport || 'Cricket',
+                    date: t.date || 'TBD',
+                    venue: t.venue || 'No Venue',
+                    teams: t.teamsCount || 0,
+                    players: t.playersCount || 0,
+                    status: (t.status === 'live' || t.status === 'upcoming' || t.status === 'draft') ? t.status : 'upcoming' as const,
+                    emoji: t.sport === 'Football' ? '⚽' : t.sport === 'Volleyball' ? '🏐' : '🏏',
+                    bannerClass: t.sport?.toLowerCase() || '',
+                    bannerUrl: t.banner
+                }));
+                setAuctions(mapped);
+            }
+        } catch (err) {
+            console.error('Fetch Error:', err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     // One hidden file input per card — keyed by auction id
     const fileRefs = useRef<Record<number, HTMLInputElement | null>>({});
@@ -66,6 +94,20 @@ export default function MyAuctionsTab({ onCreateClick, onManageClick }: Props) {
         a.name.toLowerCase().includes(query.toLowerCase()) ||
         a.sport.toLowerCase().includes(query.toLowerCase())
     );
+
+    if (isLoading) {
+        return (
+            <div className={`${styles.wrap} ${isDark ? styles.dark : ''}`}>
+                <div className={styles.topRow}>
+                    <div className={styles.sectionLabel}>Loading Auctions...</div>
+                </div>
+                <div className={styles.loadingState}>
+                    <div className={styles.spinner}></div>
+                    <p>Fetching your tournament data...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={`${styles.wrap} ${isDark ? styles.dark : ''}`}>
@@ -110,7 +152,7 @@ export default function MyAuctionsTab({ onCreateClick, onManageClick }: Props) {
 
             {filtered.length === 0 ? (
                 <div className={styles.empty}>
-                    <div className={styles.emptyIcon}>🏏</div>
+                    <div className={styles.emptyIcon}>📂</div>
                     <div className={styles.emptyText}>No auctions found</div>
                     <div className={styles.emptySub}>Try a different search or create a new auction.</div>
                     <button className={`${styles.actBtn} ${styles.primary}`} onClick={() => onCreateClick('create')}>Create Your First Auction</button>
