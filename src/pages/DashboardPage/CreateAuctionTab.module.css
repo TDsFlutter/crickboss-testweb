@@ -579,6 +579,54 @@
     border-radius: 12px;
 }
 
+/* Hover overlay when image is already selected */
+.logoChangeOverlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.logoZone:hover .logoChangeOverlay {
+    opacity: 1;
+}
+
+/* Placeholder when no image */
+.logoPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #9fafc4;
+    pointer-events: none;
+}
+
+.logoPlaceholder span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #9fafc4;
+}
+
+.logoPlaceholder small {
+    font-size: 0.62rem;
+    color: #c0cdd8;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.dark .logoPlaceholder span { color: #4a5c80; }
+.dark .logoPlaceholder small { color: #3a4d6b; }
+
 .logoMeta {
     display: flex;
     flex-direction: column;
