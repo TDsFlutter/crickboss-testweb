@@ -5,7 +5,7 @@ import styles from './MyProfileTab.module.css';
 import { api } from '../../utils/api';
 
 export default function MyProfileTab() {
-    const { email, displayName, city, avatar, updateProfile, refreshUser } = useAuth();
+    const { email, displayName, city, avatar, updateProfile, refreshUser, deleteAccount } = useAuth();
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
@@ -82,6 +82,27 @@ export default function MyProfileTab() {
         } finally {
             setUploadingAvatar(false);
             setTimeout(() => setProfileToast('idle'), 3500);
+        }
+    };
+    
+    const handleDeleteAccount = async () => {
+        if (!window.confirm('Are you sure you want to delete your account? This action is permanent and cannot be undone.')) {
+            return;
+        }
+        
+        setSaving(true);
+        try {
+            const res = await deleteAccount();
+            if (!res.success) {
+                setProfileToast('error');
+                setProfileToastMsg(res.message || 'Failed to delete account.');
+                setSaving(false);
+            }
+            // If success, AuthContext.logout will be called and user will be redirected
+        } catch {
+            setProfileToast('error');
+            setProfileToastMsg('Connection error. Please try again.');
+            setSaving(false);
         }
     };
 
@@ -250,6 +271,33 @@ export default function MyProfileTab() {
                     <p className={styles.infoNote}>
                         Your account uses secure <strong>Email OTP</strong> authentication — no password needed.
                     </p>
+                </div>
+                
+                {/* ── Danger Zone ── */}
+                <div className={`${styles.card} ${d} ${styles.dangerCard}`}>
+                    <div className={styles.cardHeader}>
+                        <div className={`${styles.cardIcon} ${styles.red}`}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                            </svg>
+                        </div>
+                        <h2 className={`${styles.cardTitle} ${d}`}>Danger Zone</h2>
+                    </div>
+                    <p className={styles.cardSub}>Permanent actions for your account</p>
+                    
+                    <div className={styles.dangerAction}>
+                        <div>
+                            <p className={`${styles.actionLabel} ${d}`}>Delete Account</p>
+                            <p className={styles.actionDesc}>Permanently remove all your data and access</p>
+                        </div>
+                        <button 
+                            className={styles.deleteBtn}
+                            onClick={handleDeleteAccount}
+                            disabled={saving}
+                        >
+                            Delete...
+                        </button>
+                    </div>
                 </div>
 
             </div>

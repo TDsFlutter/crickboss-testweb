@@ -1,13 +1,13 @@
-export const BASE_URL = 'https://crickboss.live/v2/api';
+export const BASE_URL = 'https://bhargav.crickboss.live/api';
 
 export const formatAvatarUrl = (url?: string): string => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  
+
   // Strip leading /api if BASE_URL already ends with /api
   const cleanedUrl = url.startsWith('/api') ? url.slice(4) : url;
   const separator = (cleanedUrl.startsWith('/') || BASE_URL.endsWith('/')) ? '' : '/';
-  
+
   return `${BASE_URL}${separator}${cleanedUrl}`;
 };
 
@@ -80,7 +80,9 @@ async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {
   }
 
   // If backend sends user directly at root, promote to data
-  if (data?.user && !result.data) {
+  if (data?.id && data?.email && !result.data) {
+    result.data = data as T;
+  } else if (data?.user && !result.data) {
     result.data = data.user;
   }
 
@@ -99,9 +101,9 @@ export const api = {
     return handleResponse(response);
   },
 
-  register: async (data: { 
-    name: string; 
-    email: string; 
+  register: async (data: {
+    name: string;
+    email: string;
     city: string;
     mobile: string;
     country_code: string;
@@ -156,16 +158,17 @@ export const api = {
   },
 
   refreshToken: async (refresh_token?: string): Promise<APIResponse> => {
-    const body = refresh_token ? JSON.stringify({ refresh_token }) : undefined;
-    const response = await fetch(`${BASE_URL}/auth/refresh`, {
+    const url = refresh_token 
+      ? `${BASE_URL}/auth/refresh?token=${encodeURIComponent(refresh_token)}` 
+      : `${BASE_URL}/auth/refresh`;
+    const response = await fetch(url, {
       method: 'POST',
-      headers: body ? { 'Content-Type': 'application/json' } : {},
-      body,
+      headers: getHeaders(),
       credentials: 'include',
     });
     return handleResponse(response);
   },
-  
+
   logout: async (): Promise<APIResponse> => {
     // Session is managed via JWT. Logout is handled by clearing tokens locally in AuthContext.
     return { success: true, message: 'Logged out locally' };

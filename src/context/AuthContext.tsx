@@ -23,6 +23,7 @@ interface AuthContextType {
     logout: () => void;
     updateProfile: (name: string, city?: string, avatar?: string) => Promise<{ success: boolean; message: string }>;
     refreshUser: () => Promise<void>;
+    deleteAccount: () => Promise<{ success: boolean; message: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -166,6 +167,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return { success: false, message: 'Connection error. Please try again.' };
         }
     }, []);
+    
+    const deleteAccount = useCallback(async (): Promise<{ success: boolean; message: string }> => {
+        try {
+            const res = await api.deleteMe();
+            if (res.success) {
+                await logout();
+            }
+            return { success: res.success, message: res.message };
+        } catch (error) {
+            return { success: false, message: 'Connection error. Please try again.' };
+        }
+    }, [logout]);
 
     /** Inactivity Timeout: 10 minutes (600,000 ms) */
     useEffect(() => {
@@ -210,7 +223,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             login,
             logout,
             updateProfile,
-            refreshUser
+            refreshUser,
+            deleteAccount
         }}>
             {children}
         </AuthContext.Provider>
