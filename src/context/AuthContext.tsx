@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { api } from '../utils/api';
 
@@ -14,7 +14,7 @@ interface UserData {
 
 interface AuthContextType {
     isLoggedIn: boolean;
-    loading: boolean;
+    loading: boolean; // true only during the initial silent auth check
     email: string;
     displayName: string;
     userId: string;
@@ -32,55 +32,56 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(true);
+    // Start as NOT loading — public pages render immediately.
+    // We only do a silent check if tokens exist in localStorage.
+    const [loading, setLoading] = useState<boolean>(() => {
+        // Only block UI if we have tokens and need to verify them
+        return !!(localStorage.getItem('access_token') || localStorage.getItem('refresh_token'));
+    });
     const [email, setEmail] = useState<string>('');
     const [displayName, setDisplayName] = useState<string>('');
     const [userId, setUserId] = useState<string>('');
     const [city, setCity] = useState<string>('');
     const [avatar, setAvatar] = useState<string>('');
     const [countryCode, setCountryCode] = useState<string>('');
+    const initialCheckDone = useRef(false);
 
-    const login = useCallback((userData: UserData, tokens?: { access: string; refresh: string }) => {
-        // Reverting to localStorage-based token storage
-        if (tokens) {
-            localStorage.setItem('access_token', tokens.access);
-            localStorage.setItem('refresh_token', tokens.refresh);
-        }
-        
+    const setUserFromData = useCallback((userData: any) => {
         setIsLoggedIn(true);
-
-        setEmail(userData.email);
+        setEmail(userData.email || '');
         setDisplayName(userData.name || '');
-        setUserId(userData.id || '');
+        setUserId(userData.id || userData._id || '');
         setCity(userData.city || '');
         setCountryCode(userData.country_code || '');
         const rawAvatar = userData.avatar_url || userData.avatar || '';
         setAvatar(api.formatAvatarUrl(rawAvatar));
     }, []);
 
-    const logout = useCallback(async () => {
-        try {
-            await api.logout();
-        } catch (err) {
-            console.error('Logout error:', err);
-        } finally {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('cb_has_session');
-            setIsLoggedIn(false);
-            setEmail('');
-            setDisplayName('');
-            setUserId('');
-            setCity('');
-            setAvatar('');
-            setCountryCode('');
+    const login = useCallback((userData: UserData, tokens?: { access: string; refresh: string }) => {
+        if (tokens) {
+            localStorage.setItem('access_token', tokens.access);
+            if (tokens.refresh) localStorage.setItem('refresh_token', tokens.refresh);
         }
+        setUserFromData(userData);
+    }, [setUserFromData]);
+
+    const logout = useCallback(async () => {
+        try { await api.logout(); } catch { /* ignore */ }
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('cb_has_session');
+        setIsLoggedIn(false);
+        setEmail('');
+        setDisplayName('');
+        setUserId('');
+        setCity('');
+        setAvatar('');
+        setCountryCode('');
     }, []);
 
     const tryRefreshToken = useCallback(async (): Promise<boolean> => {
         const refreshToken = localStorage.getItem('refresh_token');
         if (!refreshToken) return false;
-
         try {
             const res = await api.refreshToken(refreshToken);
             const newToken = res.token || res.access_token;
@@ -88,68 +89,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 localStorage.setItem('access_token', newToken);
                 return true;
             }
-        } catch {
-            // ignore
-        }
+        } catch { /* ignore */ }
         return false;
     }, []);
 
     const refreshUser = useCallback(async () => {
-        const refreshToken = localStorage.getItem('refresh_token');
-        const accessToken = localStorage.getItem('access_token');
+        const hasAccess = !!localStorage.getItem('access_token');
+        const hasRefresh = !!localStorage.getItem('refresh_token');
 
-        // If we have no tokens at all, we assume guest
-        if (!refreshToken && !accessToken) {
+        // If no tokens at all, skip entirely — user is a guest
+        if (!hasAccess && !hasRefresh) {
             setLoading(false);
             return;
         }
 
         try {
+            // 8s timeout so users aren't stuck forever on slow network
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+
             const res = await api.getMe();
+            clearTimeout(timeoutId);
 
             if (res.success) {
                 const userData = res.data || res.user || (res.email ? res : null);
-                if (userData && userData.email) {
-                    setIsLoggedIn(true);
-                    setEmail(userData.email || '');
-                    setDisplayName(userData.name || '');
-                    setUserId(userData.id || userData._id || '');
-                    setCity(userData.city || '');
-                    setCountryCode(userData.country_code || '');
-                    const rawAvatar = userData.avatar_url || userData.avatar || '';
-                    setAvatar(api.formatAvatarUrl(rawAvatar));
+                if (userData?.email) {
+                    setUserFromData(userData);
                     return;
                 }
             }
 
-            // If /me failed, try refresh
+            // /me returned error — try refresh token
             const refreshed = await tryRefreshToken();
             if (refreshed) {
                 const retryRes = await api.getMe();
                 const retryData = retryRes.data || retryRes.user || (retryRes.email ? retryRes : null);
-                if (retryRes.success && retryData && retryData.email) {
-                    setIsLoggedIn(true);
-                    setEmail(retryData.email || '');
-                    setDisplayName(retryData.name || '');
-                    setUserId(retryData.id || retryData._id || '');
-                    setCity(retryData.city || '');
-                    setCountryCode(retryData.country_code || '');
-                    const rawAvatar = retryData.avatar_url || retryData.avatar || '';
-                    setAvatar(api.formatAvatarUrl(rawAvatar));
+                if (retryRes.success && retryData?.email) {
+                    setUserFromData(retryData);
                     return;
                 }
             }
 
-            // Final fallback: clear local state
+            // Tokens invalid — clear them silently
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
             setIsLoggedIn(false);
-            setEmail('');
-        } catch (error) {
-            console.error('[Auth] Refresh user error:', error);
+        } catch {
+            // Network error or timeout — clear state so user can log in again
             setIsLoggedIn(false);
         } finally {
             setLoading(false);
         }
-    }, [tryRefreshToken]);
+    }, [setUserFromData, tryRefreshToken]);
 
     /** Update profile via API and sync state on success */
     const updateProfile = useCallback(async (
@@ -173,53 +164,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (countryCodeVal !== undefined) setCountryCode(countryCodeVal);
             }
             return { success: res.success, message: res.message };
-        } catch (error) {
+        } catch {
             return { success: false, message: 'Connection error. Please try again.' };
         }
     }, []);
-    
+
     const deleteAccount = useCallback(async (): Promise<{ success: boolean; message: string }> => {
         try {
             const res = await api.deleteMe();
-            if (res.success) {
-                await logout();
-            }
+            if (res.success) await logout();
             return { success: res.success, message: res.message };
-        } catch (error) {
+        } catch {
             return { success: false, message: 'Connection error. Please try again.' };
         }
     }, [logout]);
 
-    /** Inactivity Timeout: 10 minutes (600,000 ms) */
+    /** Silent auth check on app mount — only runs once, only if tokens exist */
     useEffect(() => {
-        if (!isLoggedIn) return;
-
-        let timeoutId: any;
-
-        const resetTimer = () => {
-            if (timeoutId) clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                console.log('Session expired due to inactivity');
-                logout();
-            }, 600000); // 10 minutes
-        };
-
-        // Events to listen for activity
-        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-        events.forEach(event => document.addEventListener(event, resetTimer));
-
-        // Initial start
-        resetTimer();
-
-        return () => {
-            if (timeoutId) clearTimeout(timeoutId);
-            events.forEach(event => document.removeEventListener(event, resetTimer));
-        };
-    }, [isLoggedIn, logout]);
-
-    useEffect(() => {
+        if (initialCheckDone.current) return;
+        initialCheckDone.current = true;
         refreshUser();
     }, [refreshUser]);
+
+    /** Inactivity Timeout: 10 minutes */
+    useEffect(() => {
+        if (!isLoggedIn) return;
+        let timeoutId: ReturnType<typeof setTimeout>;
+        const resetTimer = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => logout(), 600000);
+        };
+        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        events.forEach(e => document.addEventListener(e, resetTimer));
+        resetTimer();
+        return () => {
+            clearTimeout(timeoutId);
+            events.forEach(e => document.removeEventListener(e, resetTimer));
+        };
+    }, [isLoggedIn, logout]);
 
     return (
         <AuthContext.Provider value={{

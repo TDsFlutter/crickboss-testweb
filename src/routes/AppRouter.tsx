@@ -29,22 +29,23 @@ function ScrollToTop() {
     return null;
 }
 
-// Redirects to dashboard if already logged in
+// Redirects logged-in users away from login/register.
+// Public pages render IMMEDIATELY — no waiting for loading.
+// Only redirect once auth check is done to avoid premature redirect flashes.
 function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
     const { isLoggedIn, loading } = useAuth();
-    if (loading) return null; // Wait for auth check
-    if (isLoggedIn) return <Navigate to="/dashboard" replace />;
+    // If already known to be logged in (fast-path), redirect
+    if (!loading && isLoggedIn) return <Navigate to="/dashboard" replace />;
+    // While loading, show the page anyway (avoids blank screen)
     return <>{children}</>;
 }
 
 export default function AppRouter() {
-    const { isLoggedIn } = useAuth();
-
     return (
         <BrowserRouter basename={import.meta.env.BASE_URL}>
             <ScrollToTop />
             <Routes>
-                {/* Protected routes — wrapped in PublicLayout so TopBar/Header/Footer are always visible */}
+                {/* Protected routes */}
                 <Route element={<ProtectedRoute />}>
                     <Route element={<PublicLayout />}>
                         <Route path="/dashboard" element={<DashboardPage />} />
