@@ -7,6 +7,8 @@ import { useTheme } from '../../context/ThemeContext';
 import FormField from '../../components/FormField/FormField';
 import styles from './RegisterPage.module.css';
 import { api } from '../../utils/api';
+import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 function maskEmail(email: string): string {
     const [user, domain] = email.split('@');
@@ -31,8 +33,8 @@ export default function RegisterPage() {
     // ── Step 1: registration form fields ──
     const [name, setName] = useState(() => sessionStorage.getItem('register_name') || '');
     const [email, setEmail] = useState(() => sessionStorage.getItem('register_email') || '');
-    const [mobile, setMobile] = useState(() => sessionStorage.getItem('register_mobile') || '');
-    const [countryCode, setCountryCode] = useState(() => sessionStorage.getItem('register_countryCode') || '+91');
+    const [phone, setPhone] = useState(() => sessionStorage.getItem('register_phone') || '');
+    const [countryISO, setCountryISO] = useState(() => sessionStorage.getItem('register_countryISO') || 'IN');
     const [city, setCity] = useState(() => sessionStorage.getItem('register_city') || '');
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [registering, setRegistering] = useState(false);
@@ -57,8 +59,8 @@ export default function RegisterPage() {
     useEffect(() => { sessionStorage.setItem('register_step', step.toString()); }, [step]);
     useEffect(() => { sessionStorage.setItem('register_name', name); }, [name]);
     useEffect(() => { sessionStorage.setItem('register_email', email); }, [email]);
-    useEffect(() => { sessionStorage.setItem('register_mobile', mobile); }, [mobile]);
-    useEffect(() => { sessionStorage.setItem('register_countryCode', countryCode); }, [countryCode]);
+    useEffect(() => { sessionStorage.setItem('register_phone', phone); }, [phone]);
+    useEffect(() => { sessionStorage.setItem('register_countryISO', countryISO); }, [countryISO]);
     useEffect(() => { sessionStorage.setItem('register_city', city); }, [city]);
 
     // Check if user is already logged in ONLY if they land here fresh (Step 1 with no data)
@@ -73,25 +75,9 @@ export default function RegisterPage() {
         sessionStorage.removeItem('register_step');
         sessionStorage.removeItem('register_name');
         sessionStorage.removeItem('register_email');
-        sessionStorage.removeItem('register_mobile');
-        sessionStorage.removeItem('register_countryCode');
+        sessionStorage.removeItem('register_phone');
+        sessionStorage.removeItem('register_countryISO');
         sessionStorage.removeItem('register_city');
-    };
-
-    const getCountryISO = (code: string): string => {
-        const mapping: { [key: string]: string } = {
-            '+91': 'IN',
-            '+1': 'US',
-            '+44': 'GB',
-            '+61': 'AU',
-            '+92': 'PK',
-            '+880': 'BD',
-            '+971': 'AE',
-            '+94': 'LK',
-            '+27': 'ZA',
-            '+64': 'NZ'
-        };
-        return mapping[code] || 'IN';
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,10 +98,8 @@ export default function RegisterPage() {
             newErrors.email = 'Please enter a valid email address.';
         }
         if (!city.trim()) newErrors.city = 'City is required.';
-        if (!mobile.trim()) {
-            newErrors.mobile = 'Mobile number is required.';
-        } else if (!/^\d/.test(mobile.trim())) {
-            newErrors.mobile = 'Please enter a valid mobile number.';
+        if (!phone) {
+            newErrors.phone = 'Mobile number is required.';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -141,11 +125,12 @@ export default function RegisterPage() {
         if (!validateForm()) return;
         setRegistering(true);
         try {
+            const phoneNumberObj = parsePhoneNumber(phone);
             const res = await api.register({
                 name: name.trim(),
                 email: email.trim().toLowerCase(),
-                mobile: mobile.trim(),
-                country_code: getCountryISO(countryCode),
+                mobile: phoneNumberObj ? phoneNumberObj.nationalNumber : phone,
+                country_code: countryISO,
                 city: city.trim(),
             });
             if (res.success) {
@@ -156,10 +141,10 @@ export default function RegisterPage() {
                 startOtpTimer();
                 setTimeout(() => otpRefs.current[0]?.focus(), 100);
             } else {
-                setErrors({ email: res.message || 'Registration failed. Please try again.' });
+                setErrors({ submit: res.message || 'Registration failed. Please try again.' });
             }
         } catch {
-            setErrors({ email: 'Connection error. Please check your internet.' });
+            setErrors({ submit: 'Connection error. Please check your internet.' });
         } finally {
             setRegistering(false);
         }
@@ -206,6 +191,7 @@ export default function RegisterPage() {
                         name: userPayload?.name || name,
                         id: userPayload?.id || userPayload?._id,
                         city: userPayload?.city || city,
+                        country_code: userPayload?.country_code || countryISO,
                     },
                     {
                         access: res.token,
@@ -318,32 +304,22 @@ export default function RegisterPage() {
                                 required
                             />
 
-                            {/* Mobile Number & Country Code */}
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                                <div style={{ width: '90px' }}>
-                                    <FormField
-                                        label="Code"
-                                        id="reg-code"
-                                        name="countryCode"
-                                        type="text"
-                                        value={countryCode}
-                                        onChange={e => setCountryCode(e.target.value)}
-                                        placeholder="+91"
-                                    />
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    <FormField
-                                        label="Mobile Number"
-                                        id="reg-mobile"
-                                        name="mobile"
-                                        type="tel"
-                                        placeholder="9876543210"
-                                        value={mobile}
-                                        onChange={e => { setMobile(e.target.value); clearError('mobile'); }}
-                                        error={errors.mobile}
-                                        required
-                                    />
-                                </div>
+                            {/* Mobile Number with Country Flag Dropdown */}
+                            <div className={styles.phoneGroup}>
+                                <label className={styles.phoneLabel}>Mobile Number <span style={{ color: '#ef4444' }}>*</span></label>
+                                <PhoneInput
+                                    international
+                                    country={countryISO}
+                                    value={phone}
+                                    onChange={(val) => {
+                                        setPhone(val || '');
+                                        clearError('phone');
+                                    }}
+                                    onCountryChange={(c) => setCountryISO(c || 'IN')}
+                                    limitMaxLength={true}
+                                    className={`${styles.phoneInput} ${errors.phone ? styles.phoneInputError : ''}`}
+                                />
+                                {errors.phone && <p className={styles.fieldError}>{errors.phone}</p>}
                             </div>
 
                             {/* City */}
@@ -366,6 +342,8 @@ export default function RegisterPage() {
                             >
                                 {registering ? <span className={styles.spinner} /> : 'Continue →'}
                             </button>
+
+                            {errors.submit && <p className={styles.fieldError} style={{ textAlign: 'center', marginTop: '12px' }}>{errors.submit}</p>}
                         </form>
 
                         <div className={styles.loginLink}>

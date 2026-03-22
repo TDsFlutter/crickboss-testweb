@@ -620,3 +620,94 @@
 .dark .imageLabel {
     color: #94a3b8;
 }
+
+/* Phone Input Unified Styles */
+.phoneGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.phoneLabel {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a2340;
+}
+
+.dark .phoneLabel {
+    color: #e8edf8;
+}
+
+.phoneInput {
+    display: flex;
+    align-items: center;
+    background: #f5f7fc;
+    border: 1.5px solid #dde3ef;
+    border-radius: 12px;
+    padding: 0 12px;
+    transition: all 0.2s;
+}
+
+.phoneInput:focus-within {
+    border-color: #1F3C88;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(31, 60, 136, 0.12);
+}
+
+.phoneInputError {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.dark .phoneInput {
+    background: #1e2636;
+    border-color: #2d3a53;
+}
+
+.dark .phoneInput:focus-within {
+    border-color: #5b82e8;
+    background: #232d42;
+    box-shadow: 0 0 0 3px rgba(91, 130, 232, 0.18);
+}
+
+.dark .phoneInputError {
+    background: #2a1616;
+}
+
+:global(.PhoneInputInput) {
+    flex: 1;
+    height: 50px;
+    background: transparent;
+    border: none;
+    padding: 0 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1a2340;
+    outline: none;
+    font-family: inherit;
+}
+
+:global(.dark .PhoneInputInput) {
+    color: #e8edf8;
+}
+
+:global(.PhoneInputCountrySelect) {
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #1a2340;
+}
+
+:global(.dark .PhoneInputCountrySelect) {
+    color: #e8edf8;
+}
+
+.fieldError {
+    font-size: 0.82rem;
+    color: #ef4444;
+    margin-top: 4px;
+    font-weight: 500;
+}

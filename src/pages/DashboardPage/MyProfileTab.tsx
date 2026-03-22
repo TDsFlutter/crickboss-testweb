@@ -5,7 +5,7 @@ import styles from './MyProfileTab.module.css';
 import { api } from '../../utils/api';
 
 export default function MyProfileTab() {
-    const { email, displayName, city, avatar, updateProfile, refreshUser, deleteAccount } = useAuth();
+    const { email, displayName, city, countryCode, avatar, updateProfile, refreshUser, deleteAccount } = useAuth();
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
@@ -257,6 +257,10 @@ export default function MyProfileTab() {
                         <div className={`${styles.infoRow} ${d}`}>
                             <span className={styles.infoLabel}>Email</span>
                             <span className={styles.infoValue}>{email || '—'}</span>
+                        </div>
+                        <div className={`${styles.infoRow} ${d}`}>
+                            <span className={styles.infoLabel}>Country</span>
+                            <span className={styles.infoValue}>{countryCode || '—'}</span>
                         </div>
                         <div className={`${styles.infoRow} ${d}`}>
                             <span className={styles.infoLabel}>City</span>

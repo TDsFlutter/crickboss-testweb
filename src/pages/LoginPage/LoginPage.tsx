@@ -134,6 +134,7 @@ export default function LoginPage() {
                         name: userPayload?.name,
                         id: userPayload?.id || userPayload?._id,
                         city: userPayload?.city,
+                        country_code: userPayload?.country_code,
                     },
                     {
                         access: res.token,

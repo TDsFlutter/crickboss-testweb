@@ -9,6 +9,7 @@ interface UserData {
     city?: string;
     avatar?: string;
     avatar_url?: string;
+    country_code?: string;
 }
 
 interface AuthContextType {
@@ -19,9 +20,10 @@ interface AuthContextType {
     userId: string;
     city: string;
     avatar: string;
+    countryCode: string;
     login: (userData: UserData, tokens?: { access: string; refresh: string }) => void;
     logout: () => void;
-    updateProfile: (name: string, city?: string, avatar?: string) => Promise<{ success: boolean; message: string }>;
+    updateProfile: (name: string, city?: string, avatar?: string, countryCode?: string) => Promise<{ success: boolean; message: string }>;
     refreshUser: () => Promise<void>;
     deleteAccount: () => Promise<{ success: boolean; message: string }>;
 }
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [userId, setUserId] = useState<string>('');
     const [city, setCity] = useState<string>('');
     const [avatar, setAvatar] = useState<string>('');
+    const [countryCode, setCountryCode] = useState<string>('');
 
     const login = useCallback((userData: UserData, tokens?: { access: string; refresh: string }) => {
         // Reverting to localStorage-based token storage
@@ -50,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setDisplayName(userData.name || '');
         setUserId(userData.id || '');
         setCity(userData.city || '');
+        setCountryCode(userData.country_code || '');
         const rawAvatar = userData.avatar_url || userData.avatar || '';
         setAvatar(api.formatAvatarUrl(rawAvatar));
     }, []);
@@ -69,6 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUserId('');
             setCity('');
             setAvatar('');
+            setCountryCode('');
         }
     }, []);
 
@@ -110,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setDisplayName(userData.name || '');
                     setUserId(userData.id || userData._id || '');
                     setCity(userData.city || '');
+                    setCountryCode(userData.country_code || '');
                     const rawAvatar = userData.avatar_url || userData.avatar || '';
                     setAvatar(api.formatAvatarUrl(rawAvatar));
                     return;
@@ -127,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setDisplayName(retryData.name || '');
                     setUserId(retryData.id || retryData._id || '');
                     setCity(retryData.city || '');
+                    setCountryCode(retryData.country_code || '');
                     const rawAvatar = retryData.avatar_url || retryData.avatar || '';
                     setAvatar(api.formatAvatarUrl(rawAvatar));
                     return;
@@ -148,19 +155,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const updateProfile = useCallback(async (
         name: string,
         cityVal?: string,
-        avatarVal?: string
+        avatarVal?: string,
+        countryCodeVal?: string
     ): Promise<{ success: boolean; message: string }> => {
         try {
-            const payload: { name?: string; city?: string; avatar?: string } = {};
+            const payload: { name?: string; city?: string; avatar?: string; country_code?: string } = {};
             if (name) payload.name = name;
             if (cityVal !== undefined) payload.city = cityVal;
             if (avatarVal !== undefined) payload.avatar = avatarVal;
+            if (countryCodeVal !== undefined) payload.country_code = countryCodeVal;
 
             const res = await api.updateMe(payload);
             if (res.success) {
                 if (name) setDisplayName(name);
                 if (cityVal !== undefined) setCity(cityVal);
                 if (avatarVal !== undefined) setAvatar(api.formatAvatarUrl(avatarVal));
+                if (countryCodeVal !== undefined) setCountryCode(countryCodeVal);
             }
             return { success: res.success, message: res.message };
         } catch (error) {
@@ -220,6 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             userId,
             city,
             avatar,
+            countryCode,
             login,
             logout,
             updateProfile,

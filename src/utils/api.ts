@@ -185,7 +185,7 @@ export const api = {
     return handleResponse(response);
   },
 
-  updateMe: async (data: { name?: string; city?: string; avatar?: string }): Promise<APIResponse> => {
+  updateMe: async (data: { name?: string; city?: string; avatar?: string; country_code?: string }): Promise<APIResponse> => {
     const response = await fetch(`${BASE_URL}/auth/me`, {
       method: 'PUT',
       headers: getHeaders(),
@@ -207,9 +207,12 @@ export const api = {
   uploadAvatar: async (file: File): Promise<APIResponse<string>> => {
     const formData = new FormData();
     formData.append('file', file);
+    const token = localStorage.getItem('access_token');
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     const response = await fetch(`${BASE_URL}/upload/avatar`, {
       method: 'POST',
-      headers: {},
+      headers,
       body: formData,
       credentials: 'include',
     });
