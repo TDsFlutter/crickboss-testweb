@@ -7,7 +7,8 @@ import { useTheme } from '../../context/ThemeContext';
 import FormField from '../../components/FormField/FormField';
 import styles from './RegisterPage.module.css';
 import { api } from '../../utils/api';
-import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input';
+import PhoneInput, { parsePhoneNumber, getCountryCallingCode } from 'react-phone-number-input';
+import type { Country } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
 function maskEmail(email: string): string {
@@ -139,11 +140,21 @@ export default function RegisterPage() {
             } catch {
                 mobileNumber = phone.replace(/\D/g, '');
             }
+            // Get the dial code since backend expects '+91' instead of 'IN'
+            let dialCode = '+91';
+            try {
+                if (countryISO) {
+                    dialCode = '+' + getCountryCallingCode(countryISO as Country);
+                }
+            } catch {
+                // fallback
+            }
+
             const res = await api.register({
                 name: name.trim(),
                 email: email.trim().toLowerCase(),
                 mobile: mobileNumber,
-                country_code: countryISO,
+                country_code: dialCode,
                 city: city.trim(),
             });
             if (res.success) {
