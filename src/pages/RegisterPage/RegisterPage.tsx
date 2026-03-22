@@ -125,11 +125,24 @@ export default function RegisterPage() {
         if (!validateForm()) return;
         setRegistering(true);
         try {
-            const phoneNumberObj = parsePhoneNumber(phone);
+            // Extract national number digits only (no + or country code)
+            let mobileNumber = phone;
+            try {
+                const phoneNumberObj = parsePhoneNumber(phone);
+                if (phoneNumberObj && phoneNumberObj.nationalNumber) {
+                    mobileNumber = phoneNumberObj.nationalNumber;
+                } else {
+                    // Fallback: strip everything except digits
+                    mobileNumber = phone.replace(/\D/g, '');
+                    // If it starts with country dial code, we can't easily strip — keep as is
+                }
+            } catch {
+                mobileNumber = phone.replace(/\D/g, '');
+            }
             const res = await api.register({
                 name: name.trim(),
                 email: email.trim().toLowerCase(),
-                mobile: phoneNumberObj ? phoneNumberObj.nationalNumber : phone,
+                mobile: mobileNumber,
                 country_code: countryISO,
                 city: city.trim(),
             });

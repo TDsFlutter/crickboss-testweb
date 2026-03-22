@@ -110,7 +110,7 @@ export const api = {
   }): Promise<APIResponse> => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
-      headers: getHeaders(),
+      headers: { 'Content-Type': 'application/json' }, // No auth token for registration
       body: JSON.stringify(data),
       credentials: 'include',
     });
@@ -120,7 +120,7 @@ export const api = {
   verifyOtp: async (email: string, otp: string): Promise<APIResponse> => {
     const response = await fetch(`${BASE_URL}/auth/verify-otp`, {
       method: 'POST',
-      headers: getHeaders(),
+      headers: { 'Content-Type': 'application/json' }, // No auth token for OTP verification
       body: JSON.stringify({ email, otp }),
       credentials: 'include',
     });
